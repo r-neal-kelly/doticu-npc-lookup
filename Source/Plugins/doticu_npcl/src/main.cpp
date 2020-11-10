@@ -8,6 +8,8 @@
 
 #include "skse64/PluginAPI.h"
 
+#include "doticu_skylib/utils.h"
+
 #include "main.h"
 
 namespace doticu_npcl {
