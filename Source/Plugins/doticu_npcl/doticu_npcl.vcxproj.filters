@@ -23,7 +23,7 @@
     <ClInclude Include="include\main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm\mcm_main.h">
+    <ClInclude Include="include\mcm_main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -31,7 +31,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm\mcm_main.cpp">
+    <ClCompile Include="src\mcm_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
