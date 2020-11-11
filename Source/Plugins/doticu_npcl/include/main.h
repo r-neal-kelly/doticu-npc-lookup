@@ -17,8 +17,7 @@ namespace doticu_npcl {
         static bool SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
         static bool SKSE_Load_Plugin(const SKSEInterface* skse);
 
-        static bool& Is_New_Game();
-        static bool Is_ESP_Installed();
+        static bool Is_Installed();
         static void Init();
         static void Load();
     };

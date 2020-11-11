@@ -11,14 +11,10 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    using namespace doticu_skylib;
+    using Machine_t = skylib::Virtual::Machine_t;
+    using Stack_ID_t = skylib::Virtual::Stack_ID_t;
 
-    using Machine_t = Virtual::Machine_t;
-    using Stack_ID_t = Virtual::Stack_ID_t;
-
-    using Config_Base_t = doticu_mcmlib::Config_Base_t;
-
-    class Main_t : Config_Base_t {
+    class Main_t : mcmlib::Config_Base_t {
     public:
         static constexpr const char* MOD_NAME           = " NPC Lookup ";
         static constexpr const char* BASES_PAGE         = " Bases ";

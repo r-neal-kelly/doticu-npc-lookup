@@ -45,7 +45,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(doticu_skylib)\include;$(doticu_mcmlib)\include;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <ForcedIncludeFiles>common/IPrefix.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>common/IPrefix.h; prefix.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
@@ -76,10 +76,13 @@
     <None Include="exports.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm_main.h" />
+    <ClInclude Include="include\prefix.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
   </ItemGroup>

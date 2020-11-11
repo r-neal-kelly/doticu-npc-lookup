@@ -8,6 +8,12 @@
 
 #include "skse64/PluginAPI.h"
 
+#include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/game.h"
+#include "doticu_skylib/quest.h"
+#include "doticu_skylib/virtual.h"
+
+#include "consts.h"
 #include "main.h"
 
 namespace doticu_npcl {
@@ -56,6 +62,8 @@ namespace doticu_npcl {
 
     bool Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
     {
+        static bool is_new_game = false;
+
         LOG().OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcl.log");
 
         if (skse) {
@@ -70,10 +78,10 @@ namespace doticu_npcl {
                 {
                     if (message) {
                         if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
-                            Is_New_Game() = true;
+                            is_new_game = true;
                         } else if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                            if (Is_New_Game()) {
-                                Is_New_Game() = false;
+                            if (is_new_game) {
+                                is_new_game = false;
                                 Init();
                             }
                         } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
@@ -93,29 +101,33 @@ namespace doticu_npcl {
         }
     }
 
-    bool& Main_t::Is_New_Game()
+    bool Main_t::Is_Installed()
     {
-        static bool self = false;
-        return self;
-    }
-
-    bool Main_t::Is_ESP_Installed()
-    {
-        return true;
+        return Consts_t::NPCL_Mod() != nullptr;
     }
 
     void Main_t::Init()
     {
-        if (Is_ESP_Installed()) {
-            _MESSAGE("started a game.");
-            // need to start quests.
+        if (Is_Installed()) {
+            _MESSAGE("Starting game.");
+
+            Vector_t<skylib::Quest_t*> quests;
+            quests.push_back(Consts_t::NPCL_MCM_Quest());
+
+            class UCallback_t : public skylib::Callback_i<> {
+                void operator()()
+                {
+                    _MESSAGE("Started quests.");
+                }
+            };
+            skylib::Quest_t::Start(quests, new UCallback_t());
         }
     }
 
     void Main_t::Load()
     {
-        if (Is_ESP_Installed()) {
-            _MESSAGE("loaded a game.");
+        if (Is_Installed()) {
+            _MESSAGE("Loading game.");
         }
     }
 
