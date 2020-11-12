@@ -29,7 +29,7 @@
     <ClInclude Include="include\consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\prefix.h">
+    <ClInclude Include="include\intrinsic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

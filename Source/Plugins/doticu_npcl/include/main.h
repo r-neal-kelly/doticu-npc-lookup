@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "intrinsic.h"
+
 namespace doticu_npcl {
 
     class Main_t {
@@ -14,10 +16,11 @@ namespace doticu_npcl {
         static const SKSEMessagingInterface*& MESSAGING();
         static PluginHandle& PLUGIN_HANDLE();
 
-        static bool SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
-        static bool SKSE_Load_Plugin(const SKSEInterface* skse);
+        static Bool_t SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
+        static Bool_t SKSE_Load_Plugin(const SKSEInterface* skse);
+        static Bool_t SKSE_Register_Functions(skylib::Virtual::Registry_t* registry);
 
-        static bool Is_Installed();
+        static Bool_t Is_Installed();
         static void Init();
         static void Load();
     };

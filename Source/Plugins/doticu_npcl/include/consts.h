@@ -8,6 +8,8 @@
 
 #include "doticu_skylib/quest.h"
 
+#include "intrinsic.h"
+
 namespace doticu_npcl {
 
     class Consts_t {

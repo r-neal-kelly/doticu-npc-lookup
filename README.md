@@ -2,10 +2,9 @@
 *An in-game way to find any NPC for The Elder Scrolls V: Skyrim Special Edition.*
 
 ## Requires
-- [Skyrim SE 1.5.97+](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)
+- [Skyrim SE 1.5.97](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)
 - [SKSE 2.0.19+](https://skse.silverlock.org/)
 - [SkyUI 5.2SE+](https://www.nexusmods.com/skyrimspecialedition/mods/12604)
-- [Address Library for SKSE Plugins](https://www.nexusmods.com/skyrimspecialedition/mods/32444)
 
 # 
 ## Thank You

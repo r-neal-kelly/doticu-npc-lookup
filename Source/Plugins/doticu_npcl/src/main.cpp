@@ -15,6 +15,7 @@
 
 #include "consts.h"
 #include "main.h"
+#include "mcm_main.h"
 
 namespace doticu_npcl {
 
@@ -48,7 +49,7 @@ namespace doticu_npcl {
         return self;
     }
 
-    bool Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
+    Bool_t Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
     {
         if (skse && info) {
             info->infoVersion = PluginInfo::kInfoVersion;
@@ -60,9 +61,9 @@ namespace doticu_npcl {
         }
     }
 
-    bool Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
+    Bool_t Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
     {
-        static bool is_new_game = false;
+        static Bool_t is_new_game = false;
 
         LOG().OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcl.log");
 
@@ -74,23 +75,28 @@ namespace doticu_npcl {
             MESSAGING() = static_cast<SKSEMessagingInterface*>
                 (skse->QueryInterface(kInterface_Messaging));
             if (PAPYRUS() && MESSAGING()) {
-                auto Callback = [](SKSEMessagingInterface::Message* message)->void
-                {
-                    if (message) {
-                        if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
-                            is_new_game = true;
-                        } else if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                            if (is_new_game) {
-                                is_new_game = false;
-                                Init();
+                if (PAPYRUS()->Register(SKSE_Register_Functions)) {
+                    auto Callback = [](SKSEMessagingInterface::Message* message)->void
+                    {
+                        if (message) {
+                            if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
+                                is_new_game = true;
+                            } else if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
+                                if (is_new_game) {
+                                    is_new_game = false;
+                                    Init();
+                                }
+                            } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
+                                Load();
                             }
-                        } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                            Load();
                         }
-                    }
-                };
-                MESSAGING()->RegisterListener(PLUGIN_HANDLE(), "SKSE", Callback);
-                return true;
+                    };
+                    MESSAGING()->RegisterListener(PLUGIN_HANDLE(), "SKSE", Callback);
+                    return true;
+                } else {
+                    _FATALERROR("Unable to register functions.");
+                    return false;
+                }
             } else {
                 _FATALERROR("Unable to get papyrus or messaging interface.");
                 return false;
@@ -101,14 +107,31 @@ namespace doticu_npcl {
         }
     }
 
-    bool Main_t::Is_Installed()
+    Bool_t Main_t::SKSE_Register_Functions(skylib::Virtual::Registry_t* registry)
+    {
+        #define REGISTER(TYPE_)                                                             \
+        M                                                                                   \
+            TYPE_::Register_Me(reinterpret_cast<skylib::Virtual::Machine_t*>(registry));    \
+            _MESSAGE("Added " #TYPE_ " functions.");                                        \
+        W
+
+        REGISTER(MCM::Main_t);
+
+        #undef REGISTER
+
+        _MESSAGE("Added all functions.\n");
+
+        return true;
+    }
+
+    Bool_t Main_t::Is_Installed()
     {
         return Consts_t::NPCL_Mod() != nullptr;
     }
 
     void Main_t::Init()
     {
-        if (Is_Installed()) {
+        if (Is_Installed()) { // I want a check with global variable too, to make sure we haven't init'd already. rare possibility
             _MESSAGE("Starting game.");
 
             Vector_t<skylib::Quest_t*> quests;
