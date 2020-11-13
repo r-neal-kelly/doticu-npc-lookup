@@ -17,6 +17,10 @@
 #include "main.h"
 #include "mcm_main.h"
 
+#include "doticu_skylib/cell.h"
+#include "doticu_skylib/actor.h"
+#include "doticu_skylib/worldspace.h"
+
 namespace doticu_npcl {
 
     const IDebugLog& Main_t::LOG()
@@ -87,6 +91,7 @@ namespace doticu_npcl {
                                     Init();
                                 }
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
+                                // we need to check if this is a new install, so init instead
                                 Load();
                             }
                         }
@@ -151,6 +156,8 @@ namespace doticu_npcl {
     {
         if (Is_Installed()) {
             _MESSAGE("Loading game.");
+            skylib::Actor_Base_t::Log_Actor_Bases();
+            skylib::Actor_t::Log_Loaded_Actors();
         }
     }
 

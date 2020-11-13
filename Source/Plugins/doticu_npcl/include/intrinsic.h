@@ -14,6 +14,8 @@ namespace mcmlib = doticu_mcmlib;
 
 namespace doticu_npcl {
 
+    using Index_t       = skylib::Index_t;
+
     using Bool_t        = skylib::Bool_t;
     using Int_t         = skylib::Int_t;
     using Float_t       = skylib::Float_t;
