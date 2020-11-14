@@ -12,14 +12,17 @@
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/virtual.h"
+#include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/leveled_actor_base.h"
+#include "doticu_skylib/actor.h"
+#include "doticu_skylib/global.h"
 
 #include "consts.h"
 #include "main.h"
 #include "mcm_main.h"
-
-#include "doticu_skylib/cell.h"
-#include "doticu_skylib/actor.h"
-#include "doticu_skylib/worldspace.h"
+#include "mcm_bases.h"
+#include "mcm_leveled_bases.h"
+#include "mcm_references.h"
 
 namespace doticu_npcl {
 
@@ -67,8 +70,6 @@ namespace doticu_npcl {
 
     Bool_t Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
     {
-        static Bool_t is_new_game = false;
-
         LOG().OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcl.log");
 
         if (skse) {
@@ -83,16 +84,16 @@ namespace doticu_npcl {
                     auto Callback = [](SKSEMessagingInterface::Message* message)->void
                     {
                         if (message) {
-                            if (message->type == SKSEMessagingInterface::kMessage_NewGame) {
-                                is_new_game = true;
-                            } else if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                                if (is_new_game) {
-                                    is_new_game = false;
+                            if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
+                                if (!Is_Installed()) {
                                     Init();
                                 }
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                                // we need to check if this is a new install, so init instead
-                                Load();
+                                if (Is_Installed()) {
+                                    Load();
+                                } else {
+                                    Init();
+                                }
                             }
                         }
                     };
@@ -121,6 +122,9 @@ namespace doticu_npcl {
         W
 
         REGISTER(MCM::Main_t);
+        REGISTER(MCM::Bases_t);
+        REGISTER(MCM::Leveled_Bases_t);
+        REGISTER(MCM::References_t);
 
         #undef REGISTER
 
@@ -131,12 +135,17 @@ namespace doticu_npcl {
 
     Bool_t Main_t::Is_Installed()
     {
+        return Consts_t::NPCL_Is_Installed_Global()->Bool();
+    }
+
+    Bool_t Main_t::Is_Active()
+    {
         return Consts_t::NPCL_Mod() != nullptr;
     }
 
     void Main_t::Init()
     {
-        if (Is_Installed()) { // I want a check with global variable too, to make sure we haven't init'd already. rare possibility
+        if (Is_Active()) {
             _MESSAGE("Starting game.");
 
             Vector_t<skylib::Quest_t*> quests;
@@ -154,9 +163,10 @@ namespace doticu_npcl {
 
     void Main_t::Load()
     {
-        if (Is_Installed()) {
+        if (Is_Active()) {
             _MESSAGE("Loading game.");
             skylib::Actor_Base_t::Log_Actor_Bases();
+            skylib::Leveled_Actor_Base_t::Log_Leveled_Actor_Bases();
             skylib::Actor_t::Log_Loaded_Actors();
         }
     }

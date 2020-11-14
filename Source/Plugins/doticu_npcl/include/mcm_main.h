@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/virtual.h"
 #include "doticu_skylib/virtual_machine.h"
 
 #include "doticu_mcmlib/config_base.h"
@@ -18,6 +17,7 @@ namespace doticu_npcl { namespace MCM {
     using Class_t = skylib::Virtual::Class_t;
     using Object_t = skylib::Virtual::Object_t;
     using Variable_t = skylib::Virtual::Variable_t;
+    using String_Variable_t = skylib::Virtual::String_Variable_t;
 
     using Latent_Callback_i = Callback_i<>;
 
@@ -25,15 +25,24 @@ namespace doticu_npcl { namespace MCM {
     public:
         static constexpr const char* MOD_NAME           = " NPC Lookup ";
         static constexpr const char* BASES_PAGE         = " Bases ";
+        static constexpr const char* LEVELED_BASES_PAGE = " Leveled Bases ";
         static constexpr const char* REFERENCES_PAGE    = " References ";
+        static constexpr const char* DEFAULT_PAGE       = BASES_PAGE;
 
+        static Main_t*  Self();
         static String_t Class_Name();
         static Class_t* Class();
 
     public:
         Object_t* Object();
 
-        void Return_Latent(Latent_Callback_i* lcallback);
+        String_Variable_t* Current_Page_Variable();
+
+        String_t    Current_Page();
+        void        Current_Page(String_t current_page);
+
+        Latent_Callback_i*  Create_Latent_Callback(Machine_t* machine, Stack_ID_t stack_id);
+        void                Destroy_Latent_Callback(Latent_Callback_i* lcallback);
 
         Bool_t On_Build_Page(Machine_t* machine, Stack_ID_t stack_id, String_t current_page);
         Bool_t On_Option_Select(Machine_t* machine, Stack_ID_t stack_id, Int_t option);

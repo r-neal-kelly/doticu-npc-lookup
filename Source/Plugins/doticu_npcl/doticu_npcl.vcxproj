@@ -78,13 +78,19 @@
   <ItemGroup>
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\main.h" />
+    <ClInclude Include="include\mcm_bases.h" />
+    <ClInclude Include="include\mcm_leveled_bases.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\intrinsic.h" />
+    <ClInclude Include="include\mcm_references.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mcm_bases.cpp" />
+    <ClCompile Include="src\mcm_leveled_bases.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
+    <ClCompile Include="src\mcm_references.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

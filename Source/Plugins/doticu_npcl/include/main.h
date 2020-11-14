@@ -21,6 +21,7 @@ namespace doticu_npcl {
         static Bool_t SKSE_Register_Functions(skylib::Virtual::Registry_t* registry);
 
         static Bool_t Is_Installed();
+        static Bool_t Is_Active();
         static void Init();
         static void Load();
     };

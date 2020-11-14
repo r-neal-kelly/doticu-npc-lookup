@@ -7,9 +7,10 @@ string p_current_page = ""
 event OnConfigOpen()
     ModName = " NPC Lookup "
     
-    Pages = Utility.CreateStringArray(2, "")
+    Pages = Utility.CreateStringArray(3, "")
     Pages[0] = " Bases "
-    Pages[1] = " References "
+    pages[1] = " Leveled Bases "
+    Pages[2] = " References "
 endEvent
 
 event OnPageReset(String current_page) native

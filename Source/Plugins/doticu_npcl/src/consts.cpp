@@ -4,6 +4,8 @@
 
 #include "doticu_skylib/utils.h"
 #include "doticu_skylib/game.h"
+#include "doticu_skylib/global.h"
+#include "doticu_skylib/quest.h"
 
 #include "consts.h"
 
@@ -23,7 +25,9 @@ namespace doticu_npcl {
         return form;                                        \
     W
 
-    skylib::Quest_t* Consts_t::NPCL_MCM_Quest() { DEFINE_FORM(NPCL_Mod(), skylib::Quest_t, 0x000D62); }
+    skylib::Global_t*   Consts_t::NPCL_Is_Installed_Global()    { DEFINE_FORM(NPCL_Mod(), skylib::Global_t, 0x000D63); }
+
+    skylib::Quest_t*    Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(), skylib::Quest_t, 0x000D62); }
 
     #undef DEFINE_FORM
 
