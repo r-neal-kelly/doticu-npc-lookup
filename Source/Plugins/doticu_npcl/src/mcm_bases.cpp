@@ -9,10 +9,38 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    Bases_t*    Bases_t::Self()         { return static_cast<Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
-    String_t    Bases_t::Class_Name()   { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases"); }
-    Class_t*    Bases_t::Class()        { DEFINE_CLASS(); }
-    Object_t*   Bases_t::Object()       { DEFINE_OBJECT(); }
+    Bases_t*            Bases_t::Self()                             { return static_cast<Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
+    String_t            Bases_t::Class_Name()                       { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases"); }
+    Class_t*            Bases_t::Class()                            { DEFINE_CLASS(); }
+
+    Object_t*           Bases_t::Object()                           { DEFINE_OBJECT(); }
+
+    String_Variable_t*  Bases_t::Current_View_Variable()            { DEFINE_STRING_VARIABLE("p_current_view"); }
+
+    Int_Variable_t*     Bases_t::Filter_Option_Variable()           { DEFINE_INT_VARIABLE("p_filter_option"); }
+
+    Int_Variable_t*     Bases_t::Name_Option_Variable()             { DEFINE_INT_VARIABLE("p_name_option"); }
+    String_Variable_t*  Bases_t::Name_Argument_Variable()           { DEFINE_STRING_VARIABLE("p_name_argument"); }
+
+    Int_Variable_t*     Bases_t::Mod_Option_Variable()              { DEFINE_INT_VARIABLE("p_mod_option"); }
+    String_Variable_t*  Bases_t::Mod_Argument_Variable()            { DEFINE_STRING_VARIABLE("p_mod_argument"); }
+    String_Variable_t*  Bases_t::Mod_View_Variable()                { DEFINE_STRING_VARIABLE("p_mod_view"); }
+
+    Int_Variable_t*     Bases_t::Sex_Option_Variable()              { DEFINE_INT_VARIABLE("p_sex_option"); }
+    Int_Variable_t*     Bases_t::Sex_Argument_Variable()            { DEFINE_INT_VARIABLE("p_sex_argument"); }
+    String_Variable_t*  Bases_t::Sex_View_Variable()                { DEFINE_STRING_VARIABLE("p_sex_view"); }
+
+    Int_Variable_t*     Bases_t::Race_Option_Variable()             { DEFINE_INT_VARIABLE("p_race_option"); }
+    String_Variable_t*  Bases_t::Race_Argument_Variable()           { DEFINE_STRING_VARIABLE("p_race_argument"); }
+    String_Variable_t*  Bases_t::Race_View_Variable()               { DEFINE_STRING_VARIABLE("p_race_view"); }
+
+    Int_Variable_t*     Bases_t::Relationship_Option_Variable()     { DEFINE_INT_VARIABLE("p_relationship_option"); }
+    Int_Variable_t*     Bases_t::Relationship_Argument_Variable()   { DEFINE_INT_VARIABLE("p_relationship_argument"); }
+    String_Variable_t*  Bases_t::Relationship_View_Variable()       { DEFINE_STRING_VARIABLE("p_relationship_view"); }
+
+    Int_Variable_t*     Bases_t::Is_Unique_Option_Variable()        { DEFINE_INT_VARIABLE("p_is_unique_option"); }
+    Int_Variable_t*     Bases_t::Is_Generic_Option_Variable()       { DEFINE_INT_VARIABLE("p_is_generic_option"); }
+    Int_Variable_t*     Bases_t::Unique_Generic_Ternary_Variable()  { DEFINE_INT_VARIABLE("p_unique_generic_ternary"); }
 
     void Bases_t::On_Build_Page(Latent_Callback_i* lcallback)
     {

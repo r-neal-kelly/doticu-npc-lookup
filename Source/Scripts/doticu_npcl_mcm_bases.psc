@@ -7,22 +7,22 @@ string  p_current_view              =      ""
 int     p_filter_option             =      -1
 
 int     p_name_option               =      -1
-string  p_name_arg                  =      ""
+string  p_name_argument             =      ""
 
 int     p_mod_option                =      -1
-string  p_mod_arg                   =      ""
+string  p_mod_argument              =      ""
 string  p_mod_view                  = " Any "
 
 int     p_sex_option                =      -1
-string  p_sex_arg                   =      ""
+int     p_sex_argument              =      -1
 string  p_sex_view                  = " Any "
 
 int     p_race_option               =      -1
-string  p_race_arg                  =      ""
+string  p_race_argument             =      ""
 string  p_race_view                 = " Any "
 
 int     p_relationship_option       =      -1
-int     p_relationship_arg          =      -1
+int     p_relationship_argument     =      -1
 string  p_relationship_view         = " Any "
 
 int     p_is_unique_option          =      -1

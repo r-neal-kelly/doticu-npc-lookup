@@ -17,6 +17,7 @@ namespace doticu_npcl { namespace MCM {
     using Class_t = skylib::Virtual::Class_t;
     using Object_t = skylib::Virtual::Object_t;
     using Variable_t = skylib::Virtual::Variable_t;
+    using Int_Variable_t = skylib::Virtual::Int_Variable_t;
     using String_Variable_t = skylib::Virtual::String_Variable_t;
 
     using Latent_Callback_i = Callback_i<>;
