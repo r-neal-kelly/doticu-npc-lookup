@@ -5,6 +5,7 @@
 #include "doticu_skylib/utils.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/mod.h"
 #include "doticu_skylib/quest.h"
 
 #include "consts.h"

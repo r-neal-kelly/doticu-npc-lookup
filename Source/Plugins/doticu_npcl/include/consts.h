@@ -11,6 +11,7 @@
 namespace doticu_skylib {
 
     class Global_t;
+    class Mod_t;
     class Quest_t;
 
 }

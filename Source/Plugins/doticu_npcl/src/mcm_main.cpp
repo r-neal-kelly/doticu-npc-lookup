@@ -66,6 +66,29 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    void Main_t::Toggle_Ternary(Int_Variable_t* ternary,
+                                Int_t high_option,
+                                Int_t low_option,
+                                Ternary_e toggle)
+    {
+        if (toggle == Ternary_e::HIGH) {
+            if (ternary->Value() < 1) {
+                ternary->Value(1);
+            } else {
+                ternary->Value(0);
+            }
+        } else if (toggle == Ternary_e::LOW) {
+            if (ternary->Value() > -1) {
+                ternary->Value(-1);
+            } else {
+                ternary->Value(0);
+            }
+        }
+
+        Toggle_Option_Value(high_option, ternary->Value() > 0, false);
+        Toggle_Option_Value(low_option, ternary->Value() < 0, true);
+    }
+
     static Bool_t Is_Same(const char* page_a, const char* page_b)
     {
         return skylib::CString_t::Is_Same(page_a, page_b, true);

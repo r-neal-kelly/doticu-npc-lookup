@@ -6,8 +6,6 @@
 
 #include "skse64_common/skse_version.h"
 
-#include "skse64/PluginAPI.h"
-
 #include "doticu_skylib/intrinsic.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/quest.h"
@@ -16,6 +14,8 @@
 #include "doticu_skylib/leveled_actor_base.h"
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/race.h"
+#include "doticu_skylib/mod.h"
 
 #include "consts.h"
 #include "main.h"
@@ -26,35 +26,10 @@
 
 namespace doticu_npcl {
 
-    const IDebugLog& Main_t::LOG()
-    {
-        static const IDebugLog self;
-        return self;
-    }
-
-    const SKSEInterface*& Main_t::SKSE()
-    {
-        static const SKSEInterface* self = nullptr;
-        return self;
-    }
-
-    const SKSEPapyrusInterface*& Main_t::PAPYRUS()
-    {
-        static const SKSEPapyrusInterface* self = nullptr;
-        return self;
-    }
-
-    const SKSEMessagingInterface*& Main_t::MESSAGING()
-    {
-        static const SKSEMessagingInterface* self = nullptr;
-        return self;
-    }
-
-    PluginHandle& Main_t::PLUGIN_HANDLE()
-    {
-        static PluginHandle self;
-        return self;
-    }
+    const SKSEInterface* Main_t::SKSE = nullptr;
+    const SKSEPapyrusInterface* Main_t::SKSE_PAPYRUS = nullptr;
+    const SKSEMessagingInterface* Main_t::SKSE_MESSAGING = nullptr;
+    PluginHandle Main_t::SKSE_PLUGIN_HANDLE = 0;
 
     Bool_t Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
     {
@@ -70,41 +45,42 @@ namespace doticu_npcl {
 
     Bool_t Main_t::SKSE_Load_Plugin(const SKSEInterface* skse)
     {
-        LOG().OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcl.log");
-
+        SKSE_LOG.OpenRelative(CSIDL_MYDOCUMENTS, "\\My Games\\Skyrim Special Edition\\SKSE\\doticu_npcl.log");
         if (skse) {
-            SKSE() = skse;
-            PLUGIN_HANDLE() = skse->GetPluginHandle();
-            PAPYRUS() = static_cast<SKSEPapyrusInterface*>
-                (skse->QueryInterface(kInterface_Papyrus));
-            MESSAGING() = static_cast<SKSEMessagingInterface*>
-                (skse->QueryInterface(kInterface_Messaging));
-            if (PAPYRUS() && MESSAGING()) {
-                if (PAPYRUS()->Register(SKSE_Register_Functions)) {
+            SKSE = skse;
+            SKSE_PAPYRUS = static_cast<const SKSEPapyrusInterface*>(SKSE->QueryInterface(kInterface_Papyrus));
+            SKSE_MESSAGING = static_cast<const SKSEMessagingInterface*>(SKSE->QueryInterface(kInterface_Messaging));
+            SKSE_PLUGIN_HANDLE = SKSE->GetPluginHandle();
+            if (SKSE_PAPYRUS && SKSE_MESSAGING) {
+                if (SKSE_PAPYRUS->Register(reinterpret_cast<Bool_t(*)(skylib::Virtual::Registry_t*)>(SKSE_Register_Functions))) {
                     auto Callback = [](SKSEMessagingInterface::Message* message)->void
                     {
                         if (message) {
                             if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                                if (!Is_Installed()) {
-                                    Init();
+                                if (Is_Active()) {
+                                    if (!Is_Installed()) {
+                                        Init();
+                                    }
                                 }
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                                if (Is_Installed()) {
-                                    Load();
-                                } else {
-                                    Init();
+                                if (Is_Active()) {
+                                    if (Is_Installed()) {
+                                        Load();
+                                    } else {
+                                        Init();
+                                    }
                                 }
                             }
                         }
                     };
-                    MESSAGING()->RegisterListener(PLUGIN_HANDLE(), "SKSE", Callback);
+                    SKSE_MESSAGING->RegisterListener(SKSE_PLUGIN_HANDLE, "SKSE", Callback);
                     return true;
                 } else {
                     _FATALERROR("Unable to register functions.");
                     return false;
                 }
             } else {
-                _FATALERROR("Unable to get papyrus or messaging interface.");
+                _FATALERROR("Unable to get papyrus and/or messaging interface.");
                 return false;
             }
         } else {
@@ -113,12 +89,12 @@ namespace doticu_npcl {
         }
     }
 
-    Bool_t Main_t::SKSE_Register_Functions(skylib::Virtual::Registry_t* registry)
+    Bool_t Main_t::SKSE_Register_Functions(skylib::Virtual::Machine_t* machine)
     {
-        #define REGISTER(TYPE_)                                                             \
-        M                                                                                   \
-            TYPE_::Register_Me(reinterpret_cast<skylib::Virtual::Machine_t*>(registry));    \
-            _MESSAGE("Added " #TYPE_ " functions.");                                        \
+        #define REGISTER(TYPE_)                         \
+        M                                               \
+            TYPE_::Register_Me(machine);                \
+            _MESSAGE("Added " #TYPE_ " functions.");    \
         W
 
         REGISTER(MCM::Main_t);
@@ -133,54 +109,62 @@ namespace doticu_npcl {
         return true;
     }
 
-    Bool_t Main_t::Is_Installed()
-    {
-        return Consts_t::NPCL_Is_Installed_Global()->Bool();
-    }
-
     Bool_t Main_t::Is_Active()
     {
         return Consts_t::NPCL_Mod() != nullptr;
     }
 
+    Bool_t Main_t::Is_Installed()
+    {
+        return Consts_t::NPCL_Is_Installed_Global()->Bool();
+    }
+
     void Main_t::Init()
     {
-        if (Is_Active()) {
-            _MESSAGE("Starting game.");
+        SKYLIB_ASSERT(!Is_Installed());
 
-            Vector_t<skylib::Quest_t*> quests;
-            quests.push_back(Consts_t::NPCL_MCM_Quest());
+        _MESSAGE("Starting game.");
 
-            class UCallback_t : public skylib::Callback_i<> {
-                void operator()()
-                {
-                    _MESSAGE("Started quests.");
-                }
-            };
-            skylib::Quest_t::Start(quests, new UCallback_t());
-        }
+        Consts_t::NPCL_Is_Installed_Global()->Bool(true);
+
+        Vector_t<skylib::Quest_t*> quests;
+        quests.push_back(Consts_t::NPCL_MCM_Quest());
+
+        class UCallback_t : public skylib::Callback_i<>
+        {
+            void operator()()
+            {
+                _MESSAGE("Started quests.");
+            }
+        };
+        skylib::Quest_t::Start(quests, new UCallback_t());
     }
 
     void Main_t::Load()
     {
-        if (Is_Active()) {
-            _MESSAGE("Loading game.");
-            skylib::Actor_Base_t::Log_Actor_Bases();
-            skylib::Leveled_Actor_Base_t::Log_Leveled_Actor_Bases();
-            skylib::Actor_t::Log_Loaded_Actors();
-        }
+        SKYLIB_ASSERT(Is_Installed());
+
+        _MESSAGE("Loading game.");
+        skylib::Mod_t::Log_Mods();
+        skylib::Mod_t::Log_Active_Mods();
+        skylib::Mod_t::Log_Active_Heavy_Mods();
+        skylib::Mod_t::Log_Active_Light_Mods();
+        skylib::Race_t::Log_Races();
+        skylib::Actor_Base_t::Log_Actor_Bases();
+        skylib::Leveled_Actor_Base_t::Log_Leveled_Actor_Bases();
+        skylib::Actor_t::Log_Loaded_Actors();
     }
 
 }
 
 extern "C" {
 
-    bool SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
+    skylib::Bool_t SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
     {
         return doticu_npcl::Main_t::SKSE_Query_Plugin(skse, info);
     }
 
-    bool SKSEPlugin_Load(const SKSEInterface* skse)
+    skylib::Bool_t SKSEPlugin_Load(const SKSEInterface* skse)
     {
         return doticu_npcl::Main_t::SKSE_Load_Plugin(skse);
     }
