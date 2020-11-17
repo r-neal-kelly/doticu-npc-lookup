@@ -21,6 +21,7 @@ namespace doticu_npcl { namespace MCM {
     using Int_Variable_t = skylib::Virtual::Int_Variable_t;
     using String_Variable_t = skylib::Virtual::String_Variable_t;
 
+    using Flag_e = mcmlib::Flag_e;
     using Cursor_e = mcmlib::Cursor_e;
 
     using Latent_Callback_i = Callback_i<>;
