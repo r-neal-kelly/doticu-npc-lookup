@@ -12,6 +12,9 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    using Ternary_e = skylib::Ternary_e;
+    using Comparator_e = skylib::Comparator_e;
+
     using Machine_t = skylib::Virtual::Machine_t;
     using Stack_ID_t = skylib::Virtual::Stack_ID_t;
     using Class_t = skylib::Virtual::Class_t;
@@ -26,21 +29,24 @@ namespace doticu_npcl { namespace MCM {
 
     using Latent_Callback_i = Callback_i<>;
 
-    enum class Ternary_e : skylib::s64
-    {
-        LOW = -1,
-        NONE = 0,
-        HIGH = 1,
-    };
-
     class Main_t : public mcmlib::Config_Base_t {
     public:
-        static constexpr const char* MOD_NAME           = " NPC Lookup ";
-        static constexpr const char* RACES_PAGE         = " Races ";
-        static constexpr const char* BASES_PAGE         = " Bases ";
-        static constexpr const char* LEVELED_BASES_PAGE = " Leveled Bases ";
-        static constexpr const char* REFERENCES_PAGE    = " References ";
-        static constexpr const char* DEFAULT_PAGE       = BASES_PAGE;
+        static constexpr const char*    MOD_NAME            = " NPC Lookup ";
+        static constexpr const char*    RACES_PAGE          = " Races ";
+        static constexpr const char*    BASES_PAGE          = " Bases ";
+        static constexpr const char*    LEVELED_BASES_PAGE  = " Leveled Bases ";
+        static constexpr const char*    REFERENCES_PAGE     = " References ";
+        static constexpr const char*    DEFAULT_PAGE        = BASES_PAGE;
+
+        static constexpr const char*    FILTER_LABEL        = "                               Filter";
+        static constexpr const char*    OPTIONS_LABEL       = "                             Options";
+        static constexpr const char*    PREVIOUS_PAGE_LABEL = "                     Go to Previous Page";
+        static constexpr const char*    NEXT_PAGE_LABEL     = "                       Go to Next Page";
+        static constexpr const char*    BACK_LABEL          = "                               Back";
+        static constexpr const char*    CLEAR_LABEL         = "                              Clear";
+        static constexpr const char*    RESET_LABEL         = "                              Reset";
+
+        static Int_t    String_Comparator(const char* str_a, const char* str_b);
 
         static Main_t*  Self();
         static String_t Class_Name();

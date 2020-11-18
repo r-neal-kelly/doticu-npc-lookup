@@ -17,6 +17,21 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    Int_t Main_t::String_Comparator(const char* str_a, const char* str_b)
+    {
+        if (!str_a || !str_a[0]) {
+            return Comparator_e::IS_UNORDERED;
+        } else if (!str_b || !str_b[0]) {
+            return Comparator_e::IS_ORDERED;
+        } else if (str_a[0] == '0' && str_a[1] == 'x' && str_b[0] != '0' && str_b[1] != 'x') {
+            return Comparator_e::IS_UNORDERED;
+        } else if (str_a[0] != '0' && str_a[1] != 'x' && str_b[0] == '0' && str_b[1] == 'x') {
+            return Comparator_e::IS_ORDERED;
+        } else {
+            return _stricmp(str_a, str_b);
+        }
+    }
+
     Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
     String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm"); }
     Class_t*            Main_t::Class()                 { DEFINE_CLASS(); }

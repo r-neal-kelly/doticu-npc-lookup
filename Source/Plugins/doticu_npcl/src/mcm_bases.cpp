@@ -204,40 +204,29 @@ namespace doticu_npcl { namespace MCM {
         return (bases + "               " + pages).c_str();
     }
 
-    static Int_t Actor_Base_Comparator(Actor_Base_t** base_a, Actor_Base_t** base_b)
-    {
-        enum
-        {
-            ORDERED = -1,
-            UNORDERED = 1,
-            EQUAL = 0,
-        };
-
-        const char* name_a = base_a && *base_a ? (*base_a)->Name() : "";
-        const char* name_b = base_b && *base_b ? (*base_b)->Name() : "";
-        if (!name_a[0]) {
-            return UNORDERED;
-        } else if (!name_b[0]) {
-            return ORDERED;
-        } else {
-            return _stricmp(name_a, name_b);
-        }
-    }
-
     Vector_t<Actor_Base_t*>& Bases_t::Actor_Bases()
     {
-        static Vector_t<Actor_Base_t*> read;
-        static Vector_t<Actor_Base_t*> write;
-
         size_t actor_base_count = Actor_Base_t::Count_Actor_Bases();
+
+        static Vector_t<Actor_Base_t*> read;
         read.reserve(actor_base_count);
-        write.reserve(actor_base_count);
         read.resize(0);
+        Actor_Base_t::Actor_Bases(read);
+
+        static Vector_t<Actor_Base_t*> write;
+        write.reserve(actor_base_count);
         write.resize(0);
 
-        Actor_Base_t::Actor_Bases(read);
         Vector_t<Actor_Base_t*>& results = Filter_Actor_Bases(&read, &write);
-        results.Sort(Actor_Base_Comparator);
+
+        results.Sort(
+            [](Actor_Base_t** base_a, Actor_Base_t** base_b)->Int_t
+            {
+                const char* name_a = base_a && *base_a ? (*base_a)->Any_Name() : "";
+                const char* name_b = base_b && *base_b ? (*base_b)->Any_Name() : "";
+                return Main_t::String_Comparator(name_a, name_b);
+            }
+        );
 
         return results;
     }
@@ -318,9 +307,9 @@ namespace doticu_npcl { namespace MCM {
             [](Actor_Base_t* actor_base, String_t search)->Bool_t
             {
                 if (strlen(search) > 1) {
-                    return skylib::CString_t::Contains(actor_base->Name(), search, true);
+                    return skylib::CString_t::Contains(actor_base->Any_Name(), search, true);
                 } else {
-                    return skylib::CString_t::Starts_With(actor_base->Name(), search, true);
+                    return skylib::CString_t::Starts_With(actor_base->Any_Name(), search, true);
                 }
             }
         );
@@ -664,13 +653,6 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    static Int_t Race_Comparator(skylib::Race_t** race_a, skylib::Race_t** race_b)
-    {
-        const char* editor_id_a = race_a && *race_a ? (*race_a)->Get_Editor_ID() : "";
-        const char* editor_id_b = race_b && *race_b ? (*race_b)->Get_Editor_ID() : "";
-        return _stricmp(editor_id_a, editor_id_b);
-    }
-
     void Bases_t::On_Option_Menu_Open_Filter(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -679,7 +661,14 @@ namespace doticu_npcl { namespace MCM {
             mcm->Flicker_Option(option);
 
             Vector_t<skylib::Race_t*> races = skylib::Race_t::Races();
-            races.Sort(Race_Comparator);
+            races.Sort(
+                [](skylib::Race_t** race_a, skylib::Race_t** race_b)->Int_t
+                {
+                    const char* name_a = race_a && *race_a ? (*race_a)->Get_Editor_ID() : "";
+                    const char* name_b = race_b && *race_b ? (*race_b)->Get_Editor_ID() : "";
+                    return Main_t::String_Comparator(name_a, name_b);
+                }
+            );
 
             Vector_t<String_t> values;
             values.reserve(races.size() + 1);
@@ -741,7 +730,14 @@ namespace doticu_npcl { namespace MCM {
                 String_t race_editor_id = "";
                 if (idx > 0) {
                     Vector_t<skylib::Race_t*> races = skylib::Race_t::Races();
-                    races.Sort(Race_Comparator);
+                    races.Sort(
+                        [](skylib::Race_t** race_a, skylib::Race_t** race_b)->Int_t
+                        {
+                            const char* name_a = race_a && *race_a ? (*race_a)->Get_Editor_ID() : "";
+                            const char* name_b = race_b && *race_b ? (*race_b)->Get_Editor_ID() : "";
+                            return Main_t::String_Comparator(name_a, name_b);
+                        }
+                    );
                     if (idx - 1 < races.size()) {
                         race_editor_id = races[idx - 1]->Get_Editor_ID();
                     }
@@ -831,11 +827,6 @@ namespace doticu_npcl { namespace MCM {
 
     void Bases_t::On_Build_Page_List(Latent_Callback_i* lcallback)
     {
-        constexpr const char* FILTER_LABEL          = "                               Filter";
-        constexpr const char* OPTIONS_LABEL         = "                             Options";
-        constexpr const char* PREVIOUS_PAGE_LABEL   = "                     Go to Previous Page";
-        constexpr const char* NEXT_PAGE_LABEL       = "                       Go to Next Page";
-
         Main_t* mcm = Main_t::Self();
 
         mcm->Cursor_Position(0);
@@ -860,24 +851,24 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(Format_List_Title(actor_base_count, page_index, page_count));
 
             Filter_Option_Variable()->Value(
-                mcm->Add_Text_Option(FILTER_LABEL, "")
+                mcm->Add_Text_Option(Main_t::FILTER_LABEL, "")
             );
             Options_Option_Variable()->Value(
-                mcm->Add_Text_Option(OPTIONS_LABEL, "")
+                mcm->Add_Text_Option(Main_t::OPTIONS_LABEL, "")
             );
             if (page_count > 1) {
                 Previous_Page_Option_Variable()->Value(
-                    mcm->Add_Text_Option(PREVIOUS_PAGE_LABEL, "")
+                    mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "")
                 );
                 Next_Page_Option_Variable()->Value(
-                    mcm->Add_Text_Option(NEXT_PAGE_LABEL, "")
+                    mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "")
                 );
             } else {
                 Previous_Page_Option_Variable()->Value(
-                    mcm->Add_Text_Option(PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE)
+                    mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE)
                 );
                 Next_Page_Option_Variable()->Value(
-                    mcm->Add_Text_Option(NEXT_PAGE_LABEL, "", Flag_e::DISABLE)
+                    mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE)
                 );
             }
 
@@ -891,7 +882,7 @@ namespace doticu_npcl { namespace MCM {
             }
             for (; begin < end; begin += 1) {
                 Actor_Base_t* actor_base = actor_bases[begin];
-                mcm->Add_Text_Option(actor_base->Name(), "...");
+                mcm->Add_Text_Option(actor_base->Any_Name(), "...");
             }
 
             Options_Offset_Variable()->Value(Filter_Option_Variable()->Value());
@@ -899,16 +890,16 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(Format_List_Title(0, 0, 1));
 
             Filter_Option_Variable()->Value(
-                mcm->Add_Text_Option(FILTER_LABEL, "")
+                mcm->Add_Text_Option(Main_t::FILTER_LABEL, "")
             );
             Options_Option_Variable()->Value(
-                mcm->Add_Text_Option(OPTIONS_LABEL, "")
+                mcm->Add_Text_Option(Main_t::OPTIONS_LABEL, "")
             );
             Previous_Page_Option_Variable()->Value(
-                mcm->Add_Text_Option(PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE)
+                mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE)
             );
             Next_Page_Option_Variable()->Value(
-                mcm->Add_Text_Option(NEXT_PAGE_LABEL, "", Flag_e::DISABLE)
+                mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE)
             );
 
             mcm->Add_Header_Option(" No Actor Bases ");
@@ -975,7 +966,7 @@ namespace doticu_npcl { namespace MCM {
                 //mcm->Disable_Option(option);
 
                 mcm->Flicker_Option(option);
-                mcm->Show_Message((std::string("Would open item menu for ") + actor_base->Name() + ".").c_str());
+                mcm->Show_Message((std::string("Would open item menu for ") + actor_base->Any_Name().data + ".").c_str());
 
                 //mcm->Reset_Page();
             }
