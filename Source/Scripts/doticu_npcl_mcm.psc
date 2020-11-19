@@ -4,16 +4,7 @@ Scriptname doticu_npcl_mcm extends SKI_ConfigBase
 
 string p_current_page = ""
 
-event OnConfigOpen()
-    ModName = " NPC Lookup "
-    
-    Pages = Utility.CreateStringArray(4, "")
-    Pages[0] = " Races "
-    Pages[1] = " Bases "
-    pages[2] = " Leveled Bases "
-    Pages[3] = " References "
-endEvent
-
+event OnConfigOpen() native
 event OnPageReset(String current_page) native
 event OnOptionSelect(int option) native
 event OnOptionMenuOpen(int option) native

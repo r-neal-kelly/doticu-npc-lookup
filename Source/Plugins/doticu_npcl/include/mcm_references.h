@@ -85,7 +85,8 @@ namespace doticu_npcl { namespace MCM {
         References_Item_t*      Item();
 
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Config_Open();
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -108,6 +109,8 @@ namespace doticu_npcl { namespace MCM {
         static constexpr Int_t  HEADERS_PER_PAGE = 6;
         static constexpr Int_t  ITEMS_PER_PAGE = 18;
 
+        static Bool_t do_update_loaded_actors;
+
     public:
         Int_Variable_t* Filter_Option_Variable();
         Int_Variable_t* Options_Option_Variable();
@@ -125,7 +128,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_Actor_t              Option_To_Loaded_Actor(Int_t option);
 
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -232,6 +235,7 @@ namespace doticu_npcl { namespace MCM {
         Relation_e  Relation_Argument();
         void        Relation_Argument(Relation_e value);
         String_t    Relation_Argument_String();
+        void        Relation_Argument_String(String_t value);
         Bool_t      Relation_Do_Negate();
         void        Relation_Do_Negate(Bool_t value);
 
@@ -245,8 +249,9 @@ namespace doticu_npcl { namespace MCM {
         void        Interior_Exterior_Ternary(Ternary_e value);
 
     public:
-        Vector_t<Loaded_Actor_t>&   Execute(Vector_t<Loaded_Actor_t>* read, Vector_t<Loaded_Actor_t>* write);
+        Vector_t<Loaded_Actor_t>*   Execute(Vector_t<Loaded_Actor_t>* read, Vector_t<Loaded_Actor_t>* write);
         void                        Clear();
+
         Vector_t<String_t>          Selectable_Mods();
         Vector_t<String_t>          Selectable_Races();
         Vector_t<String_t>          Selectable_Bases();
@@ -255,7 +260,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>          Selectable_Relations();
 
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -283,7 +288,7 @@ namespace doticu_npcl { namespace MCM {
         void    Reset();
 
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -300,7 +305,7 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_t : public References_t
     {
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);

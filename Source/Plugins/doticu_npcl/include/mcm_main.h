@@ -23,6 +23,7 @@ namespace doticu_npcl { namespace MCM {
     using Bool_Variable_t = skylib::Virtual::Bool_Variable_t;
     using Int_Variable_t = skylib::Virtual::Int_Variable_t;
     using String_Variable_t = skylib::Virtual::String_Variable_t;
+    using String_Property_t = skylib::Virtual::String_Property_t;
 
     using Flag_e = mcmlib::Flag_e;
     using Cursor_e = mcmlib::Cursor_e;
@@ -32,7 +33,6 @@ namespace doticu_npcl { namespace MCM {
     class Main_t : public mcmlib::Config_Base_t {
     public:
         static constexpr const char*    MOD_NAME            = " NPC Lookup ";
-        static constexpr const char*    RACES_PAGE          = " Races ";
         static constexpr const char*    BASES_PAGE          = " Bases ";
         static constexpr const char*    LEVELED_BASES_PAGE  = " Leveled Bases ";
         static constexpr const char*    REFERENCES_PAGE     = " References ";
@@ -68,7 +68,8 @@ namespace doticu_npcl { namespace MCM {
                                            Int_t low_option,
                                            Ternary_e toggle);
 
-        Bool_t On_Build_Page(Machine_t* machine, Stack_ID_t stack_id, String_t current_page);
+        Bool_t On_Config_Open(Machine_t* machine, Stack_ID_t stack_id);
+        Bool_t On_Page_Open(Machine_t* machine, Stack_ID_t stack_id, String_t current_page);
         Bool_t On_Option_Select(Machine_t* machine, Stack_ID_t stack_id, Int_t option);
         Bool_t On_Option_Menu_Open(Machine_t* machine, Stack_ID_t stack_id, Int_t option);
         Bool_t On_Option_Menu_Accept(Machine_t* machine, Stack_ID_t stack_id, Int_t option, Int_t idx);

@@ -23,7 +23,8 @@ namespace doticu_npcl { namespace MCM {
     public:
         Object_t* Object();
 
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Config_Open();
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);

@@ -201,21 +201,21 @@ namespace doticu_npcl { namespace MCM {
             std::to_string(page_index + 1) + "/" +
             std::to_string(page_count);
 
-        return (bases + "               " + pages).c_str();
+        return bases + "               " + pages;
     }
 
     Vector_t<Actor_Base_t*>& Bases_t::Actor_Bases()
     {
-        size_t actor_base_count = Actor_Base_t::Count_Actor_Bases();
+        size_t actor_base_count = Actor_Base_t::Actor_Base_Count();
 
         static Vector_t<Actor_Base_t*> read;
         read.reserve(actor_base_count);
-        read.resize(0);
+        read.clear();
         Actor_Base_t::Actor_Bases(read);
 
         static Vector_t<Actor_Base_t*> write;
         write.reserve(actor_base_count);
-        write.resize(0);
+        write.clear();
 
         Vector_t<Actor_Base_t*>& results = Filter_Actor_Bases(&read, &write);
 
@@ -274,7 +274,7 @@ namespace doticu_npcl { namespace MCM {
             temp = read;
             read = write;
             write = temp;
-            write->resize(0);
+            write->clear();
         };
 
         auto Filter_Search = [&read, &write, &Swap](String_t search,
@@ -416,17 +416,22 @@ namespace doticu_npcl { namespace MCM {
         return skylib::CString_t::Is_Same(a, b, caseless);
     }
 
-    void Bases_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void Bases_t::On_Config_Open()
+    {
+
+    }
+
+    void Bases_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
         String_t current_view = Current_View();
-             if (Is_Same(current_view, FILTER_VIEW))    On_Build_Page_Filter(lcallback);
-        else if (Is_Same(current_view, LIST_VIEW))      On_Build_Page_List(lcallback);
-        else if (Is_Same(current_view, ITEM_VIEW))      On_Build_Page_Item(lcallback);
+             if (Is_Same(current_view, FILTER_VIEW))    On_Page_Open_Filter(lcallback);
+        else if (Is_Same(current_view, LIST_VIEW))      On_Page_Open_List(lcallback);
+        else if (Is_Same(current_view, ITEM_VIEW))      On_Page_Open_Item(lcallback);
         else {
             Current_View(LIST_VIEW);
-            On_Build_Page(lcallback);
+            On_Page_Open(is_refresh, lcallback);
         }
     }
 
@@ -524,7 +529,7 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void Bases_t::On_Build_Page_Filter(Latent_Callback_i* lcallback)
+    void Bases_t::On_Page_Open_Filter(Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -825,7 +830,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Bases_t::On_Build_Page_List(Latent_Callback_i* lcallback)
+    void Bases_t::On_Page_Open_List(Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -966,7 +971,7 @@ namespace doticu_npcl { namespace MCM {
                 //mcm->Disable_Option(option);
 
                 mcm->Flicker_Option(option);
-                mcm->Show_Message((std::string("Would open item menu for ") + actor_base->Any_Name().data + ".").c_str());
+                mcm->Show_Message(std::string("Would open item menu for ") + actor_base->Any_Name().data + ".");
 
                 //mcm->Reset_Page();
             }
@@ -999,7 +1004,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Bases_t::On_Build_Page_Item(Latent_Callback_i* lcallback)
+    void Bases_t::On_Page_Open_Item(Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
         mcm->Title_Text("Bases: View");

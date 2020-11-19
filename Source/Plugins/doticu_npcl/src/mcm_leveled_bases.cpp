@@ -14,7 +14,12 @@ namespace doticu_npcl { namespace MCM {
     Class_t*            Leveled_Bases_t::Class()        { DEFINE_CLASS(); }
     Object_t*           Leveled_Bases_t::Object()       { DEFINE_OBJECT(); }
 
-    void Leveled_Bases_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void Leveled_Bases_t::On_Config_Open()
+    {
+
+    }
+
+    void Leveled_Bases_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
         mcm->Destroy_Latent_Callback(lcallback);

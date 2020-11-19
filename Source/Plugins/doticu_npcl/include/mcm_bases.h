@@ -124,7 +124,8 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Actor_Base_t*>&    Filter_Actor_Bases(Vector_t<Actor_Base_t*>* read, Vector_t<Actor_Base_t*>* write);
 
     public:
-        void On_Build_Page(Latent_Callback_i* lcallback);
+        void On_Config_Open();
+        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -136,21 +137,21 @@ namespace doticu_npcl { namespace MCM {
         void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
 
     private:
-        void On_Build_Page_Filter(Latent_Callback_i* lcallback);
+        void On_Page_Open_Filter(Latent_Callback_i* lcallback);
         void On_Option_Select_Filter(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open_Filter(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept_Filter(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
         void On_Option_Input_Accept_Filter(Int_t option, String_t value, Latent_Callback_i* lcallback);
         void On_Option_Highlight_Filter(Int_t option, Latent_Callback_i* lcallback);
 
-        void On_Build_Page_List(Latent_Callback_i* lcallback);
+        void On_Page_Open_List(Latent_Callback_i* lcallback);
         void On_Option_Select_List(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open_List(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept_List(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
         void On_Option_Input_Accept_List(Int_t option, String_t value, Latent_Callback_i* lcallback);
         void On_Option_Highlight_List(Int_t option, Latent_Callback_i* lcallback);
 
-        void On_Build_Page_Item(Latent_Callback_i* lcallback);
+        void On_Page_Open_Item(Latent_Callback_i* lcallback);
         void On_Option_Select_Item(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open_Item(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept_Item(Int_t option, Int_t idx, Latent_Callback_i* lcallback);

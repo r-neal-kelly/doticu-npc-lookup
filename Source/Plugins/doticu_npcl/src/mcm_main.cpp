@@ -109,20 +109,45 @@ namespace doticu_npcl { namespace MCM {
         return skylib::CString_t::Is_Same(page_a, page_b, true);
     }
 
-    Bool_t Main_t::On_Build_Page(Machine_t* machine, Stack_ID_t stack_id, String_t current_page)
+    Bool_t Main_t::On_Config_Open(Machine_t* machine, Stack_ID_t stack_id)
     {
-        String_t page = current_page;
-        if (!page || !page.data || !page.data[0]) {
-            page = Current_Page();
-        } else {
-            Current_Page(page);
-        }
-
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Build_Page(lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Build_Page(lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Build_Page(lcallback);
+        Mod_Name(MOD_NAME);
+
+        Vector_t<String_t> pages;
+        pages.reserve(3);
+        pages.push_back(BASES_PAGE);
+        pages.push_back(LEVELED_BASES_PAGE);
+        pages.push_back(REFERENCES_PAGE);
+        Pages(pages);
+
+        Bases_t::Self()->On_Config_Open();
+        Leveled_Bases_t::Self()->On_Config_Open();
+        References_t::Self()->On_Config_Open();
+
+        Destroy_Latent_Callback(lcallback);
+
+        return true;
+    }
+
+    Bool_t Main_t::On_Page_Open(Machine_t* machine, Stack_ID_t stack_id, String_t current_page)
+    {
+        Bool_t is_refresh;
+        if (!current_page || !current_page.data || !current_page.data[0]) {
+            is_refresh = false;
+            current_page = Current_Page();
+        } else {
+            is_refresh = Current_Page() == current_page;
+            Current_Page(current_page);
+        }
+
+        String_t page = current_page;
+        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+
+             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Page_Open(is_refresh, lcallback);
         else                                        Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -256,7 +281,8 @@ namespace doticu_npcl { namespace MCM {
                                RETURN_TYPE_, METHOD_, __VA_ARGS__);         \
         W
 
-        LMETHOD("OnPageReset", 1, void, On_Build_Page, String_t);
+        LMETHOD("OnConfigOpen", 0, void, On_Config_Open);
+        LMETHOD("OnPageReset", 1, void, On_Page_Open, String_t);
         LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
         LMETHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);
         LMETHOD("OnOptionMenuAccept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);

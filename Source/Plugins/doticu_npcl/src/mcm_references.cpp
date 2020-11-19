@@ -81,13 +81,18 @@ namespace doticu_npcl { namespace MCM {
         return static_cast<References_Item_t*>(this);
     }
 
-    void References_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void References_t::On_Config_Open()
+    {
+        List()->do_update_loaded_actors = true;
+    }
+
+    void References_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         View_e current_view = Current_View();
-             if (current_view == View_e::LIST)      List()->On_Build_Page(lcallback);
-        else if (current_view == View_e::FILTER)    Filter()->On_Build_Page(lcallback);
-        else if (current_view == View_e::OPTIONS)   Options()->On_Build_Page(lcallback);
-        else if (current_view == View_e::ITEM)      Item()->On_Build_Page(lcallback);
+             if (current_view == View_e::LIST)      List()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == View_e::FILTER)    Filter()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == View_e::OPTIONS)   Options()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == View_e::ITEM)      Item()->On_Page_Open(is_refresh, lcallback);
         else                                        SKYLIB_ASSERT(false);
     }
 
@@ -187,6 +192,8 @@ namespace doticu_npcl { namespace MCM {
 
     /* References_List_t */
 
+    Bool_t          References_List_t::do_update_loaded_actors          = true;
+
     Int_Variable_t* References_List_t::Filter_Option_Variable()         { DEFINE_INT_VARIABLE("p_list_filter_option"); }
     Int_Variable_t* References_List_t::Options_Option_Variable()        { DEFINE_INT_VARIABLE("p_list_options_option"); }
     Int_Variable_t* References_List_t::Previous_Page_Option_Variable()  { DEFINE_INT_VARIABLE("p_list_previous_page_option"); }
@@ -214,32 +221,37 @@ namespace doticu_npcl { namespace MCM {
             std::to_string(page_index + 1) + "/" +
             std::to_string(page_count);
 
-        return (items + "               " + pages).c_str();
+        return items + "               " + pages;
     }
 
     Vector_t<Loaded_Actor_t>& References_List_t::Loaded_Actors()
     {
         static Vector_t<Loaded_Actor_t> read;
-        read.reserve(2048);
-        read.resize(0);
-        Actor_t::Loaded_Actors(read);
-
         static Vector_t<Loaded_Actor_t> write;
-        write.reserve(2048);
-        write.resize(0);
+        static Vector_t<Loaded_Actor_t>* loaded_actors;
 
-        Vector_t<Loaded_Actor_t>& results = Filter()->Execute(&read, &write);
+        if (!loaded_actors || do_update_loaded_actors) {
+            do_update_loaded_actors = false;
 
-        results.Sort(
-            [](Loaded_Actor_t* item_a, Loaded_Actor_t* item_b)->Int_t
-            {
-                const char* name_a = item_a ? item_a->actor->Any_Name() : "";
-                const char* name_b = item_b ? item_b->actor->Any_Name() : "";
-                return Main_t::String_Comparator(name_a, name_b);
-            }
-        );
+            read.reserve(2048);
+            read.clear();
+            Actor_t::Loaded_Actors(read);
 
-        return results;
+            write.reserve(2048);
+            write.clear();
+
+            loaded_actors = Filter()->Execute(&read, &write);
+
+            loaded_actors->Sort(
+                [](Loaded_Actor_t* item_a, Loaded_Actor_t* item_b)->Int_t
+                {
+                    const char* name_a = item_a ? item_a->actor->Any_Name() : "";
+                    const char* name_b = item_b ? item_b->actor->Any_Name() : "";
+                    return Main_t::String_Comparator(name_a, name_b);
+                }
+            );
+        }
+        return *loaded_actors;
     }
 
     Loaded_Actor_t References_List_t::Option_To_Loaded_Actor(Int_t option)
@@ -258,9 +270,13 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void References_List_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        if (!is_refresh) {
+            do_update_loaded_actors = true;
+        }
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -381,7 +397,7 @@ namespace doticu_npcl { namespace MCM {
                 //mcm->Disable_Option(option);
 
                 mcm->Flicker_Option(option);
-                mcm->Show_Message((std::string("Would open item menu for ") + loaded_actor.actor->Any_Name().data + ".").c_str());
+                mcm->Show_Message(std::string("Would open item menu for ") + loaded_actor.actor->Any_Name().data + ".");
 
                 //mcm->Reset_Page();
             }
@@ -624,8 +640,13 @@ namespace doticu_npcl { namespace MCM {
         if (relation == Relation_e::NONE) {
             return " Any ";
         } else {
-            return (std::string(" ") + Relation_e::To_String(relation) + " ").c_str();
+            return std::string(" ") + Relation_e::To_String(relation) + " ";
         }
+    }
+
+    void References_Filter_t::Relation_Argument_String(String_t value)
+    {
+        Relation_Argument(Relation_e::From_String(value));
     }
 
     Bool_t References_Filter_t::Relation_Do_Negate()
@@ -668,7 +689,7 @@ namespace doticu_npcl { namespace MCM {
         Interior_Exterior_Ternary_Variable()->Value(value);
     }
 
-    Vector_t<Loaded_Actor_t>& References_Filter_t::Execute(Vector_t<Loaded_Actor_t>* read, Vector_t<Loaded_Actor_t>* write)
+    Vector_t<Loaded_Actor_t>* References_Filter_t::Execute(Vector_t<Loaded_Actor_t>* read, Vector_t<Loaded_Actor_t>* write)
     {
         Vector_t<Loaded_Actor_t>* temp = nullptr;
         auto Swap = [&temp, &read, &write]()->void
@@ -676,7 +697,7 @@ namespace doticu_npcl { namespace MCM {
             temp = read;
             read = write;
             write = temp;
-            write->resize(0);
+            write->clear();
         };
 
         auto Filter_Search = [&read, &write, &Swap](String_t search,
@@ -853,12 +874,25 @@ namespace doticu_npcl { namespace MCM {
             Relation_e relation = Relation_Argument();
             if (relation != Relation_e::NONE) {
                 Actor_Base_t* player_actor_base = Consts_t::Skyrim_Player_Actor_Base();
-                for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
-                    Loaded_Actor_t& loaded_actor = read->at(idx);
-                    Actor_t* actor = loaded_actor.actor;
-                    Cell_t* cell = loaded_actor.cell;
-                    if (actor && cell && actor->base_form && Relation_e::Between(player_actor_base, actor->base_form) == relation) {
-                        write->push_back(loaded_actor);
+                if (Relation_Do_Negate()) {
+                    for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
+                        Loaded_Actor_t& loaded_actor = read->at(idx);
+                        if (loaded_actor.Is_Valid()) {
+                            Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
+                            if (actor_base && Relation_e::Between(player_actor_base, actor_base) != relation) {
+                                write->push_back(loaded_actor);
+                            }
+                        }
+                    }
+                } else {
+                    for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
+                        Loaded_Actor_t& loaded_actor = read->at(idx);
+                        if (loaded_actor.Is_Valid()) {
+                            Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
+                            if (actor_base && Relation_e::Between(player_actor_base, actor_base) == relation) {
+                                write->push_back(loaded_actor);
+                            }
+                        }
                     }
                 }
                 Swap();
@@ -936,7 +970,7 @@ namespace doticu_npcl { namespace MCM {
             }
         );
 
-        return *read;
+        return read;
     }
 
     void References_Filter_t::Clear()
@@ -967,89 +1001,365 @@ namespace doticu_npcl { namespace MCM {
         Interior_Exterior_Ternary(Ternary_e::NONE);
     }
 
-    Vector_t<String_t> References_Filter_t::Selectable_Mods()
+    class String_Argument_i
     {
-        Vector_t<Mod_t*> mods = Mod_t::Active_Mods();
+    public:
+        virtual             ~String_Argument_i()            = default;
+        virtual String_t    operator()()                    = 0;
+        virtual void        operator()(String_t argument)   = 0;
+    };
 
-        Vector_t<String_t> values;
-        values.reserve(mods.size() + 1);
+    class Selectable_String_i
+    {
+    public:
+        virtual             ~Selectable_String_i()                      = default;
+        virtual String_t    operator()(Loaded_Actor_t& loaded_actor)    = 0;
+    };
 
-        values.push_back(" Any ");
-        for (size_t idx = 0, count = mods.size(); idx < count; idx += 1) {
-            values.push_back(mods[idx]->Name());
+    class Selectable_Strings_i
+    {
+    public:
+        virtual                     ~Selectable_Strings_i()                     = default;
+        virtual Vector_t<String_t>  operator()(Loaded_Actor_t& loaded_actor)    = 0;
+    };
+
+    static Vector_t<Loaded_Actor_t> Selectable_Loaded_Actors(References_Filter_t* self, String_Argument_i& argument)
+    {
+        Vector_t<Loaded_Actor_t> loaded_actors;
+        if (self->Options()->Do_Smart_Select()) {
+            String_t current = argument();
+            argument("");
+            self->List()->do_update_loaded_actors = true;
+            loaded_actors = self->List()->Loaded_Actors();
+            argument(current);
+        } else {
+            loaded_actors = Actor_t::Loaded_Actors();
         }
 
-        return values;
+        return loaded_actors;
+    }
+
+    static void Sort_Selectables(Vector_t<String_t>& selectables)
+    {
+        selectables.Sort(
+            [](String_t* str_a, String_t* str_b)->Int_t
+            {
+                return Main_t::String_Comparator(
+                    str_a ? str_a->data : "",
+                    str_b ? str_b->data : ""
+                );
+            },
+            1
+        );
+    }
+
+    static Vector_t<String_t> Selectable_Strings(References_Filter_t* self,
+                                                 String_Argument_i& argument,
+                                                 Selectable_String_i& selectable)
+    {
+        Vector_t<Loaded_Actor_t> loaded_actors = Selectable_Loaded_Actors(self, argument);
+
+        Vector_t<String_t> results;
+        results.reserve(loaded_actors.size() + 1);
+        results.push_back(" Any ");
+
+        for (Index_t idx = 0, end = loaded_actors.size(); idx < end; idx += 1) {
+            Loaded_Actor_t& loaded_actor = loaded_actors.at(idx);
+            if (loaded_actor.Is_Valid()) {
+                String_t string = selectable(loaded_actor);
+                if (string.data && string.data[0] && !results.Has(string)) {
+                    results.push_back(string);
+                }
+            }
+        }
+
+        Sort_Selectables(results);
+
+        return results;
+    }
+
+    static Vector_t<String_t> Selectable_Strings(References_Filter_t* self,
+                                                 String_Argument_i& argument,
+                                                 Selectable_Strings_i& selectable)
+    {
+        Vector_t<Loaded_Actor_t> loaded_actors = Selectable_Loaded_Actors(self, argument);
+
+        Vector_t<String_t> results;
+        results.reserve(loaded_actors.size() + 1);
+        results.push_back(" Any ");
+
+        for (Index_t idx = 0, end = loaded_actors.size(); idx < end; idx += 1) {
+            Loaded_Actor_t& loaded_actor = loaded_actors.at(idx);
+            if (loaded_actor.Is_Valid()) {
+                Vector_t<String_t> strings = selectable(loaded_actor);
+                for (Index_t idx = 0, end = strings.size(); idx < end; idx += 1) {
+                    String_t string = strings[idx];
+                    if (string.data && string.data[0] && !results.Has(string)) {
+                        results.push_back(string);
+                    }
+                }
+            }
+        }
+
+        Sort_Selectables(results);
+
+        return results;
+    }
+
+    Vector_t<String_t> References_Filter_t::Selectable_Mods()
+    {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Mod_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Mod_Argument(argument);
+            }
+        } string_argument(this);
+
+        class Selectable_Strings_t : public Selectable_Strings_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_Strings_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            Vector_t<String_t> operator()(Loaded_Actor_t& loaded_actor)
+            {
+                Vector_t<String_t> mods;
+                skylib::Static_Array_t<Mod_t*>* form_files = loaded_actor.actor->form_files;
+                if (form_files) {
+                    for (Index_t idx = 0, end = form_files->count; idx < end; idx += 1) {
+                        Mod_t* mod = form_files->entries[idx];
+                        if (mod) {
+                            mods.push_back(mod->Name());
+                        }
+                    }
+                }
+                return mods;
+            }
+        } selectable_string(this);
+
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
     Vector_t<String_t> References_Filter_t::Selectable_Races()
     {
-        Vector_t<Race_t*> races;
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Race_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Race_Argument(argument);
+            }
+        } string_argument(this);
 
-        if (Options()->Do_Smart_Select()) {
-            races.reserve(Race_t::Race_Count());
-
-            String_t current = Race_Argument();
-            Race_Argument("");
-            Vector_t<Loaded_Actor_t> loaded_actors = List()->Loaded_Actors();
-            Race_Argument(current);
-
-            for (Index_t idx = 0, end = loaded_actors.size(); idx < end; idx += 1) {
-                Loaded_Actor_t& loaded_actor = loaded_actors.at(idx);
-                Actor_t* actor = loaded_actor.actor;
-                Cell_t* cell = loaded_actor.cell;
-                if (actor && cell) {
-                    Race_t* race = actor->Race();
-                    if (race && !races.Has(race)) {
-                        races.push_back(race);
-                    }
+        class Selectable_String_t : public Selectable_String_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_String_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()(Loaded_Actor_t& loaded_actor)
+            {
+                Race_t* race = loaded_actor.actor->Race();
+                if (race) {
+                    return race->Get_Editor_ID();
+                } else {
+                    return "";
                 }
             }
-        } else {
-            races = Race_t::Races();
-        }
+        } selectable_string(this);
 
-        races.Sort(
-            [](Race_t** race_a, Race_t** race_b)->Int_t
-            {
-                const char* name_a = race_a && *race_a ? (*race_a)->Get_Editor_ID() : "";
-                const char* name_b = race_b && *race_b ? (*race_b)->Get_Editor_ID() : "";
-                return Main_t::String_Comparator(name_a, name_b);
-            }
-        );
-
-        Vector_t<String_t> values;
-        values.reserve(races.size() + 1);
-
-        values.push_back(" Any ");
-        for (size_t idx = 0, count = races.size(); idx < count; idx += 1) {
-            values.push_back(races[idx]->Get_Editor_ID());
-        }
-
-        return values;
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
     Vector_t<String_t> References_Filter_t::Selectable_Bases()
     {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Base_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Base_Argument(argument);
+            }
+        } string_argument(this);
 
+        class Selectable_String_t : public Selectable_String_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_String_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()(Loaded_Actor_t& loaded_actor)
+            {
+                Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
+                if (actor_base) {
+                    return actor_base->Any_Name();
+                } else {
+                    return "";
+                }
+            }
+        } selectable_string(this);
+
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
     Vector_t<String_t> References_Filter_t::Selectable_Names()
     {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Name_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Name_Argument(argument);
+            }
+        } string_argument(this);
 
+        class Selectable_String_t : public Selectable_String_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_String_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()(Loaded_Actor_t& loaded_actor)
+            {
+                return loaded_actor.actor->Any_Name();
+            }
+        } selectable_string(this);
+
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
     Vector_t<String_t> References_Filter_t::Selectable_Cells()
     {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Cell_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Cell_Argument(argument);
+            }
+        } string_argument(this);
 
+        class Selectable_String_t : public Selectable_String_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_String_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()(Loaded_Actor_t& loaded_actor)
+            {
+                return loaded_actor.cell->Any_Name();
+            }
+        } selectable_string(this);
+
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
     Vector_t<String_t> References_Filter_t::Selectable_Relations()
     {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Relation_Argument_String();
+            }
+            void operator()(String_t argument)
+            {
+                self->Relation_Argument_String(argument);
+            }
+        } string_argument(this);
 
+        class Selectable_String_t : public Selectable_String_i
+        {
+        public:
+            References_Filter_t* self;
+            Actor_Base_t* player_actor_base;
+            Selectable_String_t(References_Filter_t* self, Actor_Base_t* player_actor_base) :
+                self(self), player_actor_base(player_actor_base)
+            {
+            }
+            String_t operator()(Loaded_Actor_t& loaded_actor)
+            {
+                Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
+                if (actor_base) {
+                    Relation_e relation = Relation_e::Between(player_actor_base, actor_base);
+                    if (relation != Relation_e::NONE) {
+                        return std::string(" ") + Relation_e::To_String(relation) + " ";
+                    } else {
+                        return "";
+                    }
+                } else {
+                    return "";
+                }
+            }
+        } selectable_string(this, Consts_t::Skyrim_Player_Actor_Base());
+
+        return Selectable_Strings(this, string_argument, selectable_string);
     }
 
-    void References_Filter_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void References_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -1123,6 +1433,7 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (option == Back_Option_Variable()->Value()) {
+            List()->do_update_loaded_actors = true;
             mcm->Disable_Option(option);
             Current_View(View_e::LIST);
             mcm->Reset_Page();
@@ -1130,6 +1441,47 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             Clear();
             mcm->Reset_Page();
+
+        } else if (option == Mod_Negate_Option_Variable()->Value()) {
+            Bool_t value = Mod_Do_Negate();
+            Mod_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Race_Negate_Option_Variable()->Value()) {
+            Bool_t value = Race_Do_Negate();
+            Race_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Base_Negate_Option_Variable()->Value()) {
+            Bool_t value = Base_Do_Negate();
+            Base_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Name_Negate_Option_Variable()->Value()) {
+            Bool_t value = Name_Do_Negate();
+            Name_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Cell_Negate_Option_Variable()->Value()) {
+            Bool_t value = Cell_Do_Negate();
+            Cell_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Relation_Negate_Option_Variable()->Value()) {
+            Bool_t value = Relation_Do_Negate();
+            Relation_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Is_Male_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option, option + 1, Ternary_e::HIGH);
+        } else if (option == Is_Female_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option - 1, option, Ternary_e::LOW);
+
+        } else if (option == Is_Unique_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option, option + 1, Ternary_e::HIGH);
+        } else if (option == Is_Generic_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option - 1, option, Ternary_e::LOW);
+
+        } else if (option == In_Interior_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Interior_Exterior_Ternary_Variable(), option, option + 1, Ternary_e::HIGH);
+        } else if (option == In_Exterior_Option_Variable()->Value()) {
+            mcm->Toggle_Ternary(Interior_Exterior_Ternary_Variable(), option - 1, option, Ternary_e::LOW);
+
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -1146,6 +1498,22 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Race_Select_Option_Variable()->Value()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Races());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Base_Select_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Bases());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Name_Select_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Names());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Cell_Select_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Cells());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Relation_Select_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Relations());
             mcm->Menu_Dialog_Default(0);
         }
 
@@ -1180,6 +1548,54 @@ namespace doticu_npcl { namespace MCM {
                 Race_Argument(value);
                 mcm->Input_Option_Value(Race_Search_Option_Variable()->Value(), value, true);
             }
+        } else if (option == Base_Select_Option_Variable()->Value()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> bases = Selectable_Bases();
+                    if (idx < bases.size()) {
+                        value = bases[idx];
+                    }
+                }
+                Base_Argument(value);
+                mcm->Input_Option_Value(Base_Search_Option_Variable()->Value(), value, true);
+            }
+        } else if (option == Name_Select_Option_Variable()->Value()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> names = Selectable_Names();
+                    if (idx < names.size()) {
+                        value = names[idx];
+                    }
+                }
+                Name_Argument(value);
+                mcm->Input_Option_Value(Name_Search_Option_Variable()->Value(), value, true);
+            }
+        } else if (option == Cell_Select_Option_Variable()->Value()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> cells = Selectable_Cells();
+                    if (idx < cells.size()) {
+                        value = cells[idx];
+                    }
+                }
+                Cell_Argument(value);
+                mcm->Input_Option_Value(Cell_Search_Option_Variable()->Value(), value, true);
+            }
+        } else if (option == Relation_Select_Option_Variable()->Value()) {
+            if (idx > -1) {
+                String_t value = " Any ";
+                if (idx > 0) {
+                    Vector_t<String_t> relations = Selectable_Relations();
+                    if (idx < relations.size()) {
+                        value = relations[idx];
+                    }
+                }
+                Relation_Argument_String(value);
+                mcm->Menu_Option_Value(option, value, true);
+            }
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -1204,6 +1620,15 @@ namespace doticu_npcl { namespace MCM {
             mcm->Input_Option_Value(option, value, true);
         } else if (option == Race_Search_Option_Variable()->Value()) {
             Race_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Base_Search_Option_Variable()->Value()) {
+            Base_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Name_Search_Option_Variable()->Value()) {
+            Name_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Cell_Search_Option_Variable()->Value()) {
+            Cell_Argument(value);
             mcm->Input_Option_Value(option, value, true);
         }
 
@@ -1245,7 +1670,7 @@ namespace doticu_npcl { namespace MCM {
         Do_Smart_Select(true);
     }
 
-    void References_Options_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
@@ -1297,7 +1722,7 @@ namespace doticu_npcl { namespace MCM {
 
     /* References_Item_t */
 
-    void References_Item_t::On_Build_Page(Latent_Callback_i* lcallback)
+    void References_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
