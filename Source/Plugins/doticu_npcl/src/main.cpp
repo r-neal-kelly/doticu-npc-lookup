@@ -7,15 +7,7 @@
 #include "skse64_common/skse_version.h"
 
 #include "doticu_skylib/intrinsic.h"
-#include "doticu_skylib/game.h"
-#include "doticu_skylib/quest.h"
-#include "doticu_skylib/virtual.h"
-#include "doticu_skylib/actor_base.h"
-#include "doticu_skylib/leveled_actor_base.h"
-#include "doticu_skylib/actor.h"
 #include "doticu_skylib/global.h"
-#include "doticu_skylib/race.h"
-#include "doticu_skylib/mod.h"
 
 #include "consts.h"
 #include "main.h"
@@ -123,8 +115,6 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(!Is_Installed());
 
-        _MESSAGE("Starting game.");
-
         Consts_t::NPCL_Is_Installed_Global()->Bool(true);
 
         Vector_t<skylib::Quest_t*> quests;
@@ -134,7 +124,7 @@ namespace doticu_npcl {
         {
             void operator()()
             {
-                _MESSAGE("Started quests.");
+
             }
         };
         skylib::Quest_t::Start(quests, new UCallback_t());
@@ -143,16 +133,6 @@ namespace doticu_npcl {
     void Main_t::Load()
     {
         SKYLIB_ASSERT(Is_Installed());
-
-        _MESSAGE("Loading game.");
-        skylib::Mod_t::Log_Mods();
-        skylib::Mod_t::Log_Active_Mods();
-        skylib::Mod_t::Log_Active_Heavy_Mods();
-        skylib::Mod_t::Log_Active_Light_Mods();
-        skylib::Race_t::Log_Races();
-        skylib::Actor_Base_t::Log_Actor_Bases();
-        skylib::Leveled_Actor_Base_t::Log_Leveled_Actor_Bases();
-        skylib::Actor_t::Log_Loaded_Actors();
     }
 
 }

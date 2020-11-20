@@ -34,10 +34,10 @@ namespace doticu_npcl { namespace MCM {
 
     Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
     String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm"); }
-    Class_t*            Main_t::Class()                 { DEFINE_CLASS(); }
-    Object_t*           Main_t::Object()                { DEFINE_OBJECT(); }
+    V::Class_t*         Main_t::Class()                 { DEFINE_CLASS(); }
+    V::Object_t*        Main_t::Object()                { DEFINE_OBJECT(); }
 
-    String_Variable_t*  Main_t::Current_Page_Variable() { DEFINE_STRING_VARIABLE("p_current_page"); }
+    V::String_Variable_t*  Main_t::Current_Page_Variable() { DEFINE_STRING_VARIABLE("p_current_page"); }
 
     String_t Main_t::Current_Page()
     {
@@ -54,19 +54,19 @@ namespace doticu_npcl { namespace MCM {
         Current_Page_Variable()->Value(current_page);
     }
 
-    Latent_Callback_i* Main_t::Create_Latent_Callback(Machine_t* machine, Stack_ID_t stack_id)
+    Latent_Callback_i* Main_t::Create_Latent_Callback(V::Machine_t* machine, V::Stack_ID_t stack_id)
     {
         struct Callback : public Latent_Callback_i
         {
-            Machine_t* machine;
-            Stack_ID_t stack_id;
-            Callback(Machine_t* machine, Stack_ID_t stack_id) :
+            V::Machine_t* machine;
+            V::Stack_ID_t stack_id;
+            Callback(V::Machine_t* machine, V::Stack_ID_t stack_id) :
                 machine(machine), stack_id(stack_id)
             {
             }
             void operator()()
             {
-                Variable_t none;
+                V::Variable_t none;
                 machine->Return_Latent_Function(stack_id, &none);
             }
         };
@@ -81,7 +81,7 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void Main_t::Toggle_Ternary(Int_Variable_t* ternary,
+    void Main_t::Toggle_Ternary(V::Int_Variable_t* ternary,
                                 Int_t high_option,
                                 Int_t low_option,
                                 Ternary_e toggle)
@@ -109,7 +109,7 @@ namespace doticu_npcl { namespace MCM {
         return skylib::CString_t::Is_Same(page_a, page_b, true);
     }
 
-    Bool_t Main_t::On_Config_Open(Machine_t* machine, Stack_ID_t stack_id)
+    Bool_t Main_t::On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id)
     {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
@@ -131,7 +131,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Page_Open(Machine_t* machine, Stack_ID_t stack_id, String_t current_page)
+    Bool_t Main_t::On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page)
     {
         Bool_t is_refresh;
         if (!current_page || !current_page.data || !current_page.data[0]) {
@@ -153,7 +153,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Select(Machine_t* machine, Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Select(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -166,7 +166,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Menu_Open(Machine_t* machine, Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Menu_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -179,7 +179,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Menu_Accept(Machine_t* machine, Stack_ID_t stack_id, Int_t option, Int_t idx)
+    Bool_t Main_t::On_Option_Menu_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t idx)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -192,7 +192,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Slider_Open(Machine_t* machine, Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Slider_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -205,7 +205,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Slider_Accept(Machine_t* machine, Stack_ID_t stack_id, Int_t option, Float_t value)
+    Bool_t Main_t::On_Option_Slider_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Float_t value)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -218,7 +218,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Input_Accept(Machine_t* machine, Stack_ID_t stack_id, Int_t option, String_t value)
+    Bool_t Main_t::On_Option_Input_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, String_t value)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -231,7 +231,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Keymap_Change(Machine_t* machine, Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
+    Bool_t Main_t::On_Option_Keymap_Change(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -244,7 +244,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Default(Machine_t* machine, Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Default(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -257,7 +257,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Highlight(Machine_t* machine, Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Highlight(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
@@ -270,7 +270,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    void Main_t::Register_Me(Machine_t* machine)
+    void Main_t::Register_Me(V::Machine_t* machine)
     {
         Config_Base_t::Register_Me(machine);
 

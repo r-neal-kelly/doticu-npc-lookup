@@ -11,8 +11,8 @@ namespace doticu_npcl { namespace MCM {
 
     Leveled_Bases_t*    Leveled_Bases_t::Self()         { return static_cast<Leveled_Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
     String_t            Leveled_Bases_t::Class_Name()   { DEFINE_CLASS_NAME("doticu_npcl_mcm_leveled_bases"); }
-    Class_t*            Leveled_Bases_t::Class()        { DEFINE_CLASS(); }
-    Object_t*           Leveled_Bases_t::Object()       { DEFINE_OBJECT(); }
+    V::Class_t*         Leveled_Bases_t::Class()        { DEFINE_CLASS(); }
+    V::Object_t*        Leveled_Bases_t::Object()       { DEFINE_OBJECT(); }
 
     void Leveled_Bases_t::On_Config_Open()
     {
@@ -79,7 +79,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Leveled_Bases_t::Register_Me(Machine_t* machine)
+    void Leveled_Bases_t::Register_Me(V::Machine_t* machine)
     {
     }
 

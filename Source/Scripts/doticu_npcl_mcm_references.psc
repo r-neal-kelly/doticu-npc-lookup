@@ -4,7 +4,6 @@ Scriptname doticu_npcl_mcm_references extends Quest
 
 ; Base
 string  p_current_view                      =      ""
-int     p_options_offset                    =      -1
 
 ; List
 int     p_list_filter_option                =      -1
@@ -41,11 +40,11 @@ int     p_filter_name_negate_option         =      -1
 string  p_filter_name_argument              =      ""
 bool    p_filter_name_do_negate             =   false
 
-;/int     p_filter_worldspace_search_option   =      -1; matches only exterior cells
+int     p_filter_worldspace_search_option   =      -1; matches only exterior cells
 int     p_filter_worldspace_select_option   =      -1
 int     p_filter_worldspace_negate_option   =      -1
 string  p_filter_worldspace_argument        =      ""
-bool    p_filter_worldspace_do_negate       =   false/;
+bool    p_filter_worldspace_do_negate       =   false
 
 int     p_filter_location_search_option     =      -1
 int     p_filter_location_select_option     =      -1
@@ -85,4 +84,7 @@ bool    p_options_do_smart_select           =    true
 
 ; Item
 int     p_item_back_option                  =      -1
-int     p_item_current_form_id              =       0
+int     p_item_previous_option              =      -1
+int     p_item_next_option                  =      -1
+int     p_item_actor_form_id                =       0
+int     p_item_cell_form_id                 =       0

@@ -37,6 +37,10 @@ namespace doticu_npcl {
 
     skylib::Quest_t*        Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(), skylib::Quest_t, 0x000D62); }
 
+    skylib::Word_t          Consts_t::NPCL_Major_Version()          { return 1; }
+    skylib::Word_t          Consts_t::NPCL_Minor_Version()          { return 0; }
+    skylib::Word_t          Consts_t::NPCL_Patch_Version()          { return 0; }
+
     #undef DEFINE_MOD
     #undef DEFINE_FORM
 

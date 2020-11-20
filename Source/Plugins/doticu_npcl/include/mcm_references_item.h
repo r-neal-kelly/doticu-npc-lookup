@@ -4,20 +4,31 @@
 
 #pragma once
 
-#include "mcm_main.h"
+#include "mcm_references.h"
 
 namespace doticu_npcl { namespace MCM {
 
-    class Leveled_Bases_t : public skylib::Quest_t {
+    class References_Item_t : public References_t
+    {
     public:
-        static Leveled_Bases_t* Self();
-        static String_t         Class_Name();
-        static V::Class_t*      Class();
+        V::Int_Variable_t*  Back_Option_Variable();
+        V::Int_Variable_t*  Previous_Option_Variable();
+        V::Int_Variable_t*  Next_Option_Variable();
+        V::Int_Variable_t*  Actor_Form_ID_Variable();
+        V::Int_Variable_t*  Cell_Form_ID_Variable();
 
     public:
-        V::Object_t* Object();
+        Form_ID_t   Actor_Form_ID();
+        void        Actor_Form_ID(Form_ID_t value);
+        Form_ID_t   Cell_Form_ID();
+        void        Cell_Form_ID(Form_ID_t value);
 
-        void On_Config_Open();
+    public:
+        Loaded_Actor_t  Current_Loaded_Actor();
+        Loaded_Actor_t  Previous_Loaded_Actor();
+        Loaded_Actor_t  Next_Loaded_Actor();
+
+    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
@@ -28,9 +39,6 @@ namespace doticu_npcl { namespace MCM {
         void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
         void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
-
-    public:
-        static void Register_Me(V::Machine_t* machine);
     };
 
 }}
