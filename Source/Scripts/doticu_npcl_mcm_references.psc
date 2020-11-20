@@ -77,7 +77,12 @@ int     p_filter_in_exterior_option         =      -1
 int     p_filter_interior_exterior_ternary  =       0
 
 ; Options
+int     p_options_back_option               =      -1
+int     p_options_reset_option              =      -1
+
 int     p_options_smart_select_option       =      -1
 bool    p_options_do_smart_select           =    true
 
 ; Item
+int     p_item_back_option                  =      -1
+int     p_item_current_form_id              =       0

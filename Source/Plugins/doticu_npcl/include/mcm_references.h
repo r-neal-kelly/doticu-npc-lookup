@@ -8,6 +8,7 @@
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/location.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
 #include "doticu_skylib/relation.h"
@@ -35,6 +36,7 @@ namespace doticu_npcl { namespace MCM {
     using Actor_Base_t      = skylib::Actor_Base_t;
     using Actor_t           = skylib::Actor_t;
     using Loaded_Actor_t    = skylib::Loaded_Actor_t;
+    using Form_ID_t         = skylib::Form_ID_t;
 
     class References_t;
     class References_List_t;
@@ -256,6 +258,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>          Selectable_Races();
         Vector_t<String_t>          Selectable_Bases();
         Vector_t<String_t>          Selectable_Names();
+        Vector_t<String_t>          Selectable_Locations();
         Vector_t<String_t>          Selectable_Cells();
         Vector_t<String_t>          Selectable_Relations();
 
@@ -277,6 +280,8 @@ namespace doticu_npcl { namespace MCM {
     class References_Options_t : public References_t
     {
     public:
+        Int_Variable_t*     Back_Option_Variable();
+        Int_Variable_t*     Reset_Option_Variable();
         Int_Variable_t*     Smart_Select_Option_Variable();
         Bool_Variable_t*    Do_Smart_Select_Variable();
 
@@ -304,6 +309,17 @@ namespace doticu_npcl { namespace MCM {
 
     class References_Item_t : public References_t
     {
+    public:
+        Int_Variable_t* Back_Option_Variable();
+        Int_Variable_t* Current_Form_ID_Variable();
+
+    public:
+        Form_ID_t   Current_Form_ID();
+        void        Current_Form_ID(Form_ID_t value);
+
+    public:
+        Loaded_Actor_t  Current_Loaded_Actor();
+
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);

@@ -351,6 +351,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             Current_View(View_e::OPTIONS);
             mcm->Reset_Page();
+
         } else if (option == Previous_Page_Option_Variable()->Value()) {
             mcm->Disable_Option(option);
 
@@ -391,15 +392,14 @@ namespace doticu_npcl { namespace MCM {
             }
 
             mcm->Reset_Page();
+
         } else {
             Loaded_Actor_t loaded_actor = Option_To_Loaded_Actor(option);
-            if (loaded_actor.actor && loaded_actor.cell) {
-                //mcm->Disable_Option(option);
-
-                mcm->Flicker_Option(option);
-                mcm->Show_Message(std::string("Would open item menu for ") + loaded_actor.actor->Any_Name().data + ".");
-
-                //mcm->Reset_Page();
+            if (loaded_actor.Is_Valid()) {
+                mcm->Disable_Option(option);
+                Item()->Current_Form_ID(loaded_actor.actor->form_id);
+                Current_View(View_e::ITEM);
+                mcm->Reset_Page();
             }
         }
 
@@ -708,19 +708,19 @@ namespace doticu_npcl { namespace MCM {
                 if (do_negate) {
                     for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                         Loaded_Actor_t& loaded_actor = read->at(idx);
-                        Actor_t* actor = loaded_actor.actor;
-                        Cell_t* cell = loaded_actor.cell;
-                        if (actor && cell && is_match(actor, cell, search) == Ternary_e::LOW) {
-                            write->push_back(loaded_actor);
+                        if (loaded_actor.Is_Valid()) {
+                            if (is_match(loaded_actor.actor, loaded_actor.cell, search) == Ternary_e::LOW) {
+                                write->push_back(loaded_actor);
+                            }
                         }
                     }
                 } else {
                     for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                         Loaded_Actor_t& loaded_actor = read->at(idx);
-                        Actor_t* actor = loaded_actor.actor;
-                        Cell_t* cell = loaded_actor.cell;
-                        if (actor && cell && is_match(actor, cell, search) == Ternary_e::HIGH) {
-                            write->push_back(loaded_actor);
+                        if (loaded_actor.Is_Valid()) {
+                            if (is_match(loaded_actor.actor, loaded_actor.cell, search) == Ternary_e::HIGH) {
+                                write->push_back(loaded_actor);
+                            }
                         }
                     }
                 }
@@ -733,11 +733,9 @@ namespace doticu_npcl { namespace MCM {
             Mod_Do_Negate(),
             [](Actor_t* actor, Cell_t* cell, String_t search)->Ternary_e
             {
-                Actor_Base_t* actor_base = static_cast<Actor_Base_t*>
-                    (actor->base_form);
-                if (actor_base && actor_base->form_files) {
-                    for (Index_t idx = 0, end = actor_base->form_files->count; idx < end; idx += 1) {
-                        skylib::Mod_t* mod = actor_base->form_files->entries[idx];
+                if (actor->form_files) {
+                    for (Index_t idx = 0, end = actor->form_files->count; idx < end; idx += 1) {
+                        Mod_t* mod = actor->form_files->entries[idx];
                         if (mod) {
                             if (strlen(search) > 1) {
                                 if (skylib::CString_t::Contains(mod->Name(), search, true)) {
@@ -846,6 +844,34 @@ namespace doticu_npcl { namespace MCM {
         );
 
         Filter_Search(
+            Location_Argument(),
+            Location_Do_Negate(),
+            [](Actor_t* actor, Cell_t* cell, String_t search)->Ternary_e
+            {
+                Vector_t<Location_t*> locations = cell->Locations();
+                for (Index_t idx = 0, end = locations.size(); idx < end; idx += 1) {
+                    Location_t* location = locations[idx];
+                    if (location) {
+                        if (strlen(search) > 1) {
+                            if (skylib::CString_t::Contains(location->Name(), search, true) ||
+                                skylib::CString_t::Contains(location->Get_Editor_ID(), search, true) ||
+                                skylib::CString_t::Contains(location->Form_ID_String(), search, true)) {
+                                return Ternary_e::HIGH;
+                            }
+                        } else {
+                            if (skylib::CString_t::Starts_With(location->Name(), search, true) ||
+                                skylib::CString_t::Starts_With(location->Get_Editor_ID(), search, true) ||
+                                skylib::CString_t::Starts_With(location->Form_ID_String(), search, true)) {
+                                return Ternary_e::HIGH;
+                            }
+                        }
+                    }
+                }
+                return Ternary_e::LOW;
+            }
+        );
+
+        Filter_Search(
             Cell_Argument(),
             Cell_Do_Negate(),
             [](Actor_t* actor, Cell_t* cell, String_t search)->Ternary_e
@@ -906,20 +932,20 @@ namespace doticu_npcl { namespace MCM {
             if (ternary == Ternary_e::HIGH) {
                 for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                     Loaded_Actor_t& loaded_actor = read->at(idx);
-                    Actor_t* actor = loaded_actor.actor;
-                    Cell_t* cell = loaded_actor.cell;
-                    if (actor && cell && is_high(actor, cell)) {
-                        write->push_back(loaded_actor);
+                    if (loaded_actor.Is_Valid()) {
+                        if (is_high(loaded_actor.actor, loaded_actor.cell)) {
+                            write->push_back(loaded_actor);
+                        }
                     }
                 }
                 Swap();
             } else if (ternary == Ternary_e::LOW) {
                 for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                     Loaded_Actor_t& loaded_actor = read->at(idx);
-                    Actor_t* actor = loaded_actor.actor;
-                    Cell_t* cell = loaded_actor.cell;
-                    if (actor && cell && is_low(actor, cell)) {
-                        write->push_back(loaded_actor);
+                    if (loaded_actor.Is_Valid()) {
+                        if (is_low(loaded_actor.actor, loaded_actor.cell)) {
+                            write->push_back(loaded_actor);
+                        }
                     }
                 }
                 Swap();
@@ -1136,17 +1162,7 @@ namespace doticu_npcl { namespace MCM {
             }
             Vector_t<String_t> operator()(Loaded_Actor_t& loaded_actor)
             {
-                Vector_t<String_t> mods;
-                skylib::Static_Array_t<Mod_t*>* form_files = loaded_actor.actor->form_files;
-                if (form_files) {
-                    for (Index_t idx = 0, end = form_files->count; idx < end; idx += 1) {
-                        Mod_t* mod = form_files->entries[idx];
-                        if (mod) {
-                            mods.push_back(mod->Name());
-                        }
-                    }
-                }
-                return mods;
+                return loaded_actor.actor->Mod_Names();
             }
         } selectable_string(this);
 
@@ -1274,6 +1290,43 @@ namespace doticu_npcl { namespace MCM {
         return Selectable_Strings(this, string_argument, selectable_string);
     }
 
+    Vector_t<String_t> References_Filter_t::Selectable_Locations()
+    {
+        class String_Argument_t : public String_Argument_i
+        {
+        public:
+            References_Filter_t* self;
+            String_Argument_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            String_t operator()()
+            {
+                return self->Location_Argument();
+            }
+            void operator()(String_t argument)
+            {
+                self->Location_Argument(argument);
+            }
+        } string_argument(this);
+
+        class Selectable_Strings_t : public Selectable_Strings_i
+        {
+        public:
+            References_Filter_t* self;
+            Selectable_Strings_t(References_Filter_t* self) :
+                self(self)
+            {
+            }
+            Vector_t<String_t> operator()(Loaded_Actor_t& loaded_actor)
+            {
+                return loaded_actor.cell->Location_Names();
+            }
+        } selectable_string(this);
+
+        return Selectable_Strings(this, string_argument, selectable_string);
+    }
+
     Vector_t<String_t> References_Filter_t::Selectable_Cells()
     {
         class String_Argument_t : public String_Argument_i
@@ -1363,7 +1416,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        mcm->Title_Text(" Filter References ");
+        mcm->Title_Text(" References: Filter ");
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -1399,6 +1452,13 @@ namespace doticu_npcl { namespace MCM {
         Name_Negate_Option_Variable()->Value(mcm->Add_Toggle_Option(" Negate ", Name_Do_Negate()));
         mcm->Add_Empty_Option();
 
+        mcm->Add_Header_Option(" Location ");
+        mcm->Add_Header_Option("");
+        Location_Search_Option_Variable()->Value(mcm->Add_Input_Option(" Search ", Location_Argument()));
+        Location_Select_Option_Variable()->Value(mcm->Add_Menu_Option(" Select ", "..."));
+        Location_Negate_Option_Variable()->Value(mcm->Add_Toggle_Option(" Negate ", Location_Do_Negate()));
+        mcm->Add_Empty_Option();
+
         mcm->Add_Header_Option(" Cell ");
         mcm->Add_Header_Option("");
         Cell_Search_Option_Variable()->Value(mcm->Add_Input_Option(" Search ", Cell_Argument()));
@@ -1423,7 +1483,7 @@ namespace doticu_npcl { namespace MCM {
         In_Interior_Option_Variable()->Value(mcm->Add_Toggle_Option(" In Interior ", Interior_Exterior_Ternary() == Ternary_e::HIGH));
         In_Exterior_Option_Variable()->Value(mcm->Add_Toggle_Option(" In Exterior ", Interior_Exterior_Ternary() == Ternary_e::LOW));
 
-        Options_Offset_Variable()->Value(Back_Option_Variable()->Value());
+        Options_Offset(Back_Option_Variable()->Value());
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -1433,8 +1493,8 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (option == Back_Option_Variable()->Value()) {
-            List()->do_update_loaded_actors = true;
             mcm->Disable_Option(option);
+            List()->do_update_loaded_actors = true;
             Current_View(View_e::LIST);
             mcm->Reset_Page();
         } else if (option == Clear_Option_Variable()->Value()) {
@@ -1457,6 +1517,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Name_Negate_Option_Variable()->Value()) {
             Bool_t value = Name_Do_Negate();
             Name_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Location_Negate_Option_Variable()->Value()) {
+            Bool_t value = Location_Do_Negate();
+            Location_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
         } else if (option == Cell_Negate_Option_Variable()->Value()) {
             Bool_t value = Cell_Do_Negate();
@@ -1506,6 +1570,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Name_Select_Option_Variable()->Value()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Names());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Location_Select_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Locations());
             mcm->Menu_Dialog_Default(0);
         } else if (option == Cell_Select_Option_Variable()->Value()) {
             mcm->Flicker_Option(option);
@@ -1572,6 +1640,18 @@ namespace doticu_npcl { namespace MCM {
                 Name_Argument(value);
                 mcm->Input_Option_Value(Name_Search_Option_Variable()->Value(), value, true);
             }
+        } else if (option == Location_Select_Option_Variable()->Value()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> locations = Selectable_Locations();
+                    if (idx < locations.size()) {
+                        value = locations[idx];
+                    }
+                }
+                Location_Argument(value);
+                mcm->Input_Option_Value(Location_Search_Option_Variable()->Value(), value, true);
+            }
         } else if (option == Cell_Select_Option_Variable()->Value()) {
             if (idx > -1) {
                 String_t value = "";
@@ -1627,6 +1707,9 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Name_Search_Option_Variable()->Value()) {
             Name_Argument(value);
             mcm->Input_Option_Value(option, value, true);
+        } else if (option == Location_Search_Option_Variable()->Value()) {
+            Location_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
         } else if (option == Cell_Search_Option_Variable()->Value()) {
             Cell_Argument(value);
             mcm->Input_Option_Value(option, value, true);
@@ -1652,6 +1735,8 @@ namespace doticu_npcl { namespace MCM {
 
     /* References_Options_t */
 
+    Int_Variable_t*     References_Options_t::Back_Option_Variable()            { DEFINE_INT_VARIABLE("p_options_back_option"); }
+    Int_Variable_t*     References_Options_t::Reset_Option_Variable()           { DEFINE_INT_VARIABLE("p_options_reset_option"); }
     Int_Variable_t*     References_Options_t::Smart_Select_Option_Variable()    { DEFINE_INT_VARIABLE("p_options_smart_select_option"); }
     Bool_Variable_t*    References_Options_t::Do_Smart_Select_Variable()        { DEFINE_BOOL_VARIABLE("p_options_do_smart_select"); }
 
@@ -1672,12 +1757,46 @@ namespace doticu_npcl { namespace MCM {
 
     void References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        mcm->Title_Text(" References: Options ");
+
+        mcm->Cursor_Position(0);
+        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+
+        Back_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::BACK_LABEL, ""));
+        Reset_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::RESET_LABEL, ""));
+
+        mcm->Add_Header_Option("");
+        mcm->Add_Header_Option("");
+        Smart_Select_Option_Variable()->Value(mcm->Add_Toggle_Option(" Smart Select ", Do_Smart_Select()));
+
+        Options_Offset(Back_Option_Variable()->Value());
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void References_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option_Variable()->Value()) {
+            mcm->Disable_Option(option);
+            List()->do_update_loaded_actors = true;
+            Current_View(View_e::LIST);
+            mcm->Reset_Page();
+        } else if (option == Reset_Option_Variable()->Value()) {
+            mcm->Disable_Option(option);
+            Reset();
+            mcm->Reset_Page();
+
+        } else if (option == Smart_Select_Option_Variable()->Value()) {
+            Bool_t value = Do_Smart_Select();
+            Do_Smart_Select(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void References_Options_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
@@ -1722,14 +1841,90 @@ namespace doticu_npcl { namespace MCM {
 
     /* References_Item_t */
 
+    Int_Variable_t* References_Item_t::Back_Option_Variable()       { DEFINE_INT_VARIABLE("p_item_back_option"); }
+    Int_Variable_t* References_Item_t::Current_Form_ID_Variable()   { DEFINE_INT_VARIABLE("p_item_current_form_id"); }
+
+    Form_ID_t References_Item_t::Current_Form_ID()
+    {
+        return Current_Form_ID_Variable()->Value();
+    }
+
+    void References_Item_t::Current_Form_ID(Form_ID_t value)
+    {
+        Current_Form_ID_Variable()->Value(value);
+    }
+
+    Loaded_Actor_t References_Item_t::Current_Loaded_Actor()
+    {
+        Form_ID_t current_form_id = Current_Form_ID();
+        Vector_t<Loaded_Actor_t>& loaded_actors = List()->Loaded_Actors();
+        for (Index_t idx = 0, end = loaded_actors.size(); idx < end; idx += 1) {
+            Loaded_Actor_t& loaded_actor = loaded_actors[idx];
+            if (loaded_actor.Is_Valid() && loaded_actor.actor->form_id == current_form_id) {
+                return loaded_actor;
+            }
+        }
+        return Loaded_Actor_t();
+    }
+
     void References_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        Loaded_Actor_t loaded_actor = Current_Loaded_Actor();
+        if (loaded_actor.Is_Valid()) {
+            mcm->Title_Text(std::string(" Reference: ") + loaded_actor.actor->Any_Name().data);
+
+            mcm->Cursor_Position(0);
+            mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+
+            Back_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::BACK_LABEL, ""));
+            mcm->Add_Empty_Option();
+
+            mcm->Add_Header_Option("");
+            mcm->Add_Header_Option("");
+
+            mcm->Add_Text_Option(std::string(" Name: ") + loaded_actor.actor->Name(), "");
+            mcm->Add_Text_Option(std::string(" Form ID: ") + loaded_actor.actor->Form_ID_String().data, "");
+
+            Int_t options_offset = Back_Option_Variable()->Value();
+            Int_t option = options_offset;
+            Options_Offset(options_offset);
+            auto Is_Valid_Option = [&option, &options_offset]()->Bool_t
+            {
+                return option - options_offset < 128;
+            };
+
+            if (Is_Valid_Option()) {
+                mcm->Add_Header_Option(" Mods ");
+                mcm->Add_Header_Option("");
+                Vector_t<String_t> mod_names = loaded_actor.actor->Mod_Names();
+                for (Index_t idx = 0, end = mod_names.size(); idx < end && Is_Valid_Option(); idx += 1) {
+                    String_t mod_name = mod_names[idx];
+                    option = mcm->Add_Text_Option(mod_name, "");
+                }
+            }
+        } else {
+            List()->do_update_loaded_actors = true;
+            Current_View(View_e::LIST);
+            mcm->Reset_Page();
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void References_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option_Variable()->Value()) {
+            mcm->Disable_Option(option);
+            List()->do_update_loaded_actors = true;
+            Current_View(View_e::LIST);
+            mcm->Reset_Page();
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void References_Item_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
