@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/actor_base.h"
-#include "doticu_skylib/relation.h"
-
 #include "mcm_main.h"
 
 namespace doticu_npcl { namespace MCM {

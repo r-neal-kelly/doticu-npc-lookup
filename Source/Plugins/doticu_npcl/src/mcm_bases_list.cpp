@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "mcm_bases_list.h"

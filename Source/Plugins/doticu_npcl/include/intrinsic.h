@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/skylib.h"
 
 namespace doticu_skylib {}
 namespace skylib = doticu_skylib;
@@ -14,6 +14,8 @@ namespace mcmlib = doticu_mcmlib;
 
 namespace doticu_npcl {
 
+    using Byte_t        = skylib::Byte_t;
+    using Word_t        = skylib::Word_t;
     using Index_t       = skylib::Index_t;
 
     using Bool_t        = skylib::Bool_t;
@@ -21,9 +23,11 @@ namespace doticu_npcl {
     using Float_t       = skylib::Float_t;
     using String_t      = skylib::String_t;
 
-    template <typename T>
-    using Vector_t      = skylib::Vector_t<T>;
-    template <typename ...T>
-    using Callback_i    = skylib::Callback_i<T...>;
+    template <typename Type>
+    using Enum_t        = skylib::Enum_t<Type>;
+    template <typename Type>
+    using Vector_t      = skylib::Vector_t<Type>;
+    template <typename ...Types>
+    using Callback_i    = skylib::Callback_i<Types...>;
 
 }

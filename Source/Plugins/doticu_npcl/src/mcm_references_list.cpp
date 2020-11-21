@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
+#include "doticu_skylib/cell.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "mcm_references_list.h"

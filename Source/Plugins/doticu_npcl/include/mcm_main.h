@@ -10,8 +10,13 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    using Ternary_e     = skylib::Ternary_e;
-    using Comparator_e  = skylib::Comparator_e;
+    using Ternary_e         = skylib::Ternary_e;
+    using Quaternary_e      = skylib::Quaternary_e;
+    using Comparator_e      = skylib::Comparator_e;
+    using Flag_e            = mcmlib::Flag_e;
+    using Cursor_e          = mcmlib::Cursor_e;
+
+    using Latent_Callback_i = Callback_i<>;
 
     namespace V {
 
@@ -25,11 +30,6 @@ namespace doticu_npcl { namespace MCM {
         using String_Variable_t = skylib::Virtual::String_Variable_t;
 
     }
-
-    using Flag_e        = mcmlib::Flag_e;
-    using Cursor_e      = mcmlib::Cursor_e;
-
-    using Latent_Callback_i = Callback_i<>;
 
     class Main_t : public mcmlib::Config_Base_t {
     public:
@@ -71,6 +71,10 @@ namespace doticu_npcl { namespace MCM {
                                            Int_t high_option,
                                            Int_t low_option,
                                            Ternary_e toggle);
+        void                Toggle_Quaternary(V::Int_Variable_t* variable,
+                                              Int_t option_a,
+                                              Int_t option_b,
+                                              Quaternary_e toggle);
 
     public:
         Bool_t On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id);

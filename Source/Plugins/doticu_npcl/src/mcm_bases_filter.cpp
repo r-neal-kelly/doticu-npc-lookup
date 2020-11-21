@@ -2,8 +2,10 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
+#include "doticu_skylib/relation.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
@@ -186,7 +188,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                         Actor_Base_t* actor_base = read->at(idx);
                         if (actor_base) {
-                            if (is_match(actor_base, search) == Ternary_e::LOW) {
+                            if (is_match(actor_base, search) == Ternary_e::B) {
                                 write->push_back(actor_base);
                             }
                         }
@@ -195,7 +197,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                         Actor_Base_t* actor_base = read->at(idx);
                         if (actor_base) {
-                            if (is_match(actor_base, search) == Ternary_e::HIGH) {
+                            if (is_match(actor_base, search) == Ternary_e::A) {
                                 write->push_back(actor_base);
                             }
                         }
@@ -216,16 +218,16 @@ namespace doticu_npcl { namespace MCM {
                         if (mod) {
                             if (strlen(search) > 1) {
                                 if (skylib::CString_t::Contains(mod->Name(), search, true)) {
-                                    return Ternary_e::HIGH;
+                                    return Ternary_e::A;
                                 }
                             } else {
                                 if (skylib::CString_t::Starts_With(mod->Name(), search, true)) {
-                                    return Ternary_e::HIGH;
+                                    return Ternary_e::A;
                                 }
                             }
                         }
                     }
-                    return Ternary_e::LOW;
+                    return Ternary_e::B;
                 } else {
                     return Ternary_e::NONE;
                 }
@@ -243,17 +245,17 @@ namespace doticu_npcl { namespace MCM {
                         if (skylib::CString_t::Contains(race->Name(), search, true) ||
                             skylib::CString_t::Contains(race->Get_Editor_ID(), search, true) ||
                             skylib::CString_t::Contains(race->Form_ID_String(), search, true)) {
-                            return Ternary_e::HIGH;
+                            return Ternary_e::A;
                         } else {
-                            return Ternary_e::LOW;
+                            return Ternary_e::B;
                         }
                     } else {
                         if (skylib::CString_t::Starts_With(race->Name(), search, true) ||
                             skylib::CString_t::Starts_With(race->Get_Editor_ID(), search, true) ||
                             skylib::CString_t::Starts_With(race->Form_ID_String(), search, true)) {
-                            return Ternary_e::HIGH;
+                            return Ternary_e::A;
                         } else {
-                            return Ternary_e::LOW;
+                            return Ternary_e::B;
                         }
                     }
                 } else {
@@ -271,17 +273,17 @@ namespace doticu_npcl { namespace MCM {
                     if (skylib::CString_t::Contains(actor_base->Name(), search, true) ||
                         skylib::CString_t::Contains(actor_base->Get_Editor_ID(), search, true) ||
                         skylib::CString_t::Contains(actor_base->Form_ID_String(), search, true)) {
-                        return Ternary_e::HIGH;
+                        return Ternary_e::A;
                     } else {
-                        return Ternary_e::LOW;
+                        return Ternary_e::B;
                     }
                 } else {
                     if (skylib::CString_t::Starts_With(actor_base->Name(), search, true) ||
                         skylib::CString_t::Starts_With(actor_base->Get_Editor_ID(), search, true) ||
                         skylib::CString_t::Starts_With(actor_base->Form_ID_String(), search, true)) {
-                        return Ternary_e::HIGH;
+                        return Ternary_e::A;
                     } else {
-                        return Ternary_e::LOW;
+                        return Ternary_e::B;
                     }
                 }
             }
@@ -318,7 +320,7 @@ namespace doticu_npcl { namespace MCM {
                                                      Bool_t(*is_high)(Actor_Base_t*),
                                                      Bool_t(*is_low)(Actor_Base_t*))->void
         {
-            if (ternary == Ternary_e::HIGH) {
+            if (ternary == Ternary_e::A) {
                 for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                     Actor_Base_t* actor_base = read->at(idx);
                     if (actor_base) {
@@ -328,7 +330,7 @@ namespace doticu_npcl { namespace MCM {
                     }
                 }
                 Swap();
-            } else if (ternary == Ternary_e::LOW) {
+            } else if (ternary == Ternary_e::B) {
                 for (Index_t idx = 0, end = read->size(); idx < end; idx += 1) {
                     Actor_Base_t* actor_base = read->at(idx);
                     if (actor_base) {
@@ -691,11 +693,11 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option(" Other ");
         mcm->Add_Header_Option("");
 
-        Is_Male_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Male ", Male_Female_Ternary() == Ternary_e::HIGH));
-        Is_Female_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Female ", Male_Female_Ternary() == Ternary_e::LOW));
+        Is_Male_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Male ", Male_Female_Ternary() == Ternary_e::A));
+        Is_Female_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Female ", Male_Female_Ternary() == Ternary_e::B));
 
-        Is_Unique_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Unique ", Unique_Generic_Ternary() == Ternary_e::HIGH));
-        Is_Generic_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Generic ", Unique_Generic_Ternary() == Ternary_e::LOW));
+        Is_Unique_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Unique ", Unique_Generic_Ternary() == Ternary_e::A));
+        Is_Generic_Option_Variable()->Value(mcm->Add_Toggle_Option(" Is Generic ", Unique_Generic_Ternary() == Ternary_e::B));
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -732,14 +734,14 @@ namespace doticu_npcl { namespace MCM {
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Is_Male_Option_Variable()->Value()) {
-            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option, option + 1, Ternary_e::HIGH);
+            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option, option + 1, Ternary_e::A);
         } else if (option == Is_Female_Option_Variable()->Value()) {
-            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option - 1, option, Ternary_e::LOW);
+            mcm->Toggle_Ternary(Male_Female_Ternary_Variable(), option - 1, option, Ternary_e::B);
 
         } else if (option == Is_Unique_Option_Variable()->Value()) {
-            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option, option + 1, Ternary_e::HIGH);
+            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option, option + 1, Ternary_e::A);
         } else if (option == Is_Generic_Option_Variable()->Value()) {
-            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option - 1, option, Ternary_e::LOW);
+            mcm->Toggle_Ternary(Unique_Generic_Ternary_Variable(), option - 1, option, Ternary_e::B);
 
         }
 

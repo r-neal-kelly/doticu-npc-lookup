@@ -2,11 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "skse64/PapyrusArgs.h"
-
-#include "doticu_skylib/utils.h"
-#include "doticu_skylib/virtual_function.h"
-#include "doticu_skylib/virtual_machine.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
@@ -86,13 +81,13 @@ namespace doticu_npcl { namespace MCM {
                                 Int_t low_option,
                                 Ternary_e toggle)
     {
-        if (toggle == Ternary_e::HIGH) {
+        if (toggle == Ternary_e::A) {
             if (ternary->Value() < 1) {
                 ternary->Value(1);
             } else {
                 ternary->Value(0);
             }
-        } else if (toggle == Ternary_e::LOW) {
+        } else if (toggle == Ternary_e::B) {
             if (ternary->Value() > -1) {
                 ternary->Value(-1);
             } else {
@@ -102,6 +97,40 @@ namespace doticu_npcl { namespace MCM {
 
         Toggle_Option_Value(high_option, ternary->Value() > 0, false);
         Toggle_Option_Value(low_option, ternary->Value() < 0, true);
+    }
+
+    void Main_t::Toggle_Quaternary(V::Int_Variable_t* variable,
+                                   Int_t option_a,
+                                   Int_t option_b,
+                                   Quaternary_e toggle)
+    {
+        Quaternary_e value = variable->Value();
+
+        if (toggle == Quaternary_e::A) {
+            if (value == Quaternary_e::NONE) {
+                value = Quaternary_e::A;
+            } else if (value == Quaternary_e::ALL) {
+                value = Quaternary_e::B;
+            } else if (value == Quaternary_e::A) {
+                value = Quaternary_e::NONE;
+            } else if (value == Quaternary_e::B) {
+                value = Quaternary_e::ALL;
+            }
+        } else if (toggle == Quaternary_e::B) {
+            if (value == Quaternary_e::NONE) {
+                value = Quaternary_e::B;
+            } else if (value == Quaternary_e::ALL) {
+                value = Quaternary_e::A;
+            } else if (value == Quaternary_e::A) {
+                value = Quaternary_e::ALL;
+            } else if (value == Quaternary_e::B) {
+                value = Quaternary_e::NONE;
+            }
+        }
+
+        variable->Value(value);
+        Toggle_Option_Value(option_a, value == Quaternary_e::A || value == Quaternary_e::ALL, false);
+        Toggle_Option_Value(option_b, value == Quaternary_e::B || value == Quaternary_e::ALL, true);
     }
 
     static Bool_t Is_Same(const char* page_a, const char* page_b)

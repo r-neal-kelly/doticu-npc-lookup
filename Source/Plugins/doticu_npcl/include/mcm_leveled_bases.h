@@ -8,15 +8,53 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    using Leveled_Actor_Base_t = skylib::Leveled_Actor_Base_t;
+
+    class Leveled_Bases_List_t;
+    class Leveled_Bases_Filter_t;
+    class Leveled_Bases_Options_t;
+    class Leveled_Bases_Item_t;
+
     class Leveled_Bases_t : public skylib::Quest_t {
     public:
+        static constexpr const char*    LIST_VIEW       = "list";
+        static constexpr const char*    FILTER_VIEW     = "filter";
+        static constexpr const char*    OPTIONS_VIEW    = "options";
+        static constexpr const char*    ITEM_VIEW       = "item";
+
+        class View_e : public Enum_t<Word_t>
+        {
+        public:
+            enum
+            {
+                LIST,
+                FILTER,
+                OPTIONS,
+                ITEM,
+            };
+            using Enum_t::Enum_t;
+        };
+
         static Leveled_Bases_t* Self();
         static String_t         Class_Name();
         static V::Class_t*      Class();
 
     public:
-        V::Object_t* Object();
+        V::Object_t*            Object();
 
+        V::String_Variable_t*   Current_View_Variable();
+
+    public:
+        View_e      Current_View();
+        void        Current_View(View_e value);
+
+    public:
+        Leveled_Bases_List_t*       List();
+        Leveled_Bases_Filter_t*     Filter();
+        Leveled_Bases_Options_t*    Options();
+        Leveled_Bases_Item_t*       Item();
+
+    public:
         void On_Config_Open();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);

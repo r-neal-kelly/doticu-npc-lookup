@@ -4,16 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/utils.h"
-#include "doticu_skylib/actor_base.h"
-#include "doticu_skylib/actor.h"
-#include "doticu_skylib/cell.h"
-#include "doticu_skylib/location.h"
-#include "doticu_skylib/mod.h"
-#include "doticu_skylib/race.h"
-#include "doticu_skylib/relation.h"
-#include "doticu_skylib/worldspace.h"
-
 #include "mcm_main.h"
 
 namespace doticu_npcl { namespace MCM {
