@@ -847,7 +847,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        mcm->Title_Text(" References: Filter ");
+        mcm->Title_Text(" Leveled Bases: Filter ");
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
