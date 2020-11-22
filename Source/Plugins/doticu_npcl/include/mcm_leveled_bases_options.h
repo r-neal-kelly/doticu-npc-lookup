@@ -13,12 +13,19 @@ namespace doticu_npcl { namespace MCM {
     public:
         V::Int_Variable_t*  Back_Option_Variable();
         V::Int_Variable_t*  Reset_Option_Variable();
+
         V::Int_Variable_t*  Smart_Select_Option_Variable();
         V::Bool_Variable_t* Do_Smart_Select_Variable();
+
+        V::Int_Variable_t*  Uncombative_Spawns_Option_Variable();
+        V::Bool_Variable_t* Do_Uncombative_Spawns_Variable();
 
     public:
         Bool_t  Do_Smart_Select();
         void    Do_Smart_Select(Bool_t value);
+
+        Bool_t  Do_Uncombative_Spawns();
+        void    Do_Uncombative_Spawns(Bool_t value);
 
     public:
         void    Reset();

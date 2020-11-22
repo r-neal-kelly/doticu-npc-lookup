@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/utils.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/global.h"
@@ -28,14 +29,16 @@ namespace doticu_npcl {
         return form;                                            \
     W
 
-    skylib::Actor_Base_t*   Consts_t::Skyrim_Player_Actor_Base()    { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_Base_t, 0x000007); }
+    skylib::Actor_t*        Consts_t::Skyrim_Player_Actor()         { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_t,        0x000014); }
 
-    skylib::Global_t*       Consts_t::NPCL_Is_Installed_Global()    { DEFINE_FORM(NPCL_Mod(), skylib::Global_t, 0x000D63); }
+    skylib::Actor_Base_t*   Consts_t::Skyrim_Player_Actor_Base()    { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_Base_t,   0x000007); }
+
+    skylib::Global_t*       Consts_t::NPCL_Is_Installed_Global()    { DEFINE_FORM(NPCL_Mod(),   skylib::Global_t,       0x000D63); }
 
     skylib::Mod_t*          Consts_t::Skyrim_Mod()                  { DEFINE_MOD(SKYRIM_ESM_NAME); }
     skylib::Mod_t*          Consts_t::NPCL_Mod()                    { DEFINE_MOD(NPCL_ESP_NAME); }
 
-    skylib::Quest_t*        Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(), skylib::Quest_t, 0x000D62); }
+    skylib::Quest_t*        Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(),   skylib::Quest_t,        0x000D62); }
 
     skylib::Word_t          Consts_t::NPCL_Major_Version()          { return 1; }
     skylib::Word_t          Consts_t::NPCL_Minor_Version()          { return 0; }

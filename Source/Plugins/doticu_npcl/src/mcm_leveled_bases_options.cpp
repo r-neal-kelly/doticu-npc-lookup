@@ -11,11 +11,14 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Leveled_Bases_Options_t::Back_Option_Variable()         { DEFINE_INT_VARIABLE("p_options_back_option"); }
-    V::Int_Variable_t*  Leveled_Bases_Options_t::Reset_Option_Variable()        { DEFINE_INT_VARIABLE("p_options_reset_option"); }
+    V::Int_Variable_t*  Leveled_Bases_Options_t::Back_Option_Variable()                 { DEFINE_INT_VARIABLE("p_options_back_option"); }
+    V::Int_Variable_t*  Leveled_Bases_Options_t::Reset_Option_Variable()                { DEFINE_INT_VARIABLE("p_options_reset_option"); }
     
-    V::Int_Variable_t*  Leveled_Bases_Options_t::Smart_Select_Option_Variable() { DEFINE_INT_VARIABLE("p_options_smart_select_option"); }
-    V::Bool_Variable_t* Leveled_Bases_Options_t::Do_Smart_Select_Variable()     { DEFINE_BOOL_VARIABLE("p_options_do_smart_select"); }
+    V::Int_Variable_t*  Leveled_Bases_Options_t::Smart_Select_Option_Variable()         { DEFINE_INT_VARIABLE("p_options_smart_select_option"); }
+    V::Bool_Variable_t* Leveled_Bases_Options_t::Do_Smart_Select_Variable()             { DEFINE_BOOL_VARIABLE("p_options_do_smart_select"); }
+
+    V::Int_Variable_t*  Leveled_Bases_Options_t::Uncombative_Spawns_Option_Variable()   { DEFINE_INT_VARIABLE("p_options_uncombative_spawns_option"); }
+    V::Bool_Variable_t* Leveled_Bases_Options_t::Do_Uncombative_Spawns_Variable()       { DEFINE_BOOL_VARIABLE("p_options_do_uncombative_spawns"); }
 
     Bool_t Leveled_Bases_Options_t::Do_Smart_Select()
     {
@@ -25,6 +28,16 @@ namespace doticu_npcl { namespace MCM {
     void Leveled_Bases_Options_t::Do_Smart_Select(Bool_t value)
     {
         Do_Smart_Select_Variable()->Value(value);
+    }
+
+    Bool_t Leveled_Bases_Options_t::Do_Uncombative_Spawns()
+    {
+        return Do_Uncombative_Spawns_Variable()->Value();
+    }
+
+    void Leveled_Bases_Options_t::Do_Uncombative_Spawns(Bool_t value)
+    {
+        Do_Uncombative_Spawns_Variable()->Value(value);
     }
 
     void Leveled_Bases_Options_t::Reset()
@@ -47,6 +60,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option("");
         mcm->Add_Header_Option("");
         Smart_Select_Option_Variable()->Value(mcm->Add_Toggle_Option(" Smart Select ", Do_Smart_Select()));
+        Uncombative_Spawns_Option_Variable()->Value(mcm->Add_Toggle_Option(" Uncombative Spawns ", Do_Uncombative_Spawns()));
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -68,6 +82,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Smart_Select_Option_Variable()->Value()) {
             Bool_t value = Do_Smart_Select();
             Do_Smart_Select(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Uncombative_Spawns_Option_Variable()->Value()) {
+            Bool_t value = Do_Uncombative_Spawns();
+            Do_Uncombative_Spawns(!value);
             mcm->Toggle_Option_Value(option, !value);
         }
 

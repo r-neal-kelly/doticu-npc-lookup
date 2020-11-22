@@ -16,6 +16,7 @@ namespace doticu_npcl { namespace MCM {
         V::Int_Variable_t*  Back_Option_Variable();
         V::Int_Variable_t*  Previous_Option_Variable();
         V::Int_Variable_t*  Next_Option_Variable();
+        V::Int_Variable_t*  Spawn_Option_Variable();
         V::Int_Variable_t*  Actor_Base_Form_ID_Variable();
 
     public:

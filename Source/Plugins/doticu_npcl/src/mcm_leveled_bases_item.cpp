@@ -2,10 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/leveled_actor_base.h"
 #include "doticu_skylib/virtual_macros.h"
 
+#include "consts.h"
 #include "mcm_leveled_bases_list.h"
 #include "mcm_leveled_bases_filter.h"
 #include "mcm_leveled_bases_options.h"
@@ -13,11 +15,14 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    using Game_t = skylib::Game_t;
+    using Actor_t       = skylib::Actor_t;
+    using Actor_Value_e = skylib::Actor_Value_e;
+    using Game_t        = skylib::Game_t;
 
     V::Int_Variable_t*  Leveled_Bases_Item_t::Back_Option_Variable()                { DEFINE_INT_VARIABLE("p_item_back_option"); }
     V::Int_Variable_t*  Leveled_Bases_Item_t::Previous_Option_Variable()            { DEFINE_INT_VARIABLE("p_item_previous_option"); }
     V::Int_Variable_t*  Leveled_Bases_Item_t::Next_Option_Variable()                { DEFINE_INT_VARIABLE("p_item_next_option"); }
+    V::Int_Variable_t*  Leveled_Bases_Item_t::Spawn_Option_Variable()               { DEFINE_INT_VARIABLE("p_item_spawn_option"); }
     V::Int_Variable_t*  Leveled_Bases_Item_t::Leveled_Actor_Base_Form_ID_Variable() { DEFINE_INT_VARIABLE("p_item_leveled_actor_base_form_id"); }
 
     Form_ID_t Leveled_Bases_Item_t::Leveled_Actor_Base_Form_ID()
@@ -94,7 +99,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
             Back_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::BACK_LABEL, ""));
-            mcm->Add_Empty_Option();
+            Spawn_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::SPAWN_LABEL, ""));
             if (List()->Items().size() > 1) {
                 Previous_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, ""));
                 Next_Option_Variable()->Value(mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, ""));
@@ -144,6 +149,18 @@ namespace doticu_npcl { namespace MCM {
             List()->do_update_items = true;
             Current_View(View_e::LIST);
             mcm->Reset_Page();
+        } else if (option == Spawn_Option_Variable()->Value()) {
+            mcm->Flicker_Option(option);
+            Leveled_Actor_Base_t* item = Current_Item();
+            if (item && item->Is_Valid()) {
+                Actor_t* actor = static_cast<Actor_t*>
+                    (skylib::Reference_t::Create(item, 1, Consts_t::Skyrim_Player_Actor(), true, false));
+                if (actor) {
+                    if (Options()->Do_Uncombative_Spawns()) {
+                        actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
+                    }
+                }
+            }
         } else if (option == Previous_Option_Variable()->Value()) {
             mcm->Disable_Option(option);
             Leveled_Actor_Base_t* item = Previous_Item();

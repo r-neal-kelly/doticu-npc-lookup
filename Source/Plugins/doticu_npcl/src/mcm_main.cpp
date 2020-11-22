@@ -37,9 +37,9 @@ namespace doticu_npcl { namespace MCM {
     String_t Main_t::Current_Page()
     {
         String_t current_page = Current_Page_Variable()->Value();
-        if (!current_page || !current_page.data || !current_page.data[0]) {
+        if (!current_page) {
             current_page = DEFAULT_PAGE;
-            Current_Page_Variable()->Value(current_page);
+            Current_Page(current_page);
         }
         return current_page;
     }
@@ -162,13 +162,14 @@ namespace doticu_npcl { namespace MCM {
 
     Bool_t Main_t::On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page)
     {
-        Bool_t is_refresh;
-        if (!current_page || !current_page.data || !current_page.data[0]) {
-            is_refresh = false;
+        Bool_t is_refresh = true;
+        if (!current_page) {
             current_page = Current_Page();
         } else {
-            is_refresh = Current_Page() == current_page;
-            Current_Page(current_page);
+            if (current_page != Current_Page()) {
+                is_refresh = false;
+                Current_Page(current_page);
+            }
         }
 
         String_t page = current_page;

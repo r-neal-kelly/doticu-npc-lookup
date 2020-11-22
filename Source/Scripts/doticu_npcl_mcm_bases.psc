@@ -54,8 +54,12 @@ int     p_options_reset_option              =      -1
 int     p_options_smart_select_option       =      -1
 bool    p_options_do_smart_select           =    true
 
+int     p_options_uncombative_spawns_option =      -1
+bool    p_options_do_uncombative_spawns     =    true
+
 ; Item
 int     p_item_back_option                  =      -1
 int     p_item_previous_option              =      -1
 int     p_item_next_option                  =      -1
+int     p_item_spawn_option                 =      -1
 int     p_item_actor_base_form_id           =       0

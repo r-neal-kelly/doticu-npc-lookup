@@ -200,42 +200,44 @@ namespace doticu_npcl { namespace MCM {
             write = temp;
             write->clear();
         }
+
+        Vector_t<Item_t>* Results()
+        {
+            return read;
+        }
     };
 
-    template <typename Item_t, typename ...Args>
+    template <typename Item>
     class Filter_i
     {
     public:
-        Filter_State_t<Item_t>& state;
+        Filter_State_t<Item>& state;
 
-        Filter_i(Filter_State_t<Item_t>& state) :
+        Filter_i(Filter_State_t<Item>& state) :
             state(state)
         {
         }
-
-        virtual         ~Filter_i()         = default;
-        virtual void    Execute(Args...)    = 0;
     };
 
-    template <typename Item_t>
-    class String_Filter_i : public Filter_i<Item_t, String_t, Bool_t>
+    template <typename Item>
+    class String_Filter_i : public Filter_i<Item>
     {
     public:
-        using Filter_i<Item_t, String_t, Bool_t>::Filter_i;
+        using Filter_i<Item>::Filter_i;
 
-        virtual void Execute(String_t string, Bool_t do_negate) override
+        void Execute(String_t string, Bool_t do_negate, Filter_Ternary_e(*Is_Match)(Item, String_t))
         {
             if (string.data && string.data[0]) {
                 if (do_negate) {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                        Item_t item = state.read->at(idx);
+                        Item item = state.read->at(idx);
                         if (Is_Match(item, string) == Filter_Ternary_e::ISNT_MATCH) {
                             state.write->push_back(item);
                         }
                     }
                 } else {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                        Item_t item = state.read->at(idx);
+                        Item item = state.read->at(idx);
                         if (Is_Match(item, string) == Filter_Ternary_e::IS_MATCH) {
                             state.write->push_back(item);
                         }
@@ -244,30 +246,33 @@ namespace doticu_npcl { namespace MCM {
                 state.Swap();
             }
         }
-
-        virtual Filter_Ternary_e Is_Match(Item_t, String_t) = 0;
     };
 
-    template <typename Item_t>
-    class Relation_Filter_i : public Filter_i<Item_t, Relation_e, Bool_t>
+    template <typename Item>
+    class Relation_Filter_i : public Filter_i<Item>
     {
     public:
-        using Filter_i<Item_t, Relation_e, Bool_t>::Filter_i;
+        Actor_Base_t* player_actor_base;
 
-        virtual void Execute(Relation_e relation, Bool_t do_negate) override
+        Relation_Filter_i(Filter_State_t<Item>& state) :
+            Filter_i<Item>(state), player_actor_base(Consts_t::Skyrim_Player_Actor_Base())
+        {
+        }
+
+        void Execute(Relation_e relation, Bool_t do_negate, Filter_Ternary_e(*Is_Match)(Item, Relation_e, Actor_Base_t* player_actor_base))
         {
             if (relation != Relation_e::NONE) {
                 if (do_negate) {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                        Item_t item = state.read->at(idx);
-                        if (Is_Match(item, relation) == Filter_Ternary_e::ISNT_MATCH) {
+                        Item item = state.read->at(idx);
+                        if (Is_Match(item, relation, player_actor_base) == Filter_Ternary_e::ISNT_MATCH) {
                             state.write->push_back(item);
                         }
                     }
                 } else {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                        Item_t item = state.read->at(idx);
-                        if (Is_Match(item, relation) == Filter_Ternary_e::IS_MATCH) {
+                        Item item = state.read->at(idx);
+                        if (Is_Match(item, relation, player_actor_base) == Filter_Ternary_e::IS_MATCH) {
                             state.write->push_back(item);
                         }
                     }
@@ -275,21 +280,19 @@ namespace doticu_npcl { namespace MCM {
                 state.Swap();
             }
         }
-
-        virtual Filter_Ternary_e Is_Match(Item_t, Relation_e) = 0;
     };
 
-    template <typename Item_t>
-    class Ternary_Filter_i : public Filter_i<Item_t, Ternary_e>
+    template <typename Item>
+    class Ternary_Filter_i : public Filter_i<Item>
     {
     public:
-        using Filter_i<Item_t, Ternary_e>::Filter_i;
+        using Filter_i<Item>::Filter_i;
 
-        virtual void Execute(Ternary_e ternary) override
+        void Execute(Ternary_e ternary, Filter_Ternary_e(*Is_Match)(Item, Ternary_e))
         {
             if (ternary != Ternary_e::NONE) {
                 for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                    Item_t item = state.read->at(idx);
+                    Item item = state.read->at(idx);
                     if (Is_Match(item, ternary) == Filter_Ternary_e::IS_MATCH) {
                         state.write->push_back(item);
                     }
@@ -297,21 +300,19 @@ namespace doticu_npcl { namespace MCM {
                 state.Swap();
             }
         }
-
-        virtual Filter_Ternary_e Is_Match(Item_t, Ternary_e) = 0;
     };
 
-    template <typename Item_t>
-    class Quaternary_Filter_i : public Filter_i<Item_t, Quaternary_e>
+    template <typename Item>
+    class Quaternary_Filter_i : public Filter_i<Item>
     {
     public:
-        using Filter_i<Item_t, Quaternary_e>::Filter_i;
+        using Filter_i<Item>::Filter_i;
 
-        virtual void Execute(Quaternary_e quaternary) override
+        void Execute(Quaternary_e quaternary, Filter_Ternary_e(*Is_Match)(Item, Quaternary_e))
         {
             if (quaternary != Quaternary_e::NONE) {
                 for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
-                    Item_t item = state.read->at(idx);
+                    Item item = state.read->at(idx);
                     if (Is_Match(item, quaternary) == Filter_Ternary_e::IS_MATCH) {
                         state.write->push_back(item);
                     }
@@ -319,20 +320,25 @@ namespace doticu_npcl { namespace MCM {
                 state.Swap();
             }
         }
-
-        virtual Filter_Ternary_e Is_Match(Item_t, Quaternary_e) = 0;
     };
 
-    Vector_t<Leveled_Actor_Base_t*>* Leveled_Bases_Filter_t::Execute(Vector_t<Leveled_Actor_Base_t*>* read, Vector_t<Leveled_Actor_Base_t*>* write)
+    Vector_t<Leveled_Actor_Base_t*>* Leveled_Bases_Filter_t::Execute(Vector_t<Leveled_Actor_Base_t*>* read,
+                                                                     Vector_t<Leveled_Actor_Base_t*>* write)
     {
-        Filter_State_t<Leveled_Actor_Base_t*> filter_state(read, write);
+        using Item = Leveled_Actor_Base_t*;
 
-        class Mod_Filter_t : public String_Filter_i<Leveled_Actor_Base_t*>
+        Filter_State_t<Item> filter_state(read, write);
+
+        class Mod_Filter_t : public String_Filter_i<Item>
         {
         public:
-            using String_Filter_i::String_Filter_i;
+            Mod_Filter_t(Filter_State_t<Item>& state, String_t string, Bool_t do_negate) :
+                String_Filter_i<Item>(state)
+            {
+                Execute(string, do_negate, &Is_Match);
+            }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, String_t string) override
+            static Filter_Ternary_e Is_Match(Item item, String_t string)
             {
                 if (item && item->form_files) {
                     for (Index_t idx = 0, end = item->form_files->count; idx < end; idx += 1) {
@@ -355,14 +361,18 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Mod_Filter_t(filter_state).Execute(Mod_Argument(), Mod_Do_Negate());
+        Mod_Filter_t(filter_state, Mod_Argument(), Mod_Do_Negate());
 
-        class Race_Filter_t : public String_Filter_i<Leveled_Actor_Base_t*>
+        class Race_Filter_t : public String_Filter_i<Item>
         {
         public:
-            using String_Filter_i::String_Filter_i;
+            Race_Filter_t(Filter_State_t<Item>& state, String_t string, Bool_t do_negate) :
+                String_Filter_i<Item>(state)
+            {
+                Execute(string, do_negate, &Is_Match);
+            }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, String_t string) override
+            static Filter_Ternary_e Is_Match(Item item, String_t string)
             {
                 if (item) {
                     Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
@@ -393,14 +403,18 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Race_Filter_t(filter_state).Execute(Race_Argument(), Race_Do_Negate());
+        Race_Filter_t(filter_state, Race_Argument(), Race_Do_Negate());
 
-        class Base_Filter_t : public String_Filter_i<Leveled_Actor_Base_t*>
+        class Base_Filter_t : public String_Filter_i<Item>
         {
         public:
-            using String_Filter_i::String_Filter_i;
+            Base_Filter_t(Filter_State_t<Item>& state, String_t string, Bool_t do_negate) :
+                String_Filter_i<Item>(state)
+            {
+                Execute(string, do_negate, &Is_Match);
+            }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, String_t string) override
+            static Filter_Ternary_e Is_Match(Item item, String_t string)
             {
                 if (item) {
                     Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
@@ -428,19 +442,18 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Base_Filter_t(filter_state).Execute(Base_Argument(), Base_Do_Negate());
+        Base_Filter_t(filter_state, Base_Argument(), Base_Do_Negate());
 
-        class Relation_Filter_t : public Relation_Filter_i<Leveled_Actor_Base_t*>
+        class Relation_Filter_t : public Relation_Filter_i<Item>
         {
         public:
-            Actor_Base_t* player_actor_base;
-
-            Relation_Filter_t(Filter_State_t<Leveled_Actor_Base_t*>& state, Actor_Base_t* player_actor_base) :
-                Relation_Filter_i(state), player_actor_base(player_actor_base)
+            Relation_Filter_t(Filter_State_t<Item>& state, Relation_e relation, Bool_t do_negate) :
+                Relation_Filter_i<Item>(state)
             {
+                Execute(relation, do_negate, &Is_Match);
             }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, Relation_e relation) override
+            static Filter_Ternary_e Is_Match(Item item, Relation_e relation, Actor_Base_t* player_actor_base)
             {
                 if (item) {
                     Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
@@ -456,14 +469,18 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Relation_Filter_t(filter_state, Consts_t::Skyrim_Player_Actor_Base()).Execute(Relation_Argument(), Relation_Do_Negate());
+        Relation_Filter_t(filter_state, Relation_Argument(), Relation_Do_Negate());
 
-        class Male_Female_Filter_t : public Quaternary_Filter_i<Leveled_Actor_Base_t*>
+        class Male_Female_Filter_t : public Quaternary_Filter_i<Item>
         {
         public:
-            using Quaternary_Filter_i::Quaternary_Filter_i;
+            Male_Female_Filter_t(Filter_State_t<Item>& state, Quaternary_e quaternary) :
+                Quaternary_Filter_i<Item>(state)
+            {
+                Execute(quaternary, &Is_Match);
+            }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, Quaternary_e quaternary) override
+            static Filter_Ternary_e Is_Match(Item item, Quaternary_e quaternary)
             {
                 if (item) {
                     if (quaternary == Quaternary_e::ALL) {
@@ -501,14 +518,18 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Male_Female_Filter_t(filter_state).Execute(Male_Female_Quaternary());
+        Male_Female_Filter_t(filter_state, Male_Female_Quaternary());
 
-        class Unique_Generic_Filter_t : public Quaternary_Filter_i<Leveled_Actor_Base_t*>
+        class Unique_Generic_Filter_t : public Quaternary_Filter_i<Item>
         {
         public:
-            using Quaternary_Filter_i::Quaternary_Filter_i;
+            Unique_Generic_Filter_t(Filter_State_t<Item>& state, Quaternary_e quaternary) :
+                Quaternary_Filter_i<Item>(state)
+            {
+                Execute(quaternary, &Is_Match);
+            }
 
-            virtual Filter_Ternary_e Is_Match(Leveled_Actor_Base_t* item, Quaternary_e quaternary) override
+            static Filter_Ternary_e Is_Match(Item item, Quaternary_e quaternary)
             {
                 if (item) {
                     if (quaternary == Quaternary_e::ALL) {
@@ -546,9 +567,9 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
         };
-        Unique_Generic_Filter_t(filter_state).Execute(Unique_Generic_Quaternary());
+        Unique_Generic_Filter_t(filter_state, Unique_Generic_Quaternary());
 
-        return filter_state.read;
+        return filter_state.Results();
     }
 
     void Leveled_Bases_Filter_t::Clear()

@@ -48,6 +48,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    BACK_LABEL          = "                               Back";
         static constexpr const char*    CLEAR_LABEL         = "                              Clear";
         static constexpr const char*    RESET_LABEL         = "                              Reset";
+        static constexpr const char*    SPAWN_LABEL         = "                             Spawn";
 
         static Int_t        String_Comparator(const char* str_a, const char* str_b);
 

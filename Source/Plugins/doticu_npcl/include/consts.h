@@ -24,6 +24,8 @@ namespace doticu_npcl {
         static constexpr const char* SKYRIM_ESM_NAME    = "Skyrim.esm";
         static constexpr const char* NPCL_ESP_NAME      = "doticu_npc_lookup.esp";
 
+        static skylib::Actor_t*         Skyrim_Player_Actor();
+
         static skylib::Actor_Base_t*    Skyrim_Player_Actor_Base();
 
         static skylib::Global_t*        NPCL_Is_Installed_Global();
