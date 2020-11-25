@@ -74,47 +74,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
+    <None Include="include\mcm_bases.inl" />
+    <None Include="include\mcm_references.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\consts.h" />
+    <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm_bases.h" />
-    <ClInclude Include="include\mcm_bases_filter.h" />
-    <ClInclude Include="include\mcm_bases_item.h" />
-    <ClInclude Include="include\mcm_bases_list.h" />
-    <ClInclude Include="include\mcm_bases_options.h" />
-    <ClInclude Include="include\mcm_leveled_bases.h" />
-    <ClInclude Include="include\mcm_leveled_bases_filter.h" />
-    <ClInclude Include="include\mcm_leveled_bases_item.h" />
-    <ClInclude Include="include\mcm_leveled_bases_list.h" />
-    <ClInclude Include="include\mcm_leveled_bases_options.h" />
+    <ClInclude Include="include\mcm_bases_leveled.h" />
+    <ClInclude Include="include\mcm_bases_static.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\mcm_references.h" />
-    <ClInclude Include="include\mcm_references_filter.h" />
-    <ClInclude Include="include\mcm_references_item.h" />
-    <ClInclude Include="include\mcm_references_list.h" />
-    <ClInclude Include="include\mcm_references_options.h" />
+    <ClInclude Include="include\mcm_references_loaded.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\mcm_bases.cpp" />
-    <ClCompile Include="src\mcm_bases_filter.cpp" />
-    <ClCompile Include="src\mcm_bases_item.cpp" />
-    <ClCompile Include="src\mcm_bases_list.cpp" />
-    <ClCompile Include="src\mcm_bases_options.cpp" />
-    <ClCompile Include="src\mcm_leveled_bases.cpp" />
-    <ClCompile Include="src\mcm_leveled_bases_filter.cpp" />
-    <ClCompile Include="src\mcm_leveled_bases_item.cpp" />
-    <ClCompile Include="src\mcm_leveled_bases_list.cpp" />
-    <ClCompile Include="src\mcm_leveled_bases_options.cpp" />
+    <ClCompile Include="src\mcm_bases_leveled.cpp" />
+    <ClCompile Include="src\mcm_bases_static.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
-    <ClCompile Include="src\mcm_references.cpp" />
-    <ClCompile Include="src\mcm_references_filter.cpp" />
-    <ClCompile Include="src\mcm_references_item.cpp" />
-    <ClCompile Include="src\mcm_references_list.cpp" />
-    <ClCompile Include="src\mcm_references_options.cpp" />
+    <ClCompile Include="src\mcm_references_loaded.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

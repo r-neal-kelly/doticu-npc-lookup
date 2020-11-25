@@ -18,6 +18,12 @@
     <None Include="exports.def">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="include\mcm_bases.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="include\mcm_references.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\main.h">
@@ -35,46 +41,19 @@
     <ClInclude Include="include\mcm_bases.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm_leveled_bases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\mcm_references.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm_references_list.h">
+    <ClInclude Include="include\mcm_bases_static.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm_references_filter.h">
+    <ClInclude Include="include\filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm_references_options.h">
+    <ClInclude Include="include\mcm_bases_leveled.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\mcm_references_item.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_bases_filter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_bases_item.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_bases_options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_bases_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_leveled_bases_item.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_leveled_bases_filter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_leveled_bases_options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mcm_leveled_bases_list.h">
+    <ClInclude Include="include\mcm_references_loaded.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -88,49 +67,13 @@
     <ClCompile Include="src\consts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm_bases.cpp">
+    <ClCompile Include="src\mcm_bases_static.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm_leveled_bases.cpp">
+    <ClCompile Include="src\mcm_bases_leveled.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mcm_references.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_references_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_references_filter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_references_options.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_references_item.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_bases_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_bases_filter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_bases_options.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_bases_item.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_leveled_bases_item.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_leveled_bases_options.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_leveled_bases_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mcm_leveled_bases_filter.cpp">
+    <ClCompile Include="src\mcm_references_loaded.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

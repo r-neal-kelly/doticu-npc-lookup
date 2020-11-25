@@ -1,10 +1,11 @@
 ; Copyright © 2020 r-neal-kelly, aka doticu
 
-Scriptname doticu_npcl_mcm extends SKI_ConfigBase
+Scriptname doticu_npcl_mcm_main extends SKI_ConfigBase
 
 string p_current_page = ""
 
 event OnConfigOpen() native
+event OnConfigClose() native
 event OnPageReset(String current_page) native
 event OnOptionSelect(int option) native
 event OnOptionMenuOpen(int option) native

@@ -7,10 +7,15 @@
 #include "consts.h"
 #include "mcm_main.h"
 #include "mcm_bases.h"
-#include "mcm_leveled_bases.h"
-#include "mcm_references.h"
+#include "mcm_bases_static.h"
+#include "mcm_bases_leveled.h"
+#include "mcm_references_loaded.h"
 
 namespace doticu_npcl { namespace MCM {
+
+    Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
+    String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm_main"); }
+    V::Class_t*         Main_t::Class()                 { DEFINE_CLASS(); }
 
     Int_t Main_t::String_Comparator(const char* str_a, const char* str_b)
     {
@@ -27,12 +32,9 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
-    String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm"); }
-    V::Class_t*         Main_t::Class()                 { DEFINE_CLASS(); }
-    V::Object_t*        Main_t::Object()                { DEFINE_OBJECT(); }
+    V::Object_t* Main_t::Object() { DEFINE_OBJECT(); }
 
-    V::String_Variable_t*  Main_t::Current_Page_Variable() { DEFINE_STRING_VARIABLE("p_current_page"); }
+    V::String_Variable_t* Main_t::Current_Page_Variable() { DEFINE_STRING_VARIABLE("p_current_page"); }
 
     String_t Main_t::Current_Page()
     {
@@ -76,61 +78,58 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void Main_t::Toggle_Ternary(V::Int_Variable_t* ternary,
-                                Int_t high_option,
-                                Int_t low_option,
-                                Ternary_e toggle)
+    void Main_t::Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle)
     {
-        if (toggle == Ternary_e::A) {
-            if (ternary->Value() < 1) {
-                ternary->Value(1);
+        Binary_e value = variable->Value();
+
+        if (toggle == Binary_e::A) {
+            if (value == Binary_e::A) {
+                value = Binary_e::NONE;
             } else {
-                ternary->Value(0);
+                value = Binary_e::A;
             }
-        } else if (toggle == Ternary_e::B) {
-            if (ternary->Value() > -1) {
-                ternary->Value(-1);
+        } else if (toggle == Binary_e::B) {
+            if (value == Binary_e::B) {
+                value = Binary_e::NONE;
             } else {
-                ternary->Value(0);
-            }
-        }
-
-        Toggle_Option_Value(high_option, ternary->Value() > 0, false);
-        Toggle_Option_Value(low_option, ternary->Value() < 0, true);
-    }
-
-    void Main_t::Toggle_Quaternary(V::Int_Variable_t* variable,
-                                   Int_t option_a,
-                                   Int_t option_b,
-                                   Quaternary_e toggle)
-    {
-        Quaternary_e value = variable->Value();
-
-        if (toggle == Quaternary_e::A) {
-            if (value == Quaternary_e::NONE) {
-                value = Quaternary_e::A;
-            } else if (value == Quaternary_e::ALL) {
-                value = Quaternary_e::B;
-            } else if (value == Quaternary_e::A) {
-                value = Quaternary_e::NONE;
-            } else if (value == Quaternary_e::B) {
-                value = Quaternary_e::ALL;
-            }
-        } else if (toggle == Quaternary_e::B) {
-            if (value == Quaternary_e::NONE) {
-                value = Quaternary_e::B;
-            } else if (value == Quaternary_e::ALL) {
-                value = Quaternary_e::A;
-            } else if (value == Quaternary_e::A) {
-                value = Quaternary_e::ALL;
-            } else if (value == Quaternary_e::B) {
-                value = Quaternary_e::NONE;
+                value = Binary_e::B;
             }
         }
 
         variable->Value(value);
-        Toggle_Option_Value(option_a, value == Quaternary_e::A || value == Quaternary_e::ALL, false);
-        Toggle_Option_Value(option_b, value == Quaternary_e::B || value == Quaternary_e::ALL, true);
+        Toggle_Option_Value(option_a, value == Binary_e::A, false);
+        Toggle_Option_Value(option_b, value == Binary_e::B, true);
+    }
+
+    void Main_t::Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle)
+    {
+        Binary_e value = variable->Value();
+
+        if (toggle == Binary_e::A) {
+            if (value == Binary_e::NONE) {
+                value = Binary_e::A;
+            } else if (value == Binary_e::BOTH) {
+                value = Binary_e::B;
+            } else if (value == Binary_e::A) {
+                value = Binary_e::NONE;
+            } else if (value == Binary_e::B) {
+                value = Binary_e::BOTH;
+            }
+        } else if (toggle == Binary_e::B) {
+            if (value == Binary_e::NONE) {
+                value = Binary_e::B;
+            } else if (value == Binary_e::BOTH) {
+                value = Binary_e::A;
+            } else if (value == Binary_e::A) {
+                value = Binary_e::BOTH;
+            } else if (value == Binary_e::B) {
+                value = Binary_e::NONE;
+            }
+        }
+
+        variable->Value(value);
+        Toggle_Option_Value(option_a, value == Binary_e::A || value == Binary_e::BOTH, false);
+        Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
     static Bool_t Is_Same(const char* page_a, const char* page_b)
@@ -146,14 +145,27 @@ namespace doticu_npcl { namespace MCM {
 
         Vector_t<String_t> pages;
         pages.reserve(3);
-        pages.push_back(BASES_PAGE);
+        pages.push_back(STATIC_BASES_PAGE);
         pages.push_back(LEVELED_BASES_PAGE);
-        pages.push_back(REFERENCES_PAGE);
+        pages.push_back(LOADED_REFERENCES_PAGE);
         Pages(pages);
 
-        Bases_t::Self()->On_Config_Open();
+        Static_Bases_t::Self()->On_Config_Open();
         Leveled_Bases_t::Self()->On_Config_Open();
-        References_t::Self()->On_Config_Open();
+        Loaded_References_t::Self()->On_Config_Open();
+
+        Destroy_Latent_Callback(lcallback);
+
+        return true;
+    }
+
+    Bool_t Main_t::On_Config_Close(V::Machine_t* machine, V::Stack_ID_t stack_id)
+    {
+        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+
+        Static_Bases_t::Self()->On_Config_Close();
+        Leveled_Bases_t::Self()->On_Config_Close();
+        Loaded_References_t::Self()->On_Config_Close();
 
         Destroy_Latent_Callback(lcallback);
 
@@ -175,10 +187,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = current_page;
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -188,10 +200,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Select(option, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Select(option, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -201,10 +213,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -214,10 +226,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -227,10 +239,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -240,10 +252,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -253,10 +265,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -266,10 +278,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -279,10 +291,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Default(option, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Default(option, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -292,10 +304,10 @@ namespace doticu_npcl { namespace MCM {
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, BASES_PAGE))         Bases_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE)) Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, REFERENCES_PAGE))    References_t::Self()->On_Option_Highlight(option, lcallback);
-        else                                        Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
+        else                                            Destroy_Latent_Callback(lcallback);
 
         return true;
     }
@@ -312,6 +324,7 @@ namespace doticu_npcl { namespace MCM {
         W
 
         LMETHOD("OnConfigOpen", 0, void, On_Config_Open);
+        LMETHOD("OnConfigClose", 0, void, On_Config_Close);
         LMETHOD("OnPageReset", 1, void, On_Page_Open, String_t);
         LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
         LMETHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);

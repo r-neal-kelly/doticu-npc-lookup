@@ -7,21 +7,19 @@
 #include "skse64_common/skse_version.h"
 
 #include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/global.h"
 
 #include "consts.h"
 #include "main.h"
 #include "mcm_main.h"
-#include "mcm_bases.h"
-#include "mcm_leveled_bases.h"
-#include "mcm_references.h"
 
 namespace doticu_npcl {
 
-    const SKSEInterface* Main_t::SKSE = nullptr;
-    const SKSEPapyrusInterface* Main_t::SKSE_PAPYRUS = nullptr;
-    const SKSEMessagingInterface* Main_t::SKSE_MESSAGING = nullptr;
-    PluginHandle Main_t::SKSE_PLUGIN_HANDLE = 0;
+    const SKSEInterface* Main_t::SKSE                       = nullptr;
+    const SKSEPapyrusInterface* Main_t::SKSE_PAPYRUS        = nullptr;
+    const SKSEMessagingInterface* Main_t::SKSE_MESSAGING    = nullptr;
+    PluginHandle Main_t::SKSE_PLUGIN_HANDLE                 = 0;
 
     Bool_t Main_t::SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info)
     {
@@ -50,14 +48,16 @@ namespace doticu_npcl {
                         if (message) {
                             if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
                                 if (Is_Active()) {
-                                    if (!Is_Installed()) {
+                                    if (Is_Installed()) {
+                                        Before_Save();
+                                    } else {
                                         Init();
                                     }
                                 }
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
                                 if (Is_Active()) {
                                     if (Is_Installed()) {
-                                        Load();
+                                        After_Load();
                                     } else {
                                         Init();
                                     }
@@ -90,9 +90,6 @@ namespace doticu_npcl {
         W
 
         REGISTER(MCM::Main_t);
-        REGISTER(MCM::Bases_t);
-        REGISTER(MCM::Leveled_Bases_t);
-        REGISTER(MCM::References_t);
 
         #undef REGISTER
 
@@ -130,7 +127,12 @@ namespace doticu_npcl {
         skylib::Quest_t::Start(quests, new UCallback_t());
     }
 
-    void Main_t::Load()
+    void Main_t::After_Load()
+    {
+        SKYLIB_ASSERT(Is_Installed());
+    }
+
+    void Main_t::Before_Save()
     {
         SKYLIB_ASSERT(Is_Installed());
     }

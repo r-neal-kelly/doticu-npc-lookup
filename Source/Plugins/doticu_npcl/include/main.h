@@ -32,7 +32,8 @@ namespace doticu_npcl {
         static Bool_t Is_Active();
         static Bool_t Is_Installed();
         static void Init();
-        static void Load();
+        static void After_Load();
+        static void Before_Save();
     };
 
 }
