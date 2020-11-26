@@ -14,24 +14,24 @@
 #include "filter.h"
 #include "mcm_bases.h"
 #include "mcm_bases.inl"
-#include "mcm_bases_static.h"
+#include "mcm_bases_dynamic.h"
 
 namespace doticu_npcl { namespace MCM {
 
-    using Item_t = Static_Bases_Base_t::Item_t;
+    using Item_t = Dynamic_Bases_Base_t::Item_t;
 
-    String_t                Static_Bases_Base_t::Class_Name()           { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_static"); }
-    V::Class_t*             Static_Bases_Base_t::Class()                { DEFINE_CLASS(); }
-    V::Object_t*            Static_Bases_Base_t::Object()               { DEFINE_OBJECT(); }
+    String_t                    Dynamic_Bases_Base_t::Class_Name()          { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_dynamic"); }
+    V::Class_t*                 Dynamic_Bases_Base_t::Class()               { DEFINE_CLASS(); }
+    V::Object_t*                Dynamic_Bases_Base_t::Object()              { DEFINE_OBJECT(); }
 
-    Static_Bases_t*         Static_Bases_Base_t::Self()                 { return static_cast<Static_Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
-    Static_Bases_List_t*    Static_Bases_Base_t::List()                 { return reinterpret_cast<Static_Bases_List_t*>(this); }
-    Static_Bases_Filter_t*  Static_Bases_Base_t::Filter()               { return reinterpret_cast<Static_Bases_Filter_t*>(this); }
-    Static_Bases_Options_t* Static_Bases_Base_t::Options()              { return reinterpret_cast<Static_Bases_Options_t*>(this); }
-    Static_Bases_Item_t*    Static_Bases_Base_t::Item()                 { return reinterpret_cast<Static_Bases_Item_t*>(this); }
+    Dynamic_Bases_t*            Dynamic_Bases_Base_t::Self()                { return static_cast<Dynamic_Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
+    Dynamic_Bases_List_t*       Dynamic_Bases_Base_t::List()                { return reinterpret_cast<Dynamic_Bases_List_t*>(this); }
+    Dynamic_Bases_Filter_t*     Dynamic_Bases_Base_t::Filter()              { return reinterpret_cast<Dynamic_Bases_Filter_t*>(this); }
+    Dynamic_Bases_Options_t*    Dynamic_Bases_Base_t::Options()             { return reinterpret_cast<Dynamic_Bases_Options_t*>(this); }
+    Dynamic_Bases_Item_t*       Dynamic_Bases_Base_t::Item()                { return reinterpret_cast<Dynamic_Bases_Item_t*>(this); }
 
-    const char*             Static_Bases_Base_t::Item_Type_Singular()   { return "Static Base"; }
-    const char*             Static_Bases_Base_t::Item_Type_Plural()     { return "Static Bases"; }
+    const char*                 Dynamic_Bases_Base_t::Item_Type_Singular()  { return "Dynamic Base"; }
+    const char*                 Dynamic_Bases_Base_t::Item_Type_Plural()    { return "Dynamic Bases"; }
 
 }}
 
@@ -43,18 +43,16 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    Vector_t<Item_t>& Static_Bases_List_t::Items()
+    Vector_t<Item_t>& Dynamic_Bases_List_t::Items()
     {
         if (!items || do_update_items) {
             do_update_items = false;
 
-            size_t actor_base_count = Actor_Base_t::Actor_Base_Count();
-
-            read.reserve(actor_base_count);
+            read.reserve(2048);
             read.clear();
-            Actor_Base_t::Actor_Bases(read);
+            Actor_Base_t::Dynamic_Actor_Bases(read);
 
-            write.reserve(actor_base_count);
+            write.reserve(2048);
             write.clear();
 
             items = Filter()->Execute(&read, &write).Results();
@@ -84,17 +82,17 @@ namespace doticu_npcl { namespace MCM {
         return *items;
     }
 
-    Vector_t<Item_t> Static_Bases_List_t::Default_Items()
+    Vector_t<Item_t> Dynamic_Bases_List_t::Default_Items()
     {
-        return Actor_Base_t::Actor_Bases();
+        return Actor_Base_t::Dynamic_Actor_Bases();
     }
 
-    Item_t Static_Bases_List_t::Null_Item()
+    Item_t Dynamic_Bases_List_t::Null_Item()
     {
         return nullptr;
     }
 
-    void Static_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -159,7 +157,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_List_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_List_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -217,7 +215,7 @@ namespace doticu_npcl { namespace MCM {
             Item_t actor_base = Option_To_Item(option);
             if (actor_base) {
                 mcm->Disable_Option(option);
-                Item()->Static_Form_ID(actor_base->form_id);
+                Item()->Dynamic_Form_ID(actor_base->form_id);
                 Current_View(Bases_View_e::ITEM);
                 mcm->Reset_Page();
             }
@@ -230,7 +228,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Static_Bases_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -287,7 +285,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Filter_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -337,7 +335,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Filter_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -366,7 +364,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Filter_t::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -435,7 +433,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Filter_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -460,12 +458,12 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Static_Bases_Options_t::Reset()
+    void Dynamic_Bases_Options_t::Reset()
     {
         Do_Smart_Select(true);
     }
 
-    void Static_Bases_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -486,7 +484,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -521,14 +519,14 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Static_Bases_Item_t::Static_Form_ID_Variable()          { DEFINE_INT_VARIABLE("p_item_static_form_id"); }
+    V::Int_Variable_t*  Dynamic_Bases_Item_t::Dynamic_Form_ID_Variable()        { DEFINE_INT_VARIABLE("p_item_dynamic_form_id"); }
 
-    Form_ID_t           Static_Bases_Item_t::Static_Form_ID()                   { return Static_Form_ID_Variable()->Value(); }
-    void                Static_Bases_Item_t::Static_Form_ID(Form_ID_t value)    { Static_Form_ID_Variable()->Value(value); }
+    Form_ID_t           Dynamic_Bases_Item_t::Dynamic_Form_ID()                 { return Dynamic_Form_ID_Variable()->Value(); }
+    void                Dynamic_Bases_Item_t::Dynamic_Form_ID(Form_ID_t value)  { Dynamic_Form_ID_Variable()->Value(value); }
 
-    Item_t Static_Bases_Item_t::Current_Item()
+    Item_t Dynamic_Bases_Item_t::Current_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<Item_t>(Game_t::Form(Dynamic_Form_ID()));
         if (item && List()->Items().Has(item)) {
             return item;
         } else {
@@ -536,9 +534,9 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    Item_t Static_Bases_Item_t::Previous_Item()
+    Item_t Dynamic_Bases_Item_t::Previous_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<Item_t>(Game_t::Form(Dynamic_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -557,9 +555,9 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    Item_t Static_Bases_Item_t::Next_Item()
+    Item_t Dynamic_Bases_Item_t::Next_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<Item_t>(Game_t::Form(Dynamic_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -578,7 +576,7 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void Static_Bases_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -654,7 +652,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Dynamic_Bases_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -680,7 +678,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             Actor_Base_t* actor_base = Previous_Item();
             if (actor_base) {
-                Static_Form_ID(actor_base->form_id);
+                Dynamic_Form_ID(actor_base->form_id);
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);
@@ -690,7 +688,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             Actor_Base_t* actor_base = Next_Item();
             if (actor_base) {
-                Static_Form_ID(actor_base->form_id);
+                Dynamic_Form_ID(actor_base->form_id);
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

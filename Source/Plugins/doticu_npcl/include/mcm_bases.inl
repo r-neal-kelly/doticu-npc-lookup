@@ -8,6 +8,8 @@
 
 #include "doticu_mcmlib/config_base_macros.h"
 
+#include "consts.h"
+#include "mcm_selectables.h"
 #include "mcm_bases.h"
 
 #define DEFINE_BOOL     DEFINE_BOOL_VARIABLE
@@ -53,9 +55,140 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Config_Open()
+    {
+        List()->do_update_items = true;
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Config_Close()
+    {
+        List()->Clear();
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Page_Open(is_refresh, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Page_Open(is_refresh, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Select(option, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Select(option, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Select(option, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Select(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Menu_Open(option, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Menu_Open(option, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Menu_Open(option, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Menu_Open(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Menu_Accept(option, idx, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Slider_Open(option, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Slider_Open(option, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Slider_Open(option, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Slider_Open(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Slider_Accept(option, value, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Input_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Input_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Input_Accept(option, value, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Input_Accept(option, value, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Default(option, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Default(option, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Default(option, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Default(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_View_e current_view = Current_View();
+             if (current_view == Bases_View_e::LIST)    List()->On_Option_Highlight(option, lcallback);
+        else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Highlight(option, lcallback);
+        else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Highlight(option, lcallback);
+        else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Highlight(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
 }}
 
 namespace doticu_npcl { namespace MCM {
+
+    template <typename B, typename I>
+    Bool_t          Bases_List_t<B, I>::do_update_items = true;
+    template <typename B, typename I>
+    Vector_t<I>     Bases_List_t<B, I>::read = Vector_t<I>();
+    template <typename B, typename I>
+    Vector_t<I>     Bases_List_t<B, I>::write = Vector_t<I>();
+    template <typename B, typename I>
+    Vector_t<I>*    Bases_List_t<B, I>::items = nullptr;
 
     template <typename B, typename I>
     inline Int_t&   Bases_List_t<B, I>::Filter_Option()         { DEFINE_OPTION(); }
@@ -73,6 +206,97 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t    Bases_List_t<B, I>::Page_Index()            { return Page_Index_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_List_t<B, I>::Page_Index(Int_t value) { Page_Index_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline String_t Bases_List_t<B, I>::Title(Int_t item_count, Int_t page_index, Int_t page_count)
+    {
+        std::string items =
+            std::string(Item_Type_Plural()) + ": " +
+            std::to_string(item_count);
+
+        std::string pages =
+            std::string("Page: ") +
+            std::to_string(page_index + 1) + "/" +
+            std::to_string(page_count);
+
+        return items + "               " + pages;
+    }
+
+    template <typename Base_t, typename Item_t>
+    inline Item_t Bases_List_t<Base_t, Item_t>::Option_To_Item(Int_t option)
+    {
+        Int_t relative_idx = mcmlib::Option_t(option).position - HEADERS_PER_PAGE;
+        if (relative_idx > -1 && relative_idx < ITEMS_PER_PAGE) {
+            Vector_t<Item_t>& items = List()->Items();
+            Int_t absolute_idx = Page_Index() * ITEMS_PER_PAGE + relative_idx;
+            if (absolute_idx > -1 && absolute_idx < items.size()) {
+                return items[absolute_idx];
+            } else {
+                return List()->Null_Item();
+            }
+        } else {
+            return List()->Null_Item();
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::Clear()
+    {
+        do_update_items = true;
+        read.clear();
+        write.clear();
+    }
+
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_List_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
 
 }}
 
@@ -101,6 +325,12 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Base_Negate_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Template_Search_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Template_Select_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Template_Negate_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Select_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Negate_Option()  { DEFINE_OPTION(); }
@@ -125,6 +355,10 @@ namespace doticu_npcl { namespace MCM {
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Base_Argument_Variable()              { DEFINE_STRING("p_filter_base_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Base_Do_Negate_Variable()             { DEFINE_BOOL("p_filter_base_do_negate"); }
+    template <typename B, typename I>
+    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Template_Argument_Variable()          { DEFINE_STRING("p_filter_template_argument"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Template_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_template_do_negate"); }
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_STRING("p_filter_relation_argument"); }
     template <typename B, typename I>
@@ -159,6 +393,14 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Base_Do_Negate(Bool_t value)              { Base_Do_Negate_Variable()->Value(value); }
     template <typename B, typename I>
+    inline String_t Bases_Filter_t<B, I>::Template_Argument()                       { return Template_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Template_Argument(String_t value)         { Template_Argument_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Bool_t   Bases_Filter_t<B, I>::Template_Do_Negate()                      { return Template_Do_Negate_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Template_Do_Negate(Bool_t value)          { Template_Do_Negate_Variable()->Value(value); }
+    template <typename B, typename I>
     inline String_t Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
@@ -175,647 +417,129 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Unique_Generic_Argument(Binary_e value)   { Unique_Generic_Argument_Variable()->Value(value); }
 
-    template <typename Item_t>
-    using Collect_f             = void(*)(Item_t, Vector_t<String_t>&);
-    template <typename Item_t>
-    using Collect_Relation_f    = void(*)(Item_t, Actor_Base_t*, Vector_t<String_t>&);
-
-    template <typename Item_t>
-    class Selectables_Data_t
+    template <typename B, typename I>
+    inline String_t Bases_Filter_t<B, I>::Title()
     {
-    public:
-        Vector_t<Item_t>    items;
-        Vector_t<String_t>  results;
-        Vector_t<String_t>  buffer;
+        return std::string(Item_Type_Plural()) + ": Filter ";
+    }
 
-        void Reserve()
-        {
-            size_t item_count = items.size();
-            if (item_count > 2048) {
-                results.reserve(2048);
-            } else {
-                results.reserve(item_count);
-            }
-            buffer.reserve(128);
-        }
-
-        void Select(Collect_f<Item_t> Collect)
-        {
-            Reserve();
-
-            results.push_back(" Any ");
-            for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
-                Item_t item = items.at(idx);
-                if (item) {
-                    Collect(item, buffer);
-                    for (Index_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
-                        String_t string = buffer[idx];
-                        if (string && !results.Has(string)) {
-                            results.push_back(string);
-                        }
-                    }
-                    buffer.clear();
-                }
-            }
-
-            Sort();
-        }
-
-        void Select(Collect_Relation_f<Item_t> Collect, Actor_Base_t* base_to_compare)
-        {
-            Reserve();
-
-            results.push_back(" Any ");
-            for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
-                Item_t item = items.at(idx);
-                if (item) {
-                    Collect(item, base_to_compare, buffer);
-                    for (Index_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
-                        String_t string = buffer[idx];
-                        if (string && !results.Has(string)) {
-                            results.push_back(string);
-                        }
-                    }
-                    buffer.clear();
-                }
-            }
-
-            Sort();
-        }
-
-        void Sort()
-        {
-            static auto comparator = [](String_t* str_a, String_t* str_b)->Int_t
-            {
-                return Main_t::String_Comparator(
-                    str_a ? str_a->data : "",
-                    str_b ? str_b->data : ""
-                );
-            };
-            results.Sort(comparator, 1);
-        }
-
-        Vector_t<String_t> Results()
-        {
-            return results;
-        }
-    };
-
-    template <typename Base_t, typename Item_t, typename Selectable_t>
-    class Selectables_i : public Selectables_Data_t<Item_t>
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::Clear()
     {
-    public:
-        Selectables_i()
-        {
-            STATIC_ASSERT(false);
-        }
-    };
+        Mod_Argument("");
+        Mod_Do_Negate(false);
+
+        Race_Argument("");
+        Race_Do_Negate(false);
+
+        Base_Argument("");
+        Base_Do_Negate(false);
+
+        Template_Argument("");
+        Template_Do_Negate(false);
+
+        Relation_Argument("");
+        Relation_Do_Negate(false);
+
+        Male_Female_Argument(Binary_e::NONE);
+        Unique_Generic_Argument(Binary_e::NONE);
+    }
 
     template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Mod_t*> : public Selectables_Data_t<Item_t>
+    inline Filter_State_t<Item_t> Bases_Filter_t<Base_t, Item_t>::Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write)
     {
-    public:
-        using Selectable_t = Mod_t*;
+        Actor_Base_t* relatable_base = Consts_t::Skyrim_Player_Actor_Base();
+        Relation_e relation_argument = Relation_e::From_String(Relation_Argument());
 
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
+        Filter_State_t<Item_t> filter_state(read, write);
 
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Mod_Argument();
-                filter->Mod_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Mod_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
+        Mod_Filter_t<Item_t>(filter_state, Mod_Argument(), Mod_Do_Negate());
+        Race_Filter_t<Item_t>(filter_state, Race_Argument(), Race_Do_Negate());
+        Base_Filter_t<Item_t>(filter_state, Base_Argument(), Base_Do_Negate());
+        Template_Filter_t<Item_t>(filter_state, Template_Argument(), Template_Do_Negate());
+        Relation_Filter_t<Item_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
+        Male_Female_Filter_t<Item_t>(filter_state, Male_Female_Argument());
+        Unique_Generic_Filter_t<Item_t>(filter_state, Unique_Generic_Argument());
 
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
+        return std::move(filter_state);
+    }
 
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Race_t*> : public Selectables_Data_t<Item_t>
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Mods()
     {
-    public:
-        using Selectable_t = Race_t*;
-
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Race_Argument();
-                filter->Race_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Race_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Actor_Base_t*> : public Selectables_Data_t<Item_t>
+        return Selectable_Mods_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Races()
     {
-    public:
-        using Selectable_t = Actor_Base_t*;
-
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Base_Argument();
-                filter->Base_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Base_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Actor_t*> : public Selectables_Data_t<Item_t>
+        return Selectable_Races_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Bases()
     {
-    public:
-        using Selectable_t = Actor_t*;
-
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Reference_Argument();
-                filter->Reference_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Reference_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Worldspace_t*> : public Selectables_Data_t<Item_t>
+        return Selectable_Bases_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Templates()
     {
-    public:
-        using Selectable_t = Worldspace_t*;
-
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Worldspace_Argument();
-                filter->Worldspace_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Worldspace_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Location_t*> : public Selectables_Data_t<Item_t>
+        return Selectable_Templates_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Relations()
     {
-    public:
-        using Selectable_t = Location_t*;
+        return Selectable_Relations_t<B, I>(Consts_t::Skyrim_Player_Actor_Base()).Results();
+    }
 
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Location_Argument();
-                filter->Location_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Location_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Cell_t*> : public Selectables_Data_t<Item_t>
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-    public:
-        using Selectable_t = Cell_t*;
-
-    public:
-        Selectables_i(Collect_f<Item_t> Collect)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Cell_Argument();
-                filter->Cell_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Cell_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Selectables_i<Base_t, Item_t, Relation_e> : public Selectables_Data_t<Item_t>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-    public:
-        using Selectable_t = Relation_e;
-
-    public:
-        Selectables_i(Collect_Relation_f<Item_t> Collect, Actor_Base_t* base_to_compare)
-        {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = filter->Relation_Argument();
-                filter->Relation_Argument("");
-                list->do_update_items = true;
-                items = list->Items();
-                filter->Relation_Argument(current);
-            } else {
-                items = list->Default_Items();
-            }
-            Selectables_Data_t<Item_t>::Select(Collect, base_to_compare);
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Mod_Selectables_t : public Selectables_i<Base_t, Item_t, Mod_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-    public:
-        using Selectable_t = Mod_t*;
-
-    public:
-        Mod_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            item->Mod_Names(output);
-        }
-    };
-
-    template <typename Base_t>
-    class Mod_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Mod_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Mod_t*;
-
-    public:
-        Mod_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                item.actor->Mod_Names(output);
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Race_Selectables_t : public Selectables_i<Base_t, Item_t, Race_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-    };
-
-    template <typename Base_t>
-    class Race_Selectables_t<Base_t, Actor_Base_t*> : public Selectables_i<Base_t, Actor_Base_t*, Race_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
     {
-    public:
-        using Item_t = Actor_Base_t*;
-        using Selectable_t = Race_t*;
-
-    public:
-        Race_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            Race_t* race = item->Race();
-            if (race) {
-                output.push_back(race->Get_Editor_ID());
-            } else {
-                output.push_back("");
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Race_Selectables_t<Base_t, Leveled_Actor_Base_t*> : public Selectables_i<Base_t, Leveled_Actor_Base_t*, Race_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-        using Selectable_t = Race_t*;
-
-    public:
-        Race_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            item->Race_Names(output);
-        }
-    };
-
-    template <typename Base_t>
-    class Race_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Race_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
     {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Race_t*;
-
-    public:
-        Race_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                Race_Selectables_t<Base_t, Actor_Base_t*>::Collect(item.actor->Actor_Base(), output);
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Base_Selectables_t : public Selectables_i<Base_t, Item_t, Actor_Base_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
     {
-    };
-
-    template <typename Base_t>
-    class Base_Selectables_t<Base_t, Actor_Base_t*> : public Selectables_i<Base_t, Actor_Base_t*, Actor_Base_t*>
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-    public:
-        using Item_t = Actor_Base_t*;
-        using Selectable_t = Actor_Base_t*;
-
-    public:
-        Base_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            output.push_back(item->Any_Name());
-        }
-    };
-
-    template <typename Base_t>
-    class Base_Selectables_t<Base_t, Leveled_Actor_Base_t*> : public Selectables_i<Base_t, Leveled_Actor_Base_t*, Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-        using Selectable_t = Actor_Base_t*;
-
-    public:
-        Base_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            item->Actor_Base_Names(output);
-        }
-    };
-
-    template <typename Base_t>
-    class Base_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Actor_Base_t*>
-    {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Actor_Base_t*;
-
-    public:
-        Base_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                Base_Selectables_t<Base_t, Actor_Base_t*>::Collect(item.actor->Actor_Base(), output);
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Reference_Selectables_t : public Selectables_i<Base_t, Item_t, Actor_t*>
-    {
-    };
-
-    template <typename Base_t>
-    class Reference_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Actor_t*>
-    {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Actor_t*;
-
-    public:
-        Reference_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                output.push_back(item.actor->Any_Name());
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Location_Selectables_t : public Selectables_i<Base_t, Item_t, Location_t*>
-    {
-    };
-
-    template <typename Base_t>
-    class Location_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Location_t*>
-    {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Location_t*;
-
-    public:
-        Location_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                item.cell->Location_Names(output);
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Cell_Selectables_t : public Selectables_i<Base_t, Item_t, Cell_t*>
-    {
-    };
-
-    template <typename Base_t>
-    class Cell_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Cell_t*>
-    {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Cell_t*;
-
-    public:
-        Cell_Selectables_t() :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect)
-        {
-        }
-
-        static void Collect(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                output.push_back(item.cell->Any_Name());
-            }
-        }
-    };
-
-    template <typename Base_t, typename Item_t>
-    class Relation_Selectables_t : public Selectables_i<Base_t, Item_t, Relation_e>
-    {
-    };
-
-    template <typename Base_t>
-    class Relation_Selectables_t<Base_t, Actor_Base_t*> : public Selectables_i<Base_t, Actor_Base_t*, Relation_e>
-    {
-    public:
-        using Item_t = Actor_Base_t*;
-        using Selectable_t = Relation_e;
-
-    public:
-        Relation_Selectables_t(Actor_Base_t* base_to_compare) :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect, base_to_compare)
-        {
-        }
-
-        static void Collect(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
-        {
-            Relation_e relation = Relation_e::Between(item, base_to_compare);
-            if (relation != Relation_e::NONE) {
-                output.push_back(std::string(" ") + Relation_e::To_String(relation) + " ");
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Relation_Selectables_t<Base_t, Leveled_Actor_Base_t*> : public Selectables_i<Base_t, Leveled_Actor_Base_t*, Relation_e>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-        using Selectable_t = Relation_e;
-
-    public:
-        Relation_Selectables_t(Actor_Base_t* base_to_compare) :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect, base_to_compare)
-        {
-        }
-
-        static void Collect(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
-        {
-            Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
-            for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                Actor_Base_t* actor_base = actor_bases[idx];
-                if (actor_base) {
-                    Relation_e relation = Relation_e::Between(actor_base, base_to_compare);
-                    if (relation != Relation_e::NONE) {
-                        String_t relation_name = std::string(" ") + Relation_e::To_String(relation) + " ";
-                        if (!output.Has(relation_name)) {
-                            output.push_back(relation_name);
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Relation_Selectables_t<Base_t, Loaded_Actor_t> : public Selectables_i<Base_t, Loaded_Actor_t, Relation_e>
-    {
-    public:
-        using Item_t = Loaded_Actor_t;
-        using Selectable_t = Relation_e;
-
-    public:
-        Relation_Selectables_t(Actor_Base_t* base_to_compare) :
-            Selectables_i<Base_t, Item_t, Selectable_t>(&Collect, base_to_compare)
-        {
-        }
-
-        static void Collect(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
-        {
-            if (item.Is_Valid()) {
-                Relation_Selectables_t<Base_t, Actor_Base_t*>::Collect(item.actor->Actor_Base(), base_to_compare, output);
-            }
-        }
-    };
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
 
 }}
 
@@ -852,6 +576,63 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Persistent_Spawns(Bool_t value)   { Do_Persistent_Spawns_Variable()->Value(value); }
 
+    template <typename B, typename I>
+    inline String_t Bases_Options_t<B, I>::Title()
+    {
+        return std::string(Item_Type_Plural()) + ": Options ";
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -865,4 +646,65 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::Spawn_Option()      { DEFINE_OPTION(); }
 
+    template <typename B, typename I>
+    inline String_t Bases_Item_t<B, I>::Title(const char* item_name)
+    {
+        return std::string(Item_Type_Singular()) + ": " + item_name;
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+
 }}
+
+#undef DEFINE_BOOL
+#undef DEFINE_INT
+#undef DEFINE_STRING

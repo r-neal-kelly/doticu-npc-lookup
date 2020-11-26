@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "doticu_mcmlib/config_base_macros.h"
@@ -11,6 +12,10 @@
 #include "mcm_bases.h"
 #include "mcm_bases.inl"
 #include "mcm_references.h"
+
+#define DEFINE_BOOL     DEFINE_BOOL_VARIABLE
+#define DEFINE_INT      DEFINE_INT_VARIABLE
+#define DEFINE_STRING   DEFINE_STRING_VARIABLE
 
 namespace doticu_npcl { namespace MCM {
 
@@ -111,6 +116,61 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Interior_Exterior_Argument(Binary_e value)   { Interior_Exterior_Argument_Variable()->Value(value); }
 
+    template <typename B, typename I>
+    inline void References_Filter_t<B, I>::Clear()
+    {
+        Bases_Filter_t<B, I>::Clear();
+
+        Reference_Argument("");
+        Reference_Do_Negate(false);
+
+        Worldspace_Argument("");
+        Worldspace_Do_Negate(false);
+
+        Location_Argument("");
+        Location_Do_Negate(false);
+
+        Cell_Argument("");
+        Cell_Do_Negate(false);
+
+        Interior_Exterior_Argument(Binary_e::NONE);
+    }
+
+    template <typename Base_t, typename Item_t>
+    inline Filter_State_t<Item_t> References_Filter_t<Base_t, Item_t>::Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write)
+    {
+        Filter_State_t<Item_t> filter_state = Bases_Filter_t<Base_t, Item_t>::Execute(read, write);
+
+        Reference_Filter_t<Item_t>(filter_state, Reference_Argument(), Reference_Do_Negate());
+        //Worldspace_Filter_t<Item_t>(filter_state, Worldspace_Argument(), Worldspace_Do_Negate());
+        Location_Filter_t<Item_t>(filter_state, Location_Argument(), Location_Do_Negate());
+        Cell_Filter_t<Item_t>(filter_state, Cell_Argument(), Cell_Do_Negate());
+        Interior_Exterior_Filter_t<Item_t>(filter_state, Interior_Exterior_Argument());
+
+        return std::move(filter_state);
+    }
+
+    template <typename B, typename I>
+    inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_References()
+    {
+        return Selectable_References_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Worldspaces()
+    {
+        return Vector_t<String_t>();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Locations()
+    {
+        return Selectable_Locations_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Cells()
+    {
+        return Selectable_Cells_t<B, I>().Results();
+    }
+
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -124,3 +184,7 @@ namespace doticu_npcl { namespace MCM {
 
 
 }}
+
+#undef DEFINE_BOOL
+#undef DEFINE_INT
+#undef DEFINE_STRING

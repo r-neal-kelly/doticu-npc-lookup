@@ -29,80 +29,52 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_Filter_t*     Filter();
         Loaded_References_Options_t*    Options();
         Loaded_References_Item_t*       Item();
+
+        static const char*              Item_Type_Singular();
+        static const char*              Item_Type_Plural();
     };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
 
     class Loaded_References_t : public References_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
-    public:
-        void On_Config_Open();
-        void On_Config_Close();
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
 
     class Loaded_References_List_t : public References_List_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
     public:
-        static Bool_t               do_update_items;
-        static Vector_t<Item_t>     read;
-        static Vector_t<Item_t>     write;
-        static Vector_t<Item_t>*    items;
-
-    public:
-        String_t            Title(Int_t item_count, Int_t page_index, Int_t page_count);
         Vector_t<Item_t>&   Items();
         Vector_t<Item_t>    Default_Items();
-        Item_t              Option_To_Item(Int_t option);
-        void                Clear();
+        Item_t              Null_Item();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
 
     class Loaded_References_Filter_t : public References_Filter_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
     public:
-        Vector_t<Item_t>*   Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write);
-        void                Clear();
-
-        Vector_t<String_t>  Selectable_Mods();
-        Vector_t<String_t>  Selectable_Races();
-        Vector_t<String_t>  Selectable_Bases();
-        Vector_t<String_t>  Selectable_References();
-        Vector_t<String_t>  Selectable_Worldspaces();
-        Vector_t<String_t>  Selectable_Locations();
-        Vector_t<String_t>  Selectable_Cells();
-        Vector_t<String_t>  Selectable_Relations();
-
-    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
         void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
 
     class Loaded_References_Options_t : public References_Options_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
@@ -112,15 +84,11 @@ namespace doticu_npcl { namespace MCM {
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
 
     class Loaded_References_Item_t : public References_Item_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
@@ -142,14 +110,6 @@ namespace doticu_npcl { namespace MCM {
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

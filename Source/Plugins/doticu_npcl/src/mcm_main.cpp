@@ -7,8 +7,12 @@
 #include "consts.h"
 #include "mcm_main.h"
 #include "mcm_bases.h"
+#include "mcm_bases.inl"
 #include "mcm_bases_static.h"
+#include "mcm_bases_dynamic.h"
 #include "mcm_bases_leveled.h"
+#include "mcm_references.h"
+#include "mcm_references.inl"
 #include "mcm_references_loaded.h"
 
 namespace doticu_npcl { namespace MCM {
@@ -144,13 +148,15 @@ namespace doticu_npcl { namespace MCM {
         Mod_Name(MOD_NAME);
 
         Vector_t<String_t> pages;
-        pages.reserve(3);
+        pages.reserve(4);
         pages.push_back(STATIC_BASES_PAGE);
+        pages.push_back(DYNAMIC_BASES_PAGE);
         pages.push_back(LEVELED_BASES_PAGE);
         pages.push_back(LOADED_REFERENCES_PAGE);
         Pages(pages);
 
         Static_Bases_t::Self()->On_Config_Open();
+        Dynamic_Bases_t::Self()->On_Config_Open();
         Leveled_Bases_t::Self()->On_Config_Open();
         Loaded_References_t::Self()->On_Config_Open();
 
@@ -164,6 +170,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
         Static_Bases_t::Self()->On_Config_Close();
+        Dynamic_Bases_t::Self()->On_Config_Close();
         Leveled_Bases_t::Self()->On_Config_Close();
         Loaded_References_t::Self()->On_Config_Close();
 
@@ -188,6 +195,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -201,6 +209,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Select(option, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -214,6 +223,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -227,6 +237,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -240,6 +251,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -253,6 +265,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -266,6 +279,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -279,6 +293,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -292,6 +307,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Default(option, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);
@@ -305,6 +321,7 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
              if (Is_Same(page, STATIC_BASES_PAGE))      Static_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES_PAGE))     Dynamic_Bases_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, LEVELED_BASES_PAGE))     Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE)) Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
         else                                            Destroy_Latent_Callback(lcallback);

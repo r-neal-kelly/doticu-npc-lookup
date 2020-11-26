@@ -89,6 +89,15 @@ namespace doticu_npcl { namespace MCM {
 
         Binary_e    Interior_Exterior_Argument();
         void        Interior_Exterior_Argument(Binary_e value);
+
+    public:
+        void                    Clear();
+        Filter_State_t<Item_t>  Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write);
+
+        Vector_t<String_t>      Selectable_References();
+        Vector_t<String_t>      Selectable_Worldspaces();
+        Vector_t<String_t>      Selectable_Locations();
+        Vector_t<String_t>      Selectable_Cells();
     };
 
 }}

@@ -52,6 +52,7 @@ namespace doticu_npcl { namespace MCM {
     public:
         static constexpr const char*    MOD_NAME                = " NPC Lookup ";
         static constexpr const char*    STATIC_BASES_PAGE       = " Static Bases ";
+        static constexpr const char*    DYNAMIC_BASES_PAGE      = " Dynamic Bases ";
         static constexpr const char*    LEVELED_BASES_PAGE      = " Leveled Bases ";
         static constexpr const char*    LOADED_REFERENCES_PAGE  = " Loaded References ";
         static constexpr const char*    DEFAULT_PAGE            = STATIC_BASES_PAGE;

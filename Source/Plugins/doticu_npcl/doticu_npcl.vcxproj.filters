@@ -56,6 +56,12 @@
     <ClInclude Include="include\mcm_references_loaded.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\mcm_bases_dynamic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\mcm_selectables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -74,6 +80,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\mcm_references_loaded.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mcm_bases_dynamic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

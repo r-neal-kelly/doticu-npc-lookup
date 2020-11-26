@@ -82,16 +82,19 @@
     <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\main.h" />
     <ClInclude Include="include\mcm_bases.h" />
+    <ClInclude Include="include\mcm_bases_dynamic.h" />
     <ClInclude Include="include\mcm_bases_leveled.h" />
     <ClInclude Include="include\mcm_bases_static.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\mcm_references.h" />
     <ClInclude Include="include\mcm_references_loaded.h" />
+    <ClInclude Include="include\mcm_selectables.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mcm_bases_dynamic.cpp" />
     <ClCompile Include="src\mcm_bases_leveled.cpp" />
     <ClCompile Include="src\mcm_bases_static.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
