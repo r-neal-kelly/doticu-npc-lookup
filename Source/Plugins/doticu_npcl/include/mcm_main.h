@@ -72,6 +72,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    CLEAR_LABEL             = "                              Clear";
         static constexpr const char*    RESET_LABEL             = "                              Reset";
         static constexpr const char*    SPAWN_LABEL             = "                             Spawn";
+        static constexpr const char*    UNSPAWN_LABEL           = "                            Unspawn";
 
     public:
         static Main_t*      Self();

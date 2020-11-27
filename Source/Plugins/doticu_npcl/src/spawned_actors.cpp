@@ -180,7 +180,7 @@ namespace doticu_npcl {
 
     Bool_t Spawned_Actors_t::Remove(Actor_t* actor)
     {
-        Remove(Index_Of(actor));
+        return Remove(Index_Of(actor));
     }
 
     Bool_t Spawned_Actors_t::Remove(Index_t index)

@@ -271,7 +271,7 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Back_Option();
         Int_t&  Previous_Option();
         Int_t&  Next_Option();
-        Int_t&  Spawn_Option();
+        Int_t&  Primary_Option();
 
     public:
         String_t Title(const char* item_name);

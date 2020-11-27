@@ -656,7 +656,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::Next_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Spawn_Option()      { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()    { DEFINE_OPTION(); }
 
     template <typename B, typename I>
     inline String_t Bases_Item_t<B, I>::Title(const char* item_name)

@@ -589,7 +589,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
             Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
-            Spawn_Option() = mcm->Add_Text_Option(Main_t::SPAWN_LABEL, "");
+            Primary_Option() = mcm->Add_Text_Option(Main_t::SPAWN_LABEL, "");
             if (List()->Items().size() > 1) {
                 Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "");
                 Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "");
@@ -662,7 +662,7 @@ namespace doticu_npcl { namespace MCM {
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);
             mcm->Reset_Page();
-        } else if (option == Spawn_Option()) {
+        } else if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
             Actor_Base_t* actor_base = Current_Item();
             if (actor_base && actor_base->Is_Valid()) {
