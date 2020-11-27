@@ -1,6 +1,18 @@
 # doticu-npc-lookup
 *An in-game way to find any NPC for The Elder Scrolls V: Skyrim Special Edition.*
 
+## Features
+- A SkyUI MCM menu for each of the following:
+    - Static Bases
+    - Dynamic Bases
+    - Leveled Bases
+    - Loaded References
+    - Spawned References
+- An extensive filter to narrow down what you're looking for.
+- You can spawn any static, dynamic, or leveled NPC in the game.
+- Keeps track of any spawns you make, so you can delete them.
+- It's remarkably fast and compatible!
+
 ## Requires
 - [Skyrim SE 1.5.97](https://store.steampowered.com/app/489830/The_Elder_Scrolls_V_Skyrim_Special_Edition/)
 - [SKSE 2.0.19+](https://skse.silverlock.org/)
@@ -21,7 +33,7 @@
 - [Creation Kit Wiki](https://www.creationkit.com/index.php?title=Main_Page) for the wealth of knowledge with which this mod was made.
 - [GitHub](https://github.com) for giving my codebase a place to live online.
 - [NexusMods](https://www.nexusmods.com/) for such a great site, and for hosting my mod!
-- bloodstone2008 for the asking if a mod like this could be done, and his kindness and inspiration!
+- bloodstone2008 at NexusMods for the asking if a mod like this could be done, and his kindness and inspiration that led me to make it!
 - beta testers, for your interest, bug reports, and suggestions to make this mod better and better.
 - my family, for giving me the time, space, and sustenance to make this mod.
 - and every one else who has helped me directly or indirectly, if I have failed to mention you!
