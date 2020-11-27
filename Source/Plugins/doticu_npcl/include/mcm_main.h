@@ -35,11 +35,15 @@ namespace doticu_npcl { namespace MCM {
 
     namespace V {
 
+        using Array_t           = skylib::Virtual::Array_t;
         using Class_t           = skylib::Virtual::Class_t;
         using Machine_t         = skylib::Virtual::Machine_t;
         using Object_t          = skylib::Virtual::Object_t;
         using Stack_ID_t        = skylib::Virtual::Stack_ID_t;
         using Variable_t        = skylib::Virtual::Variable_t;
+
+        template <typename T>
+        using Array_Variable_t  = skylib::Virtual::Array_Variable_t<T>;
         using Bool_Variable_t   = skylib::Virtual::Bool_Variable_t;
         using Int_Variable_t    = skylib::Virtual::Int_Variable_t;
         using String_Variable_t = skylib::Virtual::String_Variable_t;
@@ -55,6 +59,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    DYNAMIC_BASES_PAGE      = " Dynamic Bases ";
         static constexpr const char*    LEVELED_BASES_PAGE      = " Leveled Bases ";
         static constexpr const char*    LOADED_REFERENCES_PAGE  = " Loaded References ";
+        static constexpr const char*    SPAWNED_REFERENCES_PAGE = " Spawned References ";
         static constexpr const char*    DEFAULT_PAGE            = STATIC_BASES_PAGE;
 
         static constexpr const char*    FILTER_LABEL            = "                               Filter";
@@ -91,6 +96,8 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
     public:
+        void On_Load();
+        void On_Save();
         Bool_t On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id);
         Bool_t On_Config_Close(V::Machine_t* machine, V::Stack_ID_t stack_id);
         Bool_t On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page);

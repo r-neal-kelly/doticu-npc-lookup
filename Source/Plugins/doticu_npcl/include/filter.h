@@ -246,6 +246,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Mod_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Mod_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Mod_Filter_t<Form_t*>::Compare(item, string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Mod_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -362,6 +384,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Race_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Race_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Race_Filter_t<Race_t*>::Compare(item->Race(), string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Race_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -456,6 +500,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Base_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Base_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Base_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Base_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -531,6 +597,28 @@ namespace doticu_npcl {
                     }
                 }
                 return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Template_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Template_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Template_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -673,6 +761,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Location_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Location_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Location_Filter_t<Cell_t*>::Compare(item->Cell(), string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Location_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -731,6 +841,28 @@ namespace doticu_npcl {
                         return Filter_e::ISNT_MATCH;
                     }
                 }
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Cell_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Cell_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                return Cell_Filter_t<Cell_t*>::Compare(item->Cell(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -813,6 +945,28 @@ namespace doticu_npcl {
                     }
                 }
                 return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Relation_Filter_t<Actor_t*> : public Relation_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Relation_Filter_t(Filter_State_t<Item_t>& state, Actor_Base_t* base_to_compare, Relation_e relation, Bool_t do_negate) :
+            Relation_Filter_i<Item_t>(state, base_to_compare, relation, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Actor_Base_t* base_to_compare, Relation_e relation)
+        {
+            if (item && item->Is_Valid()) {
+                return Relation_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), base_to_compare, relation);
             } else {
                 return Filter_e::INVALID;
             }
@@ -918,6 +1072,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Male_Female_Filter_t<Actor_t*> : public Binary_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Male_Female_Filter_t(Filter_State_t<Item_t>& state, Binary_e binary) :
+            Binary_Filter_i<Item_t>(state, binary, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Binary_e binary)
+        {
+            if (item && item->Is_Valid()) {
+                return Male_Female_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), binary);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Male_Female_Filter_t<Loaded_Actor_t> : public Binary_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -1016,6 +1192,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Unique_Generic_Filter_t<Actor_t*> : public Binary_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Unique_Generic_Filter_t(Filter_State_t<Item_t>& state, Binary_e binary) :
+            Binary_Filter_i<Item_t>(state, binary, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Binary_e binary)
+        {
+            if (item && item->Is_Valid()) {
+                return Unique_Generic_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), binary);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Unique_Generic_Filter_t<Loaded_Actor_t> : public Binary_Filter_i<Loaded_Actor_t>
     {
     public:
@@ -1078,6 +1276,28 @@ namespace doticu_npcl {
                 } else {
                     return Filter_e::INVALID;
                 }
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Interior_Exterior_Filter_t<Actor_t*> : public Binary_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Interior_Exterior_Filter_t(Filter_State_t<Item_t>& state, Binary_e binary) :
+            Binary_Filter_i<Item_t>(state, binary, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Binary_e binary)
+        {
+            if (item && item->Is_Valid()) {
+                return Interior_Exterior_Filter_t<Cell_t*>::Compare(item->Cell(), binary);
             } else {
                 return Filter_e::INVALID;
             }

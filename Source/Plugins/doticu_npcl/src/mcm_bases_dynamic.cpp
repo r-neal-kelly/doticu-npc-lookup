@@ -12,6 +12,7 @@
 
 #include "consts.h"
 #include "filter.h"
+#include "spawned_actors.h"
 #include "mcm_bases.h"
 #include "mcm_bases.inl"
 #include "mcm_bases_dynamic.h"
@@ -672,6 +673,7 @@ namespace doticu_npcl { namespace MCM {
                     if (Options()->Do_Uncombative_Spawns()) {
                         actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
                     }
+                    Spawned_Actors_t::Self().Add(actor);
                 }
             }
         } else if (option == Previous_Option()) {

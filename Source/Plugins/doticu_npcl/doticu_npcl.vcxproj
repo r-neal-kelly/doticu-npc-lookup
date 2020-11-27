@@ -89,7 +89,9 @@
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\mcm_references.h" />
     <ClInclude Include="include\mcm_references_loaded.h" />
+    <ClInclude Include="include\mcm_references_spawned.h" />
     <ClInclude Include="include\mcm_selectables.h" />
+    <ClInclude Include="include\spawned_actors.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\consts.cpp" />
@@ -99,6 +101,8 @@
     <ClCompile Include="src\mcm_bases_static.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
     <ClCompile Include="src\mcm_references_loaded.cpp" />
+    <ClCompile Include="src\mcm_references_spawned.cpp" />
+    <ClCompile Include="src\spawned_actors.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

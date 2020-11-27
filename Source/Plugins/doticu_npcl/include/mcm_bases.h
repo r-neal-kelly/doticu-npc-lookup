@@ -39,6 +39,8 @@ namespace doticu_npcl { namespace MCM {
         void            Current_View(Bases_View_e value);
 
     public:
+        void On_Load();
+        void On_Save();
         void On_Config_Open();
         void On_Config_Close();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

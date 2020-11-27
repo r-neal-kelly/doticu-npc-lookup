@@ -3,59 +3,121 @@
 */
 
 #include "doticu_skylib/actor.h"
-#include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/cell.h"
 #include "doticu_skylib/game.h"
-#include "doticu_skylib/mod.h"
-#include "doticu_skylib/race.h"
-#include "doticu_skylib/relation.h"
-#include "doticu_skylib/reference.h"
 
 #include "consts.h"
 #include "filter.h"
 #include "spawned_actors.h"
-#include "mcm_bases.h"
-#include "mcm_bases.inl"
-#include "mcm_bases_static.h"
+#include "mcm_references.h"
+#include "mcm_references.inl"
+#include "mcm_references_spawned.h"
 
 namespace doticu_npcl { namespace MCM {
 
-    using Item_t = Static_Bases_Base_t::Item_t;
+    using Item_t = Spawned_References_Base_t::Item_t;
 
-    String_t                Static_Bases_Base_t::Class_Name()           { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_static"); }
-    V::Class_t*             Static_Bases_Base_t::Class()                { DEFINE_CLASS(); }
-    V::Object_t*            Static_Bases_Base_t::Object()               { DEFINE_OBJECT(); }
+    String_t                        Spawned_References_Base_t::Class_Name()         { DEFINE_CLASS_NAME("doticu_npcl_mcm_references_spawned"); }
+    V::Class_t*                     Spawned_References_Base_t::Class()              { DEFINE_CLASS(); }
+    V::Object_t*                    Spawned_References_Base_t::Object()             { DEFINE_OBJECT(); }
 
-    Static_Bases_t*         Static_Bases_Base_t::Self()                 { return static_cast<Static_Bases_t*>(Consts_t::NPCL_MCM_Quest()); }
-    Static_Bases_List_t*    Static_Bases_Base_t::List()                 { return reinterpret_cast<Static_Bases_List_t*>(this); }
-    Static_Bases_Filter_t*  Static_Bases_Base_t::Filter()               { return reinterpret_cast<Static_Bases_Filter_t*>(this); }
-    Static_Bases_Options_t* Static_Bases_Base_t::Options()              { return reinterpret_cast<Static_Bases_Options_t*>(this); }
-    Static_Bases_Item_t*    Static_Bases_Base_t::Item()                 { return reinterpret_cast<Static_Bases_Item_t*>(this); }
+    Spawned_References_t*           Spawned_References_Base_t::Self()               { return static_cast<Spawned_References_t*>(Consts_t::NPCL_MCM_Quest()); }
+    Spawned_References_List_t*      Spawned_References_Base_t::List()               { return reinterpret_cast<Spawned_References_List_t*>(this); }
+    Spawned_References_Filter_t*    Spawned_References_Base_t::Filter()             { return reinterpret_cast<Spawned_References_Filter_t*>(this); }
+    Spawned_References_Options_t*   Spawned_References_Base_t::Options()            { return reinterpret_cast<Spawned_References_Options_t*>(this); }
+    Spawned_References_Item_t*      Spawned_References_Base_t::Item()               { return reinterpret_cast<Spawned_References_Item_t*>(this); }
 
-    const char*             Static_Bases_Base_t::Item_Type_Singular()   { return "Static Base"; }
-    const char*             Static_Bases_Base_t::Item_Type_Plural()     { return "Static Bases"; }
+    const char*                     Spawned_References_Base_t::Item_Type_Singular() { return "Spawned Reference"; }
+    const char*                     Spawned_References_Base_t::Item_Type_Plural()   { return "Spawned References"; }
 
 }}
 
 namespace doticu_npcl { namespace MCM {
 
+    void Spawned_References_t::On_Load()
+    {
+        References_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>::On_Load();
 
+        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
+        spawned.Clear();
+
+        Spawned_References_List_t* list = List();
+        V::Array_t* actor_ids = list->Actor_IDs_Array();
+        V::Array_t* actor_mod_names = list->Actor_Mod_Names_Array();
+        V::Array_t* actor_base_ids = list->Actor_Base_IDs_Array();
+        V::Array_t* actor_base_mod_names = list->Actor_Base_Mod_Names_Array();
+        if (actor_ids && actor_mod_names && actor_base_ids && actor_base_mod_names) {
+            if (actor_mod_names->count == actor_ids->count &&
+                actor_base_ids->count == actor_ids->count &&
+                actor_base_mod_names->count == actor_ids->count) {
+                for (Index_t idx = 0, end = actor_ids->count; idx < end; idx += 1) {
+                    V::Variable_t* actor_id = actor_ids->Point(idx);
+                    V::Variable_t* actor_mod_name = actor_mod_names->Point(idx);
+                    V::Variable_t* actor_base_id = actor_base_ids->Point(idx);
+                    V::Variable_t* actor_base_mod_name = actor_base_mod_names->Point(idx);
+                    if (actor_id && actor_mod_name && actor_base_id && actor_base_mod_name) {
+                        spawned.Add(
+                            actor_id->Int(),
+                            actor_mod_name->String(),
+                            actor_base_id->Int(),
+                            actor_base_mod_name->String()
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    void Spawned_References_t::On_Save()
+    {
+        References_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>::On_Save();
+
+        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
+
+        Spawned_References_List_t* list = List();
+        list->Actor_IDs(spawned.actor_ids);
+        list->Actor_Mod_Names(spawned.actor_mod_names);
+        list->Actor_Base_IDs(spawned.actor_base_ids);
+        list->Actor_Base_Mod_Names(spawned.actor_base_mod_names);
+    }
 
 }}
 
 namespace doticu_npcl { namespace MCM {
 
-    Vector_t<Item_t>& Static_Bases_List_t::Items()
+    V::Array_Variable_t<Int_t>*     Spawned_References_List_t::Actor_IDs_Variable()             { DEFINE_ARRAY_VARIABLE(Int_t, "p_actor_ids"); }
+    V::Array_Variable_t<String_t>*  Spawned_References_List_t::Actor_Mod_Names_Variable()       { DEFINE_ARRAY_VARIABLE(String_t, "p_actor_mod_names"); }
+    V::Array_Variable_t<Int_t>*     Spawned_References_List_t::Actor_Base_IDs_Variable()        { DEFINE_ARRAY_VARIABLE(Int_t, "p_actor_base_ids"); }
+    V::Array_Variable_t<String_t>*  Spawned_References_List_t::Actor_Base_Mod_Names_Variable()  { DEFINE_ARRAY_VARIABLE(String_t, "p_actor_base_mod_names"); }
+
+    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_IDs()                                      { return *reinterpret_cast<Vector_t<Form_ID_t>*>(&Actor_IDs_Variable()->Values()); }
+    void                Spawned_References_List_t::Actor_IDs(Vector_t<Form_ID_t> values)            { Actor_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
+    V::Array_t*         Spawned_References_List_t::Actor_IDs_Array()                                { return Actor_IDs_Variable()->Value(); }
+
+    Vector_t<String_t>  Spawned_References_List_t::Actor_Mod_Names()                                { return Actor_Mod_Names_Variable()->Values(); }
+    void                Spawned_References_List_t::Actor_Mod_Names(Vector_t<String_t> values)       { Actor_Mod_Names_Variable()->Values(values); }
+    V::Array_t*         Spawned_References_List_t::Actor_Mod_Names_Array()                          { return Actor_Mod_Names_Variable()->Value(); }
+
+    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_Base_IDs()                                 { return *reinterpret_cast<Vector_t<Form_ID_t>*>(&Actor_Base_IDs_Variable()->Values()); }
+    void                Spawned_References_List_t::Actor_Base_IDs(Vector_t<Form_ID_t> values)       { Actor_Base_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
+    V::Array_t*         Spawned_References_List_t::Actor_Base_IDs_Array()                           { return Actor_Base_IDs_Variable()->Value(); }
+
+    Vector_t<String_t>  Spawned_References_List_t::Actor_Base_Mod_Names()                           { return Actor_Base_Mod_Names_Variable()->Values(); }
+    void                Spawned_References_List_t::Actor_Base_Mod_Names(Vector_t<String_t> values)  { Actor_Base_Mod_Names_Variable()->Values(values); }
+    V::Array_t*         Spawned_References_List_t::Actor_Base_Mod_Names_Array()                     { return Actor_Base_Mod_Names_Variable()->Value(); }
+
+    Vector_t<Item_t>& Spawned_References_List_t::Items()
     {
         if (!items || do_update_items) {
             do_update_items = false;
 
-            size_t actor_base_count = Actor_Base_t::Actor_Base_Count();
+            size_t spawned_actor_count = Spawned_Actors_t::Spawned_Actor_Count();
 
-            read.reserve(actor_base_count);
+            read.reserve(spawned_actor_count);
             read.clear();
-            Actor_Base_t::Actor_Bases(read);
+            Spawned_Actors_t::Spawned_Actors(read);
 
-            write.reserve(actor_base_count);
+            write.reserve(spawned_actor_count);
             write.clear();
 
             items = Filter()->Execute(&read, &write).Results();
@@ -85,17 +147,17 @@ namespace doticu_npcl { namespace MCM {
         return *items;
     }
 
-    Vector_t<Item_t> Static_Bases_List_t::Default_Items()
+    Vector_t<Item_t> Spawned_References_List_t::Default_Items()
     {
-        return Actor_Base_t::Actor_Bases();
+        return Spawned_Actors_t::Spawned_Actors();
     }
 
-    Item_t Static_Bases_List_t::Null_Item()
+    Item_t Spawned_References_List_t::Null_Item()
     {
         return nullptr;
     }
 
-    void Static_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Spawned_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -106,11 +168,11 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Vector_t<Item_t>& actor_bases = Items();
-        size_t actor_base_count = actor_bases.size();
-        if (actor_base_count) {
+        Vector_t<Item_t>& items = Items();
+        size_t item_count = items.size();
+        if (item_count) {
             Int_t page_count = static_cast<Int_t>(ceilf(
-                static_cast<Float_t>(actor_base_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
             ));
 
             Int_t page_index = Page_Index();
@@ -122,7 +184,7 @@ namespace doticu_npcl { namespace MCM {
                 Page_Index(page_index);
             }
 
-            mcm->Title_Text(Title(actor_base_count, page_index, page_count));
+            mcm->Title_Text(Title(item_count, page_index, page_count));
 
             Filter_Option() = mcm->Add_Text_Option(Main_t::FILTER_LABEL, "");
             Options_Option() = mcm->Add_Text_Option(Main_t::OPTIONS_LABEL, "");
@@ -139,12 +201,12 @@ namespace doticu_npcl { namespace MCM {
 
             Int_t begin = ITEMS_PER_PAGE * page_index;
             Int_t end = begin + ITEMS_PER_PAGE;
-            if (end > actor_base_count) {
-                end = actor_base_count;
+            if (end > item_count) {
+                end = item_count;
             }
             for (; begin < end; begin += 1) {
-                Item_t actor_base = actor_bases[begin];
-                mcm->Add_Text_Option(actor_base->Any_Name(), "...");
+                Item_t item = items[begin];
+                mcm->Add_Text_Option(item->Any_Name(), "...");
             }
         } else {
             mcm->Title_Text(Title(0, 0, 1));
@@ -160,7 +222,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_List_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Spawned_References_List_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -176,11 +238,11 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Previous_Page_Option()) {
             mcm->Disable_Option(option);
 
-            Vector_t<Item_t>& actor_bases = Items();
-            size_t actor_base_count = actor_bases.size();
-            if (actor_base_count > 0) {
+            Vector_t<Item_t>& items = Items();
+            size_t item_count = items.size();
+            if (item_count > 0) {
                 Int_t page_count = static_cast<Int_t>(ceilf(
-                    static_cast<Float_t>(actor_base_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                    static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
                 ));
 
                 Int_t page_index = Page_Index();
@@ -196,11 +258,11 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Next_Page_Option()) {
             mcm->Disable_Option(option);
 
-            Vector_t<Item_t>& actor_bases = Items();
-            size_t actor_base_count = actor_bases.size();
-            if (actor_base_count > 0) {
+            Vector_t<Item_t>& items = Items();
+            size_t item_count = items.size();
+            if (item_count > 0) {
                 Int_t page_count = static_cast<Int_t>(ceilf(
-                    static_cast<Float_t>(actor_base_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                    static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
                 ));
 
                 Int_t page_index = Page_Index();
@@ -215,10 +277,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
 
         } else {
-            Item_t actor_base = Option_To_Item(option);
-            if (actor_base) {
+            Item_t item = Option_To_Item(option);
+            if (item && item->Is_Valid()) {
                 mcm->Disable_Option(option);
-                Item()->Static_Form_ID(actor_base->form_id);
+                Item()->Actor_Form_ID(item->form_id);
                 Current_View(Bases_View_e::ITEM);
                 mcm->Reset_Page();
             }
@@ -231,7 +293,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Static_Bases_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Spawned_References_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -257,11 +319,18 @@ namespace doticu_npcl { namespace MCM {
         Race_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Race_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
+        mcm->Add_Header_Option(" Base ");
         mcm->Add_Header_Option("");
         Base_Search_Option() = mcm->Add_Input_Option(" Search ", Base_Argument());
         Base_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
         Base_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Base_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
+        mcm->Add_Header_Option("");
+        Reference_Search_Option() = mcm->Add_Input_Option(" Search ", Reference_Argument());
+        Reference_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
+        Reference_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Reference_Do_Negate());
         mcm->Add_Empty_Option();
 
         mcm->Add_Header_Option(" Template ");
@@ -269,6 +338,20 @@ namespace doticu_npcl { namespace MCM {
         Template_Search_Option() = mcm->Add_Input_Option(" Search ", Template_Argument());
         Template_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
         Template_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Template_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(" Location ");
+        mcm->Add_Header_Option("");
+        Location_Search_Option() = mcm->Add_Input_Option(" Search ", Location_Argument());
+        Location_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
+        Location_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Location_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(" Cell ");
+        mcm->Add_Header_Option("");
+        Cell_Search_Option() = mcm->Add_Input_Option(" Search ", Cell_Argument());
+        Cell_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
+        Cell_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Cell_Do_Negate());
         mcm->Add_Empty_Option();
 
         mcm->Add_Header_Option(" Relation ");
@@ -285,10 +368,13 @@ namespace doticu_npcl { namespace MCM {
         Unique_Option() = mcm->Add_Toggle_Option(" Is Unique ", Unique_Generic_Argument() == Binary_e::A);
         Generic_Option() = mcm->Add_Toggle_Option(" Is Generic ", Unique_Generic_Argument() == Binary_e::B);
 
+        Interior_Option() = mcm->Add_Toggle_Option(" In Interior ", Interior_Exterior_Argument() == Binary_e::A);
+        Exterior_Option() = mcm->Add_Toggle_Option(" In Exterior ", Interior_Exterior_Argument() == Binary_e::B);
+
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Spawned_References_Filter_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -318,6 +404,18 @@ namespace doticu_npcl { namespace MCM {
             Bool_t value = Template_Do_Negate();
             Template_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Reference_Negate_Option()) {
+            Bool_t value = Reference_Do_Negate();
+            Reference_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Location_Negate_Option()) {
+            Bool_t value = Location_Do_Negate();
+            Location_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Cell_Negate_Option()) {
+            Bool_t value = Cell_Do_Negate();
+            Cell_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
         } else if (option == Relation_Negate_Option()) {
             Bool_t value = Relation_Do_Negate();
             Relation_Do_Negate(!value);
@@ -333,12 +431,17 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Generic_Option()) {
             mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
 
+        } else if (option == Interior_Option()) {
+            mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option, option + 1, Binary_e::A);
+        } else if (option == Exterior_Option()) {
+            mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option - 1, option, Binary_e::B);
+
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    void Spawned_References_Filter_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -358,6 +461,18 @@ namespace doticu_npcl { namespace MCM {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Templates());
             mcm->Menu_Dialog_Default(0);
+        } else if (option == Reference_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_References());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Location_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Locations());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Cell_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Cells());
+            mcm->Menu_Dialog_Default(0);
         } else if (option == Relation_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Relations());
@@ -367,7 +482,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    void Spawned_References_Filter_t::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -399,9 +514,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = "";
                 if (idx > 0) {
-                    Vector_t<String_t> names = Selectable_Bases();
-                    if (idx < names.size()) {
-                        value = names[idx];
+                    Vector_t<String_t> bases = Selectable_Bases();
+                    if (idx < bases.size()) {
+                        value = bases[idx];
                     }
                 }
                 Base_Argument(value);
@@ -418,6 +533,42 @@ namespace doticu_npcl { namespace MCM {
                 }
                 Template_Argument(value);
                 mcm->Input_Option_Value(Template_Search_Option(), value, true);
+            }
+        } else if (option == Reference_Select_Option()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> names = Selectable_References();
+                    if (idx < names.size()) {
+                        value = names[idx];
+                    }
+                }
+                Reference_Argument(value);
+                mcm->Input_Option_Value(Reference_Search_Option(), value, true);
+            }
+        } else if (option == Location_Select_Option()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> locations = Selectable_Locations();
+                    if (idx < locations.size()) {
+                        value = locations[idx];
+                    }
+                }
+                Location_Argument(value);
+                mcm->Input_Option_Value(Location_Search_Option(), value, true);
+            }
+        } else if (option == Cell_Select_Option()) {
+            if (idx > -1) {
+                String_t value = "";
+                if (idx > 0) {
+                    Vector_t<String_t> cells = Selectable_Cells();
+                    if (idx < cells.size()) {
+                        value = cells[idx];
+                    }
+                }
+                Cell_Argument(value);
+                mcm->Input_Option_Value(Cell_Search_Option(), value, true);
             }
         } else if (option == Relation_Select_Option()) {
             if (idx > -1) {
@@ -436,7 +587,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Filter_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    void Spawned_References_Filter_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -452,6 +603,15 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Template_Search_Option()) {
             Template_Argument(value);
             mcm->Input_Option_Value(option, value, true);
+        } else if (option == Reference_Search_Option()) {
+            Reference_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Location_Search_Option()) {
+            Location_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Cell_Search_Option()) {
+            Cell_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -461,12 +621,12 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Static_Bases_Options_t::Reset()
+    void Spawned_References_Options_t::Reset()
     {
         Do_Smart_Select(true);
     }
 
-    void Static_Bases_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Spawned_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -481,13 +641,11 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option("");
         mcm->Add_Header_Option("");
         Smart_Select_Option() = mcm->Add_Toggle_Option(" Smart Select ", Do_Smart_Select());
-        Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(" Uncombative Spawns ", Do_Uncombative_Spawns());
-        Persistent_Spawns_Option() = mcm->Add_Toggle_Option(" Persistent Spawns ", Do_Persistent_Spawns());
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Spawned_References_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -505,14 +663,6 @@ namespace doticu_npcl { namespace MCM {
             Bool_t value = Do_Smart_Select();
             Do_Smart_Select(!value);
             mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Uncombative_Spawns_Option()) {
-            Bool_t value = Do_Uncombative_Spawns();
-            Do_Uncombative_Spawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Persistent_Spawns_Option()) {
-            Bool_t value = Do_Persistent_Spawns();
-            Do_Persistent_Spawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -522,25 +672,25 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Static_Bases_Item_t::Static_Form_ID_Variable()          { DEFINE_INT_VARIABLE("p_item_static_form_id"); }
+    V::Int_Variable_t*  Spawned_References_Item_t::Actor_Form_ID_Variable()         { DEFINE_INT_VARIABLE("p_item_actor_form_id"); }
 
-    Form_ID_t           Static_Bases_Item_t::Static_Form_ID()                   { return Static_Form_ID_Variable()->Value(); }
-    void                Static_Bases_Item_t::Static_Form_ID(Form_ID_t value)    { Static_Form_ID_Variable()->Value(value); }
+    Form_ID_t           Spawned_References_Item_t::Actor_Form_ID()                  { return Actor_Form_ID_Variable()->Value(); }
+    void                Spawned_References_Item_t::Actor_Form_ID(Form_ID_t value)   { Actor_Form_ID_Variable()->Value(value); }
 
-    Item_t Static_Bases_Item_t::Current_Item()
+    Item_t Spawned_References_Item_t::Current_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
-        if (item && List()->Items().Has(item)) {
-            return item;
+        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid() && List()->Items().Has(item)) {
+            return std::move(item);
         } else {
-            return nullptr;
+            return std::move(Item_t());
         }
     }
 
-    Item_t Static_Bases_Item_t::Previous_Item()
+    Item_t Spawned_References_Item_t::Previous_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
-        if (item) {
+        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
             if (idx > -1) {
@@ -551,17 +701,17 @@ namespace doticu_npcl { namespace MCM {
                 }
                 return items[idx];
             } else {
-                return nullptr;
+                return std::move(Item_t());
             }
         } else {
-            return nullptr;
+            return std::move(Item_t());
         }
     }
 
-    Item_t Static_Bases_Item_t::Next_Item()
+    Item_t Spawned_References_Item_t::Next_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
-        if (item) {
+        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
             if (idx > -1) {
@@ -572,26 +722,26 @@ namespace doticu_npcl { namespace MCM {
                 }
                 return items[idx];
             } else {
-                return nullptr;
+                return std::move(Item_t());
             }
         } else {
-            return nullptr;
+            return std::move(Item_t());
         }
     }
 
-    void Static_Bases_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    void Spawned_References_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
-        Actor_Base_t* actor_base = Current_Item();
-        if (actor_base) {
-            mcm->Title_Text(Title(actor_base->Any_Name()));
+        Item_t item = Current_Item();
+        if (item && item->Is_Valid()) {
+            mcm->Title_Text(Title(item->Any_Name()));
 
             mcm->Cursor_Position(0);
             mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
             Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
-            Spawn_Option() = mcm->Add_Text_Option(Main_t::SPAWN_LABEL, "");
+            mcm->Add_Empty_Option();
             if (List()->Items().size() > 1) {
                 Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "");
                 Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "");
@@ -602,11 +752,25 @@ namespace doticu_npcl { namespace MCM {
 
             mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
             mcm->Add_Header_Option("");
-            mcm->Add_Text_Option(std::string(" Name: ") + actor_base->Name(), "");
-            mcm->Add_Text_Option(std::string(" Form ID: ") + actor_base->Form_ID_String().data, "");
+            mcm->Add_Text_Option(std::string(" Name: ") + item->Name(), "");
+            mcm->Add_Text_Option(std::string(" Form ID: ") + item->Form_ID_String().data, "");
+            if (item->base_form && item->base_form->Is_Valid()) {
+                mcm->Add_Text_Option(std::string(" Base Form ID: ") + item->base_form->Form_ID_String().data, "");
+                mcm->Add_Empty_Option();
+            }
 
-            Race_t* race = actor_base->Race();
-            if (race) {
+            Cell_t* cell = item->Cell();
+            if (cell && cell->Is_Valid()) {
+                mcm->Add_Header_Option(" Cell ");
+                mcm->Add_Header_Option("");
+                mcm->Add_Text_Option(std::string(" Name: ") + cell->Name(), "");
+                mcm->Add_Text_Option(std::string(" Editor ID: ") + cell->Get_Editor_ID(), "");
+                mcm->Add_Text_Option(std::string(" Form ID: ") + cell->Form_ID_String().data, "");
+                mcm->Add_Empty_Option();
+            }
+
+            Race_t* race = item->Race();
+            if (race && race->Is_Valid()) {
                 mcm->Add_Header_Option(" Race ");
                 mcm->Add_Header_Option("");
                 mcm->Add_Text_Option(std::string(" Name: ") + race->Name(), "");
@@ -616,7 +780,7 @@ namespace doticu_npcl { namespace MCM {
             }
 
             {
-                Vector_t<String_t> mod_names = actor_base->Mod_Names();
+                Vector_t<String_t> mod_names = item->Mod_Names();
                 size_t mod_name_count = mod_names.size();
                 if (mod_name_count > 0 && mcm->Can_Add_Options(2 + mod_name_count)) {
                     mcm->Add_Header_Option(" Mods ");
@@ -631,15 +795,31 @@ namespace doticu_npcl { namespace MCM {
                 }
             }
 
-            {
-                Vector_t<Actor_Base_t*> templates = actor_base->Templates();
-                size_t template_count = templates.size();
-                if (template_count > 0 && mcm->Can_Add_Options(2 + template_count)) {
-                    mcm->Add_Header_Option(" Templates ");
+            if (cell && cell->Is_Valid()) {
+                Vector_t<String_t> location_names = cell->Location_Names();
+                size_t location_name_count = location_names.size();
+                if (location_name_count > 0 && mcm->Can_Add_Options(2 + location_name_count)) {
+                    mcm->Add_Header_Option(" Locations ");
                     mcm->Add_Header_Option("");
-                    for (Index_t idx = 0, end = template_count; idx < end; idx += 1) {
-                        Actor_Base_t* base_template = templates[idx];
-                        mcm->Add_Text_Option(base_template->Any_Name(), "");
+                    for (Index_t idx = 0, end = location_name_count; idx < end; idx += 1) {
+                        String_t location_name = location_names[idx];
+                        mcm->Add_Text_Option(location_name, "");
+                    }
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            }
+
+            {
+                Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
+                size_t actor_base_count = actor_bases.size();
+                if (actor_base_count > 0 && mcm->Can_Add_Options(2 + actor_base_count)) {
+                    mcm->Add_Header_Option(" Bases ");
+                    mcm->Add_Header_Option("");
+                    for (Index_t idx = 0, end = actor_base_count; idx < end; idx += 1) {
+                        Actor_Base_t* actor_base = actor_bases[idx];
+                        mcm->Add_Text_Option(actor_base->Any_Name(), "");
                     }
                     if (skylib::Is_Odd(mcm->Cursor_Position())) {
                         mcm->Add_Empty_Option();
@@ -655,7 +835,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
-    void Static_Bases_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    void Spawned_References_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -664,25 +844,11 @@ namespace doticu_npcl { namespace MCM {
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);
             mcm->Reset_Page();
-        } else if (option == Spawn_Option()) {
-            mcm->Flicker_Option(option);
-            Actor_Base_t* actor_base = Current_Item();
-            if (actor_base && actor_base->Is_Valid()) {
-                Bool_t do_persist = Options()->Do_Persistent_Spawns();
-                Actor_t* actor = static_cast<Actor_t*>
-                    (Reference_t::Create(actor_base, 1, Consts_t::Skyrim_Player_Actor(), do_persist, false));
-                if (actor) {
-                    if (Options()->Do_Uncombative_Spawns()) {
-                        actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
-                    }
-                    Spawned_Actors_t::Self().Add(actor);
-                }
-            }
         } else if (option == Previous_Option()) {
             mcm->Disable_Option(option);
-            Actor_Base_t* actor_base = Previous_Item();
-            if (actor_base) {
-                Static_Form_ID(actor_base->form_id);
+            Item_t item = Previous_Item();
+            if (item && item->Is_Valid()) {
+                Actor_Form_ID(item->form_id);
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);
@@ -690,9 +856,9 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
         } else if (option == Next_Option()) {
             mcm->Disable_Option(option);
-            Actor_Base_t* actor_base = Next_Item();
-            if (actor_base) {
-                Static_Form_ID(actor_base->form_id);
+            Item_t item = Next_Item();
+            if (item && item->Is_Valid()) {
+                Actor_Form_ID(item->form_id);
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

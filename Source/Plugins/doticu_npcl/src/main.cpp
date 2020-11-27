@@ -130,11 +130,15 @@ namespace doticu_npcl {
     void Main_t::After_Load()
     {
         SKYLIB_ASSERT(Is_Installed());
+
+        MCM::Main_t::Self()->On_Load();
     }
 
     void Main_t::Before_Save()
     {
         SKYLIB_ASSERT(Is_Installed());
+
+        MCM::Main_t::Self()->On_Save();
     }
 
 }

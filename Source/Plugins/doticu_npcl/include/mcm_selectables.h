@@ -195,6 +195,26 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Mods_t<Base_t, Actor_t*> : public Selectable_Mods_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Mods_t() :
+            Selectable_Mods_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Mods_t<Base_t, Form_t*>::Select(item, output);
+            }
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Mods_t<Base_t, Loaded_Actor_t> : public Selectable_Mods_i<Base_t, Loaded_Actor_t>
     {
     public:
@@ -271,6 +291,26 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Races_t<Base_t, Actor_t*> : public Selectable_Races_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Races_t() :
+            Selectable_Races_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Races_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+            }
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Races_t<Base_t, Loaded_Actor_t> : public Selectable_Races_i<Base_t, Loaded_Actor_t>
     {
     public:
@@ -338,6 +378,26 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             item->Actor_Base_Names(output);
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Bases_t<Base_t, Actor_t*> : public Selectable_Bases_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Bases_t() :
+            Selectable_Bases_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Bases_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+            }
         }
     };
 
@@ -425,6 +485,26 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Templates_t<Base_t, Actor_t*> : public Selectable_Templates_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Templates_t() :
+            Selectable_Templates_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+            }
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Templates_t<Base_t, Loaded_Actor_t> : public Selectable_Templates_i<Base_t, Loaded_Actor_t>
     {
     public:
@@ -457,6 +537,26 @@ namespace doticu_npcl { namespace MCM {
     template <typename Base_t, typename Item_t>
     class Selectable_References_t : public Selectable_References_i<Base_t, Item_t>
     {
+    };
+
+    template <typename Base_t>
+    class Selectable_References_t<Base_t, Actor_t*> : public Selectable_References_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_References_t() :
+            Selectable_References_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                output.push_back(item->Any_Name());
+            }
+        }
     };
 
     template <typename Base_t>
@@ -495,6 +595,46 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Locations_t<Base_t, Cell_t*> : public Selectable_Locations_i<Base_t, Cell_t*>
+    {
+    public:
+        using Item_t = Cell_t*;
+
+    public:
+        Selectable_Locations_t() :
+            Selectable_Locations_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                item->Location_Names(output);
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Locations_t<Base_t, Actor_t*> : public Selectable_Locations_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Locations_t() :
+            Selectable_Locations_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Locations_t<Base_t, Cell_t*>::Select(item->Cell(), output);
+            }
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Locations_t<Base_t, Loaded_Actor_t> : public Selectable_Locations_i<Base_t, Loaded_Actor_t>
     {
     public:
@@ -527,6 +667,46 @@ namespace doticu_npcl { namespace MCM {
     template <typename Base_t, typename Item_t>
     class Selectable_Cells_t : public Selectable_Cells_i<Base_t, Item_t>
     {
+    };
+
+    template <typename Base_t>
+    class Selectable_Cells_t<Base_t, Cell_t*> : public Selectable_Cells_i<Base_t, Cell_t*>
+    {
+    public:
+        using Item_t = Cell_t*;
+
+    public:
+        Selectable_Cells_t() :
+            Selectable_Cells_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                output.push_back(item->Any_Name());
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Cells_t<Base_t, Actor_t*> : public Selectable_Cells_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Cells_t() :
+            Selectable_Cells_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Cells_t<Base_t, Cell_t*>::Select(item->Cell(), output);
+            }
+        }
     };
 
     template <typename Base_t>
@@ -611,6 +791,26 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
                 }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Relations_t<Base_t, Actor_t*> : public Selectable_Relations_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Relations_t(Actor_Base_t* base_to_compare) :
+            Selectable_Relations_i<Base_t, Item_t>(&Select, base_to_compare)
+        {
+        }
+
+        static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), base_to_compare, output);
             }
         }
     };
