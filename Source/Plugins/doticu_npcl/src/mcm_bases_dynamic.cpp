@@ -476,6 +476,7 @@ namespace doticu_npcl { namespace MCM {
         Smart_Select_Option() = mcm->Add_Toggle_Option(" Smart Select ", Do_Smart_Select());
         Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(" Uncombative Spawns ", Do_Uncombative_Spawns());
         Persistent_Spawns_Option() = mcm->Add_Toggle_Option(" Persistent Spawns ", Do_Persistent_Spawns());
+        Static_Spawns_Option() = mcm->Add_Toggle_Option(" Static Spawns ", Do_Static_Spawns());
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -505,6 +506,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Persistent_Spawns_Option()) {
             Bool_t value = Do_Persistent_Spawns();
             Do_Persistent_Spawns(!value);
+            mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Static_Spawns_Option()) {
+            Bool_t value = Do_Static_Spawns();
+            Do_Static_Spawns(!value);
             mcm->Toggle_Option_Value(option, !value);
         }
 
@@ -659,18 +664,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
         } else if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
-            Actor_Base_t* actor_base = Current_Item();
-            if (actor_base && actor_base->Is_Valid()) {
-                Bool_t do_persist = Options()->Do_Persistent_Spawns();
-                Actor_t* actor = static_cast<Actor_t*>
-                    (Reference_t::Create(actor_base, 1, Consts_t::Skyrim_Player_Actor(), do_persist, false));
-                if (actor) {
-                    if (Options()->Do_Uncombative_Spawns()) {
-                        actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
-                    }
-                    Spawned_Actors_t::Self().Add(actor);
-                }
-            }
+            Spawn();
         } else if (option == Previous_Option()) {
             mcm->Disable_Option(option);
             Actor_Base_t* actor_base = Previous_Item();

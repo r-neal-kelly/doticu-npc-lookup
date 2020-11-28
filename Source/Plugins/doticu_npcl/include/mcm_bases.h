@@ -228,11 +228,13 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Smart_Select_Option();
         Int_t&  Uncombative_Spawns_Option();
         Int_t&  Persistent_Spawns_Option();
+        Int_t&  Static_Spawns_Option();
 
     public:
         V::Bool_Variable_t* Do_Smart_Select_Variable();
         V::Bool_Variable_t* Do_Uncombative_Spawns_Variable();
         V::Bool_Variable_t* Do_Persistent_Spawns_Variable();
+        V::Bool_Variable_t* Do_Static_Spawns_Variable();
 
     public:
         Bool_t  Do_Smart_Select();
@@ -243,6 +245,9 @@ namespace doticu_npcl { namespace MCM {
 
         Bool_t  Do_Persistent_Spawns();
         void    Do_Persistent_Spawns(Bool_t value);
+
+        Bool_t  Do_Static_Spawns();
+        void    Do_Static_Spawns(Bool_t value);
 
     public:
         String_t    Title();
@@ -275,7 +280,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Primary_Option();
 
     public:
-        String_t Title(const char* item_name);
+        String_t    Title(const char* item_name);
+        void        Spawn();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

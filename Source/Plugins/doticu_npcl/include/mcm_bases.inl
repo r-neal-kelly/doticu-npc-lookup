@@ -9,6 +9,7 @@
 #include "doticu_mcmlib/config_base_macros.h"
 
 #include "consts.h"
+#include "spawned_actors.h"
 #include "mcm_selectables.h"
 #include "mcm_bases.h"
 
@@ -567,6 +568,8 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Options_t<B, I>::Uncombative_Spawns_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Options_t<B, I>::Persistent_Spawns_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option() { DEFINE_OPTION(); }
 
     template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Smart_Select_Variable()       { DEFINE_BOOL("p_options_do_smart_select"); }
@@ -574,6 +577,8 @@ namespace doticu_npcl { namespace MCM {
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Uncombative_Spawns_Variable() { DEFINE_BOOL("p_options_do_uncombative_spawns"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Persistent_Spawns_Variable()  { DEFINE_BOOL("p_options_do_persistent_spawns"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Static_Spawns_Variable() { DEFINE_BOOL("p_options_do_static_spawns"); }
 
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Select()                    { return Do_Smart_Select_Variable()->Value(); }
@@ -587,6 +592,10 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   Bases_Options_t<B, I>::Do_Persistent_Spawns()               { return Do_Persistent_Spawns_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Persistent_Spawns(Bool_t value)   { Do_Persistent_Spawns_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Bool_t   Bases_Options_t<B, I>::Do_Static_Spawns()                   { return Do_Static_Spawns_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Options_t<B, I>::Do_Static_Spawns(Bool_t value)       { Do_Static_Spawns_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline String_t Bases_Options_t<B, I>::Title()
@@ -600,6 +609,7 @@ namespace doticu_npcl { namespace MCM {
         Do_Smart_Select(true);
         Do_Uncombative_Spawns(true);
         Do_Persistent_Spawns(true);
+        Do_Static_Spawns(true);
     }
 
     template <typename B, typename I>
@@ -647,10 +657,27 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Smart_Select_Option()) {
+            mcm->Info_Text("On: Filter select menus are filtered dynamically, and thus narrow down results accurately." "\n"
+                           "Off: Filter select menus may have options that lead to no results.");
+        } else if (option == Uncombative_Spawns_Option()) {
+            mcm->Info_Text("On: Tries to stop aggressive spawns from attacking the player." "\n"
+                           "Off: Makes no attempt to stop a spawn from attacking the player.");
+        } else if (option == Persistent_Spawns_Option()) {
+            mcm->Info_Text("On: Forces all spawns to be persistent so the engine doesn't try to delete them." "\n"
+                           "Off: Allows spawns to be temporary if their base is. Naturally persistent NPCs may still spawn.");
+        } else if (option == Static_Spawns_Option()) {
+            mcm->Info_Text("On: Finds the root base of dynamic spawns. Prevents the engine from changing their appearance." "\n"
+                           "Off: Allows dynamic spawns that the engine may change the appearance of over time.");
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
 
 }}
@@ -670,6 +697,60 @@ namespace doticu_npcl { namespace MCM {
     inline String_t Bases_Item_t<B, I>::Title(const char* item_name)
     {
         return std::string(Item_Type_Singular()) + ": " + item_name;
+    }
+
+    inline void Spawn_Impl(Form_t* base, Bool_t do_persist, Bool_t do_uncombative)
+    {
+        if (base && base->Is_Valid()) {
+            Actor_t* actor = static_cast<Actor_t*>
+                (Reference_t::Create(base, 1, Consts_t::Skyrim_Player_Actor(), do_persist, false));
+            if (actor && actor->Is_Valid()) {
+                if (do_uncombative) {
+                    actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
+                }
+                Spawned_Actors_t::Self().Add(actor);
+            }
+        }
+    }
+
+    inline void Spawn_Impl(Actor_Base_t* base, Bool_t do_static, Bool_t do_persist, Bool_t do_uncombative)
+    {
+        if (do_static) {
+            if (base && base->Is_Valid()) {
+                Spawn_Impl(static_cast<Form_t*>(base->Root_Base()), do_persist, do_uncombative);
+            }
+        } else {
+            Spawn_Impl(static_cast<Form_t*>(base), do_persist, do_uncombative);
+        }
+    }
+
+    inline void Spawn_Impl(Leveled_Actor_Base_t* base, Bool_t do_static, Bool_t do_persist, Bool_t do_uncombative)
+    {
+        if (do_static) {
+            if (base && base->Is_Valid()) {
+                Actor_t* actor = static_cast<Actor_t*>
+                    (Reference_t::Create(base, 1, Consts_t::Skyrim_Player_Actor(), false, true));
+                if (actor && actor->Is_Valid()) {
+                    Spawn_Impl(static_cast<Actor_Base_t*>(actor->base_form), do_static, do_persist, do_uncombative);
+                    actor->Mark_For_Delete();
+                }
+            }
+        } else {
+            Spawn_Impl(static_cast<Form_t*>(base), do_persist, do_uncombative);
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Spawn()
+    {
+        auto* options = Options();
+
+        Spawn_Impl(
+            Item()->Current_Item(),
+            options->Do_Static_Spawns(),
+            options->Do_Persistent_Spawns(),
+            options->Do_Uncombative_Spawns()
+        );
     }
 
     template <typename B, typename I>

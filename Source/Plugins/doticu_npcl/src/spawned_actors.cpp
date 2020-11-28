@@ -111,7 +111,7 @@ namespace doticu_npcl {
     Bool_t Spawned_Actors_t::Add(Actor_t* actor)
     {
         if (actor && actor->Is_Valid() && !Has(actor)) {
-            Actor_Base_t* actor_base = actor->Static_Actor_Base();
+            Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
             if (actor_base && actor_base->Is_Valid()) {
                 Mod_t* actor_base_mod = actor_base->Indexed_Mod();
                 if (actor_base_mod) {
@@ -157,7 +157,7 @@ namespace doticu_npcl {
                     }
                     Actor_t* actor = static_cast<Actor_t*>(Game_t::Form(actor_id));
                     if (actor && actor->Is_Valid()) {
-                        Actor_Base_t* actor_base = actor->Static_Actor_Base();
+                        Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
                         if (actor_base && actor_base->Is_Valid() && actor_base->form_id == actor_base_id) {
                             Add_Impl(this, actor, actor_base, actor_base_mod_name);
                             return true;
