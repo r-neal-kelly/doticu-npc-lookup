@@ -270,14 +270,43 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
+    class Bases_Item_View_e : public skylib::Enum_t<skylib::Word_t>
+    {
+    public:
+        enum : skylib::Word_t
+        {
+            ITEM,
+            BASES,
+        };
+        using Enum_t::Enum_t;
+    };
+
     template <typename Base_t, typename Item_t>
     class Bases_Item_t : public Bases_t<Base_t, Item_t>
     {
     public:
+        static constexpr const char*    ITEM_VIEW           = "item";
+        static constexpr const char*    BASES_VIEW          = "bases";
+        static constexpr Int_t          HEADERS_PER_PAGE    = 6;
+        static constexpr Int_t          ITEMS_PER_PAGE      = 18;
+
+    public:
         Int_t&  Back_Option();
+        Int_t&  Primary_Option();
         Int_t&  Previous_Option();
         Int_t&  Next_Option();
-        Int_t&  Primary_Option();
+        Int_t&  View_Item_Option();
+        Int_t&  View_Bases_Option();
+
+    public:
+        V::String_Variable_t*   Info_View_Variable();
+        V::Int_Variable_t*      Info_Index_Variable();
+
+    public:
+        Bases_Item_View_e   Info_View();
+        void                Info_View(Bases_Item_View_e value);
+        Int_t               Info_Index();
+        void                Info_Index(Int_t value);
 
     public:
         String_t    Title(const char* item_name);

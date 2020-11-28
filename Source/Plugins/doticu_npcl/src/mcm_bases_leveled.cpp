@@ -599,6 +599,14 @@ namespace doticu_npcl { namespace MCM {
 
     void Leveled_Bases_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
+        Bases_Item_View_e info_view = Info_View();
+             if (info_view == Bases_Item_View_e::ITEM)  On_Page_Open_Item(is_refresh, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES) On_Page_Open_Bases(is_refresh, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    void Leveled_Bases_Item_t::On_Page_Open_Item(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
         Main_t* mcm = Main_t::Self();
 
         Leveled_Actor_Base_t* item = Current_Item();
@@ -622,6 +630,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option("");
             mcm->Add_Text_Option(std::string(" Name: ") + item->Leveled_Name().data, "");
             mcm->Add_Text_Option(std::string(" Form ID: ") + item->Form_ID_String().data, "");
+            View_Bases_Option() = mcm->Add_Text_Option(" View Bases", "...");
+            mcm->Add_Empty_Option();
 
             {
                 Vector_t<String_t> mod_names = item->Mod_Names();
@@ -647,7 +657,79 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
+    void Leveled_Bases_Item_t::On_Page_Open_Bases(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        Leveled_Actor_Base_t* item = Current_Item();
+        if (item && item->Is_Valid()) {
+            mcm->Cursor_Position(0);
+            mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+
+            Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+            size_t item_count = items.size();
+            if (item_count) {
+                Int_t page_count = static_cast<Int_t>(ceilf(
+                    static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                ));
+
+                Int_t page_index = Info_Index();
+                if (page_index < 0) {
+                    page_index = 0;
+                    Info_Index(page_index);
+                } else if (page_index >= page_count) {
+                    page_index = page_count - 1;
+                    Info_Index(page_index);
+                }
+
+                //mcm->Title_Text(Title(item_count, page_index, page_count));
+
+                Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
+                Primary_Option() = mcm->Add_Text_Option("", "");
+                if (page_count > 1) {
+                    Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "");
+                    Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "");
+                } else {
+                    Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE);
+                    Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE);
+                }
+
+                mcm->Add_Header_Option("");
+                mcm->Add_Header_Option("");
+
+                Int_t begin = ITEMS_PER_PAGE * page_index;
+                Int_t end = begin + ITEMS_PER_PAGE;
+                if (end > item_count) {
+                    end = item_count;
+                }
+                for (; begin < end; begin += 1) {
+                    Actor_Base_t* item = items[begin];
+                    mcm->Add_Text_Option(item->Any_Name(), "...");
+                }
+            } else {
+                //mcm->Title_Text(Title(0, 0, 1));
+
+                Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
+                Primary_Option() = mcm->Add_Text_Option("", "");
+                Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE);
+                Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE);
+
+                mcm->Add_Header_Option(" No Actor Bases ");
+            }
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
+    }
+
     void Leveled_Bases_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bases_Item_View_e info_view = Info_View();
+             if (info_view == Bases_Item_View_e::ITEM)  On_Option_Select_Item(option, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES) On_Option_Select_Bases(option, lcallback);
+        else                                            SKYLIB_ASSERT(false);
+    }
+
+    void Leveled_Bases_Item_t::On_Option_Select_Item(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -679,8 +761,74 @@ namespace doticu_npcl { namespace MCM {
                 Current_View(Bases_View_e::LIST);
             }
             mcm->Reset_Page();
+
+        } else if (option == View_Bases_Option()) {
+            mcm->Disable_Option(option);
+            Info_View(Bases_Item_View_e::BASES);
+            Info_Index(0);
+            mcm->Reset_Page();
         }
 
+        mcm->Destroy_Latent_Callback(lcallback);
+    }
+
+    void Leveled_Bases_Item_t::On_Option_Select_Bases(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option()) {
+            mcm->Disable_Option(option);
+            Info_View(Bases_Item_View_e::ITEM);
+            Info_Index(0);
+            mcm->Reset_Page();
+
+        } else if (option == Previous_Option()) {
+            mcm->Disable_Option(option);
+
+            Leveled_Actor_Base_t* item = Current_Item();
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                size_t item_count = items.size();
+                if (item_count > 0) {
+                    Int_t page_count = static_cast<Int_t>(ceilf(
+                        static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                    ));
+
+                    Int_t page_index = Info_Index();
+                    if (page_index == 0) {
+                        page_index = page_count - 1;
+                    } else {
+                        page_index -= 1;
+                    }
+                    Info_Index(page_index);
+                }
+            }
+
+            mcm->Reset_Page();
+        } else if (option == Next_Option()) {
+            mcm->Disable_Option(option);
+
+            Leveled_Actor_Base_t* item = Current_Item();
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                size_t item_count = items.size();
+                if (item_count > 0) {
+                    Int_t page_count = static_cast<Int_t>(ceilf(
+                        static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
+                    ));
+
+                    Int_t page_index = Info_Index();
+                    if (page_index == page_count - 1) {
+                        page_index = 0;
+                    } else {
+                        page_index += 1;
+                    }
+                    Info_Index(page_index);
+                }
+            }
+
+            mcm->Reset_Page();
+        }
         mcm->Destroy_Latent_Callback(lcallback);
     }
 

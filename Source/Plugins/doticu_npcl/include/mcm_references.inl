@@ -181,7 +181,8 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-
+    template <typename B, typename I>
+    inline Int_t& References_Item_t<B, I>::Select_In_Console_Option() { DEFINE_OPTION(); }
 
 }}
 

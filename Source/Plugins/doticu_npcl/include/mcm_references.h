@@ -118,6 +118,7 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_t : public Bases_Item_t<Base_t, Item_t>
     {
     public:
+        Int_t& Select_In_Console_Option();
     };
 
 }}

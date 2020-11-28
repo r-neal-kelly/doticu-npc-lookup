@@ -683,8 +683,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option("");
             mcm->Add_Text_Option(std::string(" Name: ") + loaded_actor.actor->Name(), "");
             mcm->Add_Text_Option(std::string(" Form ID: ") + loaded_actor.actor->Form_ID_String().data, "");
+            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
             if (loaded_actor.actor->base_form && loaded_actor.actor->base_form->Is_Valid()) {
                 mcm->Add_Text_Option(std::string(" Base Form ID: ") + loaded_actor.actor->base_form->Form_ID_String().data, "");
+            } else {
                 mcm->Add_Empty_Option();
             }
 
@@ -792,6 +794,14 @@ namespace doticu_npcl { namespace MCM {
                 Current_View(Bases_View_e::LIST);
             }
             mcm->Reset_Page();
+
+        } else if (option == Select_In_Console_Option()) {
+            mcm->Flicker_Option(option);
+            Loaded_Actor_t loaded_actor = Current_Item();
+            if (loaded_actor.Is_Valid()) {
+                loaded_actor.actor->Select_In_Console();
+            }
+
         }
 
         mcm->Destroy_Latent_Callback(lcallback);

@@ -687,11 +687,51 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::Back_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()    { DEFINE_OPTION(); }
+    template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::Previous_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::Next_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()    { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::View_Item_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option() { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline V::String_Variable_t*    Bases_Item_t<B, I>::Info_View_Variable()    { DEFINE_STRING("p_item_info_view"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Info_Index_Variable()   { DEFINE_INT("p_item_info_index"); }
+
+    template <typename B, typename I>
+    inline Bases_Item_View_e Bases_Item_t<B, I>::Info_View()
+    {
+        String_t info_view = Info_View_Variable()->Value();
+        if (CString_t::Is_Same(info_view, ITEM_VIEW, true)) {
+            return Bases_Item_View_e::ITEM;
+        } else if (CString_t::Is_Same(info_view, BASES_VIEW, true)) {
+            return Bases_Item_View_e::BASES;
+        } else {
+            Info_View_Variable()->Value(ITEM_VIEW);
+            return Bases_Item_View_e::ITEM;
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Info_View(Bases_Item_View_e value)
+    {
+        if (value == Bases_Item_View_e::ITEM) {
+            Info_View_Variable()->Value(ITEM_VIEW);
+        } else if (value == Bases_Item_View_e::BASES) {
+            Info_View_Variable()->Value(BASES_VIEW);
+        } else {
+            Info_View_Variable()->Value(ITEM_VIEW);
+        }
+    }
+
+    template <typename B, typename I>
+    inline Int_t    Bases_Item_t<B, I>::Info_Index()            { return Info_Index_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Item_t<B, I>::Info_Index(Int_t value) { Info_Index_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline String_t Bases_Item_t<B, I>::Title(const char* item_name)

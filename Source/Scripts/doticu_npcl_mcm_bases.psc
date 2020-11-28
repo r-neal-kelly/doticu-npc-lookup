@@ -32,3 +32,7 @@ bool    p_options_do_smart_select           =    true
 bool    p_options_do_uncombative_spawns     =    true
 bool    p_options_do_persistent_spawns      =    true
 bool    p_options_do_static_spawns          =    true
+
+; Item
+string  p_item_info_view                    =      ""
+int     p_item_info_index                   =      -1

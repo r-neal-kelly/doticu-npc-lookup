@@ -103,7 +103,11 @@ namespace doticu_npcl { namespace MCM {
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void On_Page_Open_Item(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void On_Page_Open_Bases(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Select_Item(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Select_Bases(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

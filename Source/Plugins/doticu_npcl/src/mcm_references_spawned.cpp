@@ -749,8 +749,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option("");
             mcm->Add_Text_Option(std::string(" Name: ") + item->Name(), "");
             mcm->Add_Text_Option(std::string(" Form ID: ") + item->Form_ID_String().data, "");
+            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
             if (item->base_form && item->base_form->Is_Valid()) {
                 mcm->Add_Text_Option(std::string(" Base Form ID: ") + item->base_form->Form_ID_String().data, "");
+            } else {
                 mcm->Add_Empty_Option();
             }
 
@@ -867,6 +869,14 @@ namespace doticu_npcl { namespace MCM {
                 Current_View(Bases_View_e::LIST);
             }
             mcm->Reset_Page();
+
+        } else if (option == Select_In_Console_Option()) {
+            mcm->Flicker_Option(option);
+            Item_t item = Current_Item();
+            if (item->Is_Valid()) {
+                item->Select_In_Console();
+            }
+
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
