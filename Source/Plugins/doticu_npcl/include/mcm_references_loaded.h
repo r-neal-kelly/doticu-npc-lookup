@@ -79,9 +79,6 @@ namespace doticu_npcl { namespace MCM {
     class Loaded_References_Options_t : public References_Options_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
     public:
-        void Reset();
-
-    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };

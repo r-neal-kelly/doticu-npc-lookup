@@ -245,7 +245,8 @@ namespace doticu_npcl { namespace MCM {
         void    Do_Persistent_Spawns(Bool_t value);
 
     public:
-        String_t Title();
+        String_t    Title();
+        void        Reset();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

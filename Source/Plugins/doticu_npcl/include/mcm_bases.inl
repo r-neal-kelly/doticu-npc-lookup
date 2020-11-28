@@ -595,6 +595,14 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::Reset()
+    {
+        Do_Smart_Select(true);
+        Do_Uncombative_Spawns(true);
+        Do_Persistent_Spawns(true);
+    }
+
+    template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);

@@ -187,7 +187,7 @@ namespace doticu_npcl {
     {
         size_t end = actors.size();
         if (index > -1 && index < end) {
-            if (index == 0) {
+            if (index == end - 1) {
                 actors.erase(actors.end() - 1);
                 actor_ids.erase(actor_ids.end() - 1);
                 actor_mod_names.erase(actor_mod_names.end() - 1);

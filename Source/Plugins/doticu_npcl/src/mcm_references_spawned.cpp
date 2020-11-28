@@ -621,11 +621,6 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Spawned_References_Options_t::Reset()
-    {
-        Do_Smart_Select(true);
-    }
-
     void Spawned_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
