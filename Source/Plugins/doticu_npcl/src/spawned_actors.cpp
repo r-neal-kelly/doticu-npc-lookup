@@ -178,6 +178,16 @@ namespace doticu_npcl {
         }
     }
 
+    Bool_t Spawned_Actors_t::Add(Actor_Base_t* base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
+    {
+        return Add(Actor_t::Create(base, do_persist, do_uncombative, do_static));
+    }
+
+    Bool_t Spawned_Actors_t::Add(Leveled_Actor_Base_t* leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
+    {
+        return Add(Actor_t::Create(leveled_base, do_persist, do_uncombative, do_static));
+    }
+
     Bool_t Spawned_Actors_t::Remove(Actor_t* actor)
     {
         return Remove(Index_Of(actor));

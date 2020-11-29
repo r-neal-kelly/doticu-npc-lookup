@@ -87,7 +87,6 @@ namespace doticu_npcl { namespace MCM {
 
     public:
         String_t    Title(Int_t item_count, Int_t page_index, Int_t page_count);
-        Item_t      Option_To_Item(Int_t option);
         void        Clear();
 
     public:
@@ -277,6 +276,7 @@ namespace doticu_npcl { namespace MCM {
         {
             ITEM,
             BASES,
+            BASES_ITEM,
         };
         using Enum_t::Enum_t;
     };
@@ -287,6 +287,7 @@ namespace doticu_npcl { namespace MCM {
     public:
         static constexpr const char*    ITEM_VIEW           = "item";
         static constexpr const char*    BASES_VIEW          = "bases";
+        static constexpr const char*    BASES_ITEM_VIEW     = "bases_item";
         static constexpr Int_t          HEADERS_PER_PAGE    = 6;
         static constexpr Int_t          ITEMS_PER_PAGE      = 18;
 
@@ -299,18 +300,22 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  View_Bases_Option();
 
     public:
-        V::String_Variable_t*   Info_View_Variable();
-        V::Int_Variable_t*      Info_Index_Variable();
+        V::String_Variable_t*   Nested_View_Variable();
+        V::Int_Variable_t*      Nested_Index_Variable();
+        V::Int_Variable_t*      Nested_Form_Variable();
 
     public:
-        Bases_Item_View_e   Info_View();
-        void                Info_View(Bases_Item_View_e value);
-        Int_t               Info_Index();
-        void                Info_Index(Int_t value);
+        Bases_Item_View_e   Nested_View();
+        void                Nested_View(Bases_Item_View_e value);
+        Int_t               Nested_Index();
+        void                Nested_Index(Int_t value);
+        Form_ID_t           Nested_Form();
+        void                Nested_Form(Form_ID_t value);
 
     public:
         String_t    Title(const char* item_name);
-        void        Spawn();
+        void        Spawn(Actor_Base_t* base);
+        void        Spawn(Leveled_Actor_Base_t* leveled_base);
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

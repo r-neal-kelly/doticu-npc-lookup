@@ -137,6 +137,54 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
+    String_t Main_t::Title_Item(const char* singular_type, const char* item_name)
+    {
+        return std::string(singular_type) + ": " + item_name;
+    }
+
+    String_t Main_t::Title_Item(const char* singular_type, const char* item_name, Int_t item_index, Int_t item_count)
+    {
+        std::string name =
+            std::string(singular_type) + ": " +
+            item_name;
+
+        std::string items =
+            std::string("Items: ") +
+            std::to_string(item_index + 1) + "/" +
+            std::to_string(item_count);
+
+        return name + "               " + items;
+    }
+
+    String_t Main_t::Title_Items(const char* plural_type, Int_t item_count, Int_t page_index, Int_t page_count)
+    {
+        std::string items =
+            std::string(plural_type) + ": " +
+            std::to_string(item_count);
+
+        std::string pages =
+            std::string("Page: ") +
+            std::to_string(page_index + 1) + "/" +
+            std::to_string(page_count);
+
+        return items + "               " + pages;
+    }
+
+    Int_t Main_t::Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page)
+    {
+        Int_t relative_idx = mcmlib::Option_t(option).position - headers_per_page;
+        if (relative_idx > -1 && relative_idx < items_per_page) {
+            Int_t absolute_idx = page_index * items_per_page + relative_idx;
+            if (absolute_idx > -1 && absolute_idx < item_count) {
+                return absolute_idx;
+            } else {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+
     static Bool_t Is_Same(const char* page_a, const char* page_b)
     {
         return skylib::CString_t::Is_Same(page_a, page_b, true);

@@ -215,12 +215,18 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
 
         } else {
-            Leveled_Actor_Base_t* item = Option_To_Item(option);
-            if (item) {
-                mcm->Disable_Option(option);
-                Item()->Leveled_Form_ID(item->form_id);
-                Current_View(Bases_View_e::ITEM);
-                mcm->Reset_Page();
+            Vector_t<Item_t>& items = Items();
+            Index_t item_index = mcm->Option_To_Item_Index(
+                option, items.size(), Page_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
+            );
+            if (item_index > -1) {
+                Item_t item = items[item_index];
+                if (item && item->Is_Valid()) {
+                    mcm->Disable_Option(option);
+                    Item()->Leveled_Form_ID(item->form_id);
+                    Current_View(Bases_View_e::ITEM);
+                    mcm->Reset_Page();
+                }
             }
         }
 
@@ -597,12 +603,80 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    Actor_Base_t* Leveled_Bases_Item_t::Current_Nested_Item()
+    {
+        Item_t current_item = Current_Item();
+        if (current_item && current_item->Is_Valid()) {
+            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            if (nested_item && current_item->Actor_Bases().Has(nested_item)) {
+                return nested_item;
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    Actor_Base_t* Leveled_Bases_Item_t::Previous_Nested_Item()
+    {
+        Item_t current_item = Current_Item();
+        if (current_item && current_item->Is_Valid()) {
+            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            if (nested_item) {
+                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
+                Index_t idx = nested_items.Index_Of(nested_item);
+                if (idx > -1) {
+                    if (idx == 0) {
+                        idx = nested_items.size() - 1;
+                    } else {
+                        idx -= 1;
+                    }
+                    return nested_items[idx];
+                } else {
+                    return nullptr;
+                }
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    Actor_Base_t* Leveled_Bases_Item_t::Next_Nested_Item()
+    {
+        Item_t current_item = Current_Item();
+        if (current_item && current_item->Is_Valid()) {
+            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            if (nested_item) {
+                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
+                Index_t idx = nested_items.Index_Of(nested_item);
+                if (idx > -1) {
+                    if (idx == nested_items.size() - 1) {
+                        idx = 0;
+                    } else {
+                        idx += 1;
+                    }
+                    return nested_items[idx];
+                } else {
+                    return nullptr;
+                }
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
     void Leveled_Bases_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Bases_Item_View_e info_view = Info_View();
-             if (info_view == Bases_Item_View_e::ITEM)  On_Page_Open_Item(is_refresh, lcallback);
-        else if (info_view == Bases_Item_View_e::BASES) On_Page_Open_Bases(is_refresh, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        Bases_Item_View_e info_view = Nested_View();
+             if (info_view == Bases_Item_View_e::ITEM)          On_Page_Open_Item(is_refresh, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES)         On_Page_Open_Bases(is_refresh, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES_ITEM)    On_Page_Open_Bases_Item(is_refresh, lcallback);
+        else                                                    SKYLIB_ASSERT(false);
     }
 
     void Leveled_Bases_Item_t::On_Page_Open_Item(Bool_t is_refresh, Latent_Callback_i* lcallback)
@@ -673,16 +747,16 @@ namespace doticu_npcl { namespace MCM {
                     static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
                 ));
 
-                Int_t page_index = Info_Index();
+                Int_t page_index = Nested_Index();
                 if (page_index < 0) {
                     page_index = 0;
-                    Info_Index(page_index);
+                    Nested_Index(page_index);
                 } else if (page_index >= page_count) {
                     page_index = page_count - 1;
-                    Info_Index(page_index);
+                    Nested_Index(page_index);
                 }
 
-                //mcm->Title_Text(Title(item_count, page_index, page_count));
+                mcm->Title_Text(mcm->Title_Items(" Internal Actor Bases ", item_count, page_index, page_count));
 
                 Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
                 Primary_Option() = mcm->Add_Text_Option("", "");
@@ -707,7 +781,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(item->Any_Name(), "...");
                 }
             } else {
-                //mcm->Title_Text(Title(0, 0, 1));
+                mcm->Title_Text(mcm->Title_Items(" Internal Actor Bases ", 0, 0, 1));
 
                 Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
                 Primary_Option() = mcm->Add_Text_Option("", "");
@@ -721,12 +795,77 @@ namespace doticu_npcl { namespace MCM {
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
+    void Leveled_Bases_Item_t::On_Page_Open_Bases_Item(Bool_t is_refresh, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        Leveled_Actor_Base_t* current_item = Current_Item();
+        if (current_item && current_item->Is_Valid()) {
+            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            if (nested_item && nested_item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
+                Index_t nested_index = nested_items.Index_Of(nested_item);
+                if (nested_index > -1) {
+                    mcm->Title_Text(mcm->Title_Item(" Internal Actor Base ", nested_item->Any_Name(), nested_index, nested_items.size()));
+
+                    mcm->Cursor_Position(0);
+                    mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+
+                    Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
+                    Primary_Option() = mcm->Add_Text_Option(Main_t::SPAWN_LABEL, "");
+                    if (current_item->Actor_Bases().size() > 1) {
+                        Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "");
+                        Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "");
+                    } else {
+                        Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "", Flag_e::DISABLE);
+                        Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "", Flag_e::DISABLE);
+                    }
+
+                    mcm->Add_Header_Option(" Internal Actor Base ");
+                    mcm->Add_Header_Option("");
+                    mcm->Add_Text_Option(std::string(" Name: ") + nested_item->Name(), "");
+                    mcm->Add_Text_Option(std::string(" Form ID: ") + nested_item->Form_ID_String().data, "");
+                    mcm->Add_Text_Option(std::string(" Sex: ") + Sex_e::To_String(nested_item->Sex()), "");
+                    mcm->Add_Empty_Option();
+
+                    Race_t* race = nested_item->Race();
+                    if (race) {
+                        mcm->Add_Header_Option(" Race ");
+                        mcm->Add_Header_Option("");
+                        mcm->Add_Text_Option(std::string(" Name: ") + race->Name(), "");
+                        mcm->Add_Text_Option(std::string(" Editor ID: ") + race->Get_Editor_ID(), "");
+                        mcm->Add_Text_Option(std::string(" Form ID: ") + race->Form_ID_String().data, "");
+                        mcm->Add_Empty_Option();
+                    }
+                } else {
+                    Nested_View(Bases_Item_View_e::BASES);
+                    Nested_Form(0);
+                    mcm->Reset_Page();
+                }
+            } else {
+                Nested_View(Bases_Item_View_e::BASES);
+                Nested_Form(0);
+                mcm->Reset_Page();
+            }
+        } else {
+            List()->do_update_items = true;
+            Current_View(Bases_View_e::LIST);
+            Nested_View(Bases_Item_View_e::ITEM);
+            Nested_Index(0);
+            Nested_Form(0);
+            mcm->Reset_Page();
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
+    }
+
     void Leveled_Bases_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Bases_Item_View_e info_view = Info_View();
-             if (info_view == Bases_Item_View_e::ITEM)  On_Option_Select_Item(option, lcallback);
-        else if (info_view == Bases_Item_View_e::BASES) On_Option_Select_Bases(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        Bases_Item_View_e info_view = Nested_View();
+             if (info_view == Bases_Item_View_e::ITEM)          On_Option_Select_Item(option, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES)         On_Option_Select_Bases(option, lcallback);
+        else if (info_view == Bases_Item_View_e::BASES_ITEM)    On_Option_Select_Bases_Item(option, lcallback);
+        else                                                    SKYLIB_ASSERT(false);
     }
 
     void Leveled_Bases_Item_t::On_Option_Select_Item(Int_t option, Latent_Callback_i* lcallback)
@@ -740,7 +879,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
         } else if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
-            Spawn();
+            Spawn(Current_Item());
         } else if (option == Previous_Option()) {
             mcm->Disable_Option(option);
             Leveled_Actor_Base_t* item = Previous_Item();
@@ -764,8 +903,8 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == View_Bases_Option()) {
             mcm->Disable_Option(option);
-            Info_View(Bases_Item_View_e::BASES);
-            Info_Index(0);
+            Nested_View(Bases_Item_View_e::BASES);
+            Nested_Index(0);
             mcm->Reset_Page();
         }
 
@@ -778,8 +917,8 @@ namespace doticu_npcl { namespace MCM {
 
         if (option == Back_Option()) {
             mcm->Disable_Option(option);
-            Info_View(Bases_Item_View_e::ITEM);
-            Info_Index(0);
+            Nested_View(Bases_Item_View_e::ITEM);
+            Nested_Index(0);
             mcm->Reset_Page();
 
         } else if (option == Previous_Option()) {
@@ -794,13 +933,13 @@ namespace doticu_npcl { namespace MCM {
                         static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
                     ));
 
-                    Int_t page_index = Info_Index();
+                    Int_t page_index = Nested_Index();
                     if (page_index == 0) {
                         page_index = page_count - 1;
                     } else {
                         page_index -= 1;
                     }
-                    Info_Index(page_index);
+                    Nested_Index(page_index);
                 }
             }
 
@@ -817,18 +956,78 @@ namespace doticu_npcl { namespace MCM {
                         static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
                     ));
 
-                    Int_t page_index = Info_Index();
+                    Int_t page_index = Nested_Index();
                     if (page_index == page_count - 1) {
                         page_index = 0;
                     } else {
                         page_index += 1;
                     }
-                    Info_Index(page_index);
+                    Nested_Index(page_index);
                 }
             }
 
             mcm->Reset_Page();
+
+        } else {
+            Leveled_Actor_Base_t* item = Current_Item();
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                Index_t item_index = mcm->Option_To_Item_Index(
+                    option, items.size(), Nested_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
+                );
+                if (item_index > -1) {
+                    Actor_Base_t* item = items[item_index];
+                    if (item && item->Is_Valid()) {
+                        mcm->Disable_Option(option);
+                        Item()->Nested_Form(item->form_id);
+                        Nested_View(Bases_Item_View_e::BASES_ITEM);
+                        mcm->Reset_Page();
+                    }
+                }
+            }
         }
+
+        mcm->Destroy_Latent_Callback(lcallback);
+    }
+
+    void Leveled_Bases_Item_t::On_Option_Select_Bases_Item(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option()) {
+            mcm->Disable_Option(option);
+            Nested_View(Bases_Item_View_e::BASES);
+            Nested_Form(0);
+            mcm->Reset_Page();
+
+        } else if (option == Primary_Option()) {
+            mcm->Flicker_Option(option);
+            Spawn(Current_Nested_Item());
+
+        } else if (option == Previous_Option()) {
+            mcm->Disable_Option(option);
+            Actor_Base_t* nested_item = Previous_Nested_Item();
+            if (nested_item) {
+                Nested_Form(nested_item->form_id);
+            } else {
+                Nested_View(Bases_Item_View_e::BASES);
+                Nested_Form(0);
+            }
+            mcm->Reset_Page();
+
+        } else if (option == Next_Option()) {
+            mcm->Disable_Option(option);
+            Actor_Base_t* nested_item = Next_Nested_Item();
+            if (nested_item) {
+                Nested_Form(nested_item->form_id);
+            } else {
+                Nested_View(Bases_Item_View_e::BASES);
+                Nested_Form(0);
+            }
+            mcm->Reset_Page();
+
+        }
+
         mcm->Destroy_Latent_Callback(lcallback);
     }
 

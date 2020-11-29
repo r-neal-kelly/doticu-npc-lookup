@@ -223,33 +223,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline String_t Bases_List_t<B, I>::Title(Int_t item_count, Int_t page_index, Int_t page_count)
     {
-        std::string items =
-            std::string(Item_Type_Plural()) + ": " +
-            std::to_string(item_count);
-
-        std::string pages =
-            std::string("Page: ") +
-            std::to_string(page_index + 1) + "/" +
-            std::to_string(page_count);
-
-        return items + "               " + pages;
-    }
-
-    template <typename Base_t, typename Item_t>
-    inline Item_t Bases_List_t<Base_t, Item_t>::Option_To_Item(Int_t option)
-    {
-        Int_t relative_idx = mcmlib::Option_t(option).position - HEADERS_PER_PAGE;
-        if (relative_idx > -1 && relative_idx < ITEMS_PER_PAGE) {
-            Vector_t<Item_t>& items = List()->Items();
-            Int_t absolute_idx = Page_Index() * ITEMS_PER_PAGE + relative_idx;
-            if (absolute_idx > -1 && absolute_idx < items.size()) {
-                return items[absolute_idx];
-            } else {
-                return List()->Null_Item();
-            }
-        } else {
-            return List()->Null_Item();
-        }
+        return Main_t::Self()->Title_Items(Item_Type_Plural(), item_count, page_index, page_count);
     }
 
     template <typename B, typename I>
@@ -698,98 +672,77 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option() { DEFINE_OPTION(); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Item_t<B, I>::Info_View_Variable()    { DEFINE_STRING("p_item_info_view"); }
+    inline V::String_Variable_t*    Bases_Item_t<B, I>::Nested_View_Variable()    { DEFINE_STRING("p_item_nested_view"); }
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Info_Index_Variable()   { DEFINE_INT("p_item_info_index"); }
+    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Index_Variable()   { DEFINE_INT("p_item_nested_index"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Form_Variable()   { DEFINE_INT("p_item_nested_form"); }
 
     template <typename B, typename I>
-    inline Bases_Item_View_e Bases_Item_t<B, I>::Info_View()
+    inline Bases_Item_View_e Bases_Item_t<B, I>::Nested_View()
     {
-        String_t info_view = Info_View_Variable()->Value();
-        if (CString_t::Is_Same(info_view, ITEM_VIEW, true)) {
+        String_t nested_view = Nested_View_Variable()->Value();
+        if (CString_t::Is_Same(nested_view, ITEM_VIEW, true)) {
             return Bases_Item_View_e::ITEM;
-        } else if (CString_t::Is_Same(info_view, BASES_VIEW, true)) {
+        } else if (CString_t::Is_Same(nested_view, BASES_VIEW, true)) {
             return Bases_Item_View_e::BASES;
+        } else if (CString_t::Is_Same(nested_view, BASES_ITEM_VIEW, true)) {
+            return Bases_Item_View_e::BASES_ITEM;
         } else {
-            Info_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable()->Value(ITEM_VIEW);
             return Bases_Item_View_e::ITEM;
         }
     }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Info_View(Bases_Item_View_e value)
+    inline void Bases_Item_t<B, I>::Nested_View(Bases_Item_View_e value)
     {
         if (value == Bases_Item_View_e::ITEM) {
-            Info_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable()->Value(ITEM_VIEW);
         } else if (value == Bases_Item_View_e::BASES) {
-            Info_View_Variable()->Value(BASES_VIEW);
+            Nested_View_Variable()->Value(BASES_VIEW);
+        } else if (value == Bases_Item_View_e::BASES_ITEM) {
+            Nested_View_Variable()->Value(BASES_ITEM_VIEW);
         } else {
-            Info_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable()->Value(ITEM_VIEW);
         }
     }
 
     template <typename B, typename I>
-    inline Int_t    Bases_Item_t<B, I>::Info_Index()            { return Info_Index_Variable()->Value(); }
+    inline Int_t        Bases_Item_t<B, I>::Nested_Index()                  { return Nested_Index_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Item_t<B, I>::Info_Index(Int_t value) { Info_Index_Variable()->Value(value); }
+    inline void         Bases_Item_t<B, I>::Nested_Index(Int_t value)       { Nested_Index_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Form_ID_t    Bases_Item_t<B, I>::Nested_Form()                   { return Nested_Form_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Nested_Form(Form_ID_t value)    { Nested_Form_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline String_t Bases_Item_t<B, I>::Title(const char* item_name)
     {
-        return std::string(Item_Type_Singular()) + ": " + item_name;
-    }
-
-    inline void Spawn_Impl(Form_t* base, Bool_t do_persist, Bool_t do_uncombative)
-    {
-        if (base && base->Is_Valid()) {
-            Actor_t* actor = static_cast<Actor_t*>
-                (Reference_t::Create(base, 1, Consts_t::Skyrim_Player_Actor(), do_persist, false));
-            if (actor && actor->Is_Valid()) {
-                if (do_uncombative) {
-                    actor->Set_Actor_Value(Actor_Value_e::AGGRESSION, 0.0f);
-                }
-                Spawned_Actors_t::Self().Add(actor);
-            }
-        }
-    }
-
-    inline void Spawn_Impl(Actor_Base_t* base, Bool_t do_static, Bool_t do_persist, Bool_t do_uncombative)
-    {
-        if (do_static) {
-            if (base && base->Is_Valid()) {
-                Spawn_Impl(static_cast<Form_t*>(base->Root_Base()), do_persist, do_uncombative);
-            }
-        } else {
-            Spawn_Impl(static_cast<Form_t*>(base), do_persist, do_uncombative);
-        }
-    }
-
-    inline void Spawn_Impl(Leveled_Actor_Base_t* base, Bool_t do_static, Bool_t do_persist, Bool_t do_uncombative)
-    {
-        if (do_static) {
-            if (base && base->Is_Valid()) {
-                Actor_t* actor = static_cast<Actor_t*>
-                    (Reference_t::Create(base, 1, Consts_t::Skyrim_Player_Actor(), false, true));
-                if (actor && actor->Is_Valid()) {
-                    Spawn_Impl(static_cast<Actor_Base_t*>(actor->base_form), do_static, do_persist, do_uncombative);
-                    actor->Mark_For_Delete();
-                }
-            }
-        } else {
-            Spawn_Impl(static_cast<Form_t*>(base), do_persist, do_uncombative);
-        }
+        return Main_t::Self()->Title_Item(Item_Type_Singular(), item_name);
     }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Spawn()
+    inline void Bases_Item_t<B, I>::Spawn(Actor_Base_t* base)
     {
         auto* options = Options();
-
-        Spawn_Impl(
-            Item()->Current_Item(),
-            options->Do_Static_Spawns(),
+        Spawned_Actors_t::Self().Add(
+            base,
             options->Do_Persistent_Spawns(),
-            options->Do_Uncombative_Spawns()
+            options->Do_Uncombative_Spawns(),
+            options->Do_Static_Spawns()
+        );
+    }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Spawn(Leveled_Actor_Base_t* leveled_base)
+    {
+        auto* options = Options();
+        Spawned_Actors_t::Self().Add(
+            leveled_base,
+            options->Do_Persistent_Spawns(),
+            options->Do_Uncombative_Spawns(),
+            options->Do_Static_Spawns()
         );
     }
 

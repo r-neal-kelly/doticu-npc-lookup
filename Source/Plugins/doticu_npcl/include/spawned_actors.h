@@ -8,12 +8,13 @@
 
 namespace doticu_npcl {
 
-    using Actor_t       = skylib::Actor_t;
-    using Actor_Base_t  = skylib::Actor_Base_t;
-    using Form_t        = skylib::Form_t;
-    using Form_ID_t     = skylib::Form_ID_t;
-    using Game_t        = skylib::Game_t;
-    using Mod_t         = skylib::Mod_t;
+    using Actor_t               = skylib::Actor_t;
+    using Actor_Base_t          = skylib::Actor_Base_t;
+    using Form_t                = skylib::Form_t;
+    using Form_ID_t             = skylib::Form_ID_t;
+    using Game_t                = skylib::Game_t;
+    using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
+    using Mod_t                 = skylib::Mod_t;
 
     class Spawned_Actors_t {
     public:
@@ -38,6 +39,8 @@ namespace doticu_npcl {
         Bool_t  Has(Actor_t* actor);
         Bool_t  Add(Actor_t* actor);
         Bool_t  Add(Form_ID_t actor_id, String_t actor_mod_name, Form_ID_t actor_base_id, String_t actor_base_mod_name);
+        Bool_t  Add(Actor_Base_t* base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
+        Bool_t  Add(Leveled_Actor_Base_t* leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
         Bool_t  Remove(Actor_t* actor);
         Bool_t  Remove(Index_t index);
         void    Clear();

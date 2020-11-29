@@ -207,13 +207,19 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
 
         } else {
-            Loaded_Actor_t loaded_actor = Option_To_Item(option);
-            if (loaded_actor.Is_Valid()) {
-                mcm->Disable_Option(option);
-                Item()->Actor_Form_ID(loaded_actor.actor->form_id);
-                Item()->Cell_Form_ID(loaded_actor.cell->form_id);
-                Current_View(Bases_View_e::ITEM);
-                mcm->Reset_Page();
+            Vector_t<Item_t>& items = Items();
+            Index_t item_index = mcm->Option_To_Item_Index(
+                option, items.size(), Page_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
+            );
+            if (item_index > -1) {
+                Item_t item = items[item_index];
+                if (item.Is_Valid()) {
+                    mcm->Disable_Option(option);
+                    Item()->Actor_Form_ID(item.actor->form_id);
+                    Item()->Cell_Form_ID(item.cell->form_id);
+                    Current_View(Bases_View_e::ITEM);
+                    mcm->Reset_Page();
+                }
             }
         }
 

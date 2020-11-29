@@ -97,17 +97,23 @@ namespace doticu_npcl { namespace MCM {
         void        Leveled_Form_ID(Form_ID_t value);
 
     public:
-        Item_t  Current_Item();
-        Item_t  Previous_Item();
-        Item_t  Next_Item();
+        Item_t          Current_Item();
+        Item_t          Previous_Item();
+        Item_t          Next_Item();
+
+        Actor_Base_t*   Current_Nested_Item();
+        Actor_Base_t*   Previous_Nested_Item();
+        Actor_Base_t*   Next_Nested_Item();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Page_Open_Item(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Page_Open_Bases(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void On_Page_Open_Bases_Item(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Select_Item(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Select_Bases(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Select_Bases_Item(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

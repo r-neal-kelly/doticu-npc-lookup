@@ -96,6 +96,12 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
+        String_t Title_Item(const char* singular_type, const char* item_name);
+        String_t Title_Item(const char* singular_type, const char* item_name, Int_t item_index, Int_t item_count);
+        String_t Title_Items(const char* plural_type, Int_t item_count, Int_t page_index, Int_t page_count);
+
+        Int_t Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page);
+
     public:
         void On_Load();
         void On_Save();

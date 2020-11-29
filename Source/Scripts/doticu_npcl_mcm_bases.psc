@@ -34,5 +34,6 @@ bool    p_options_do_persistent_spawns      =    true
 bool    p_options_do_static_spawns          =    true
 
 ; Item
-string  p_item_info_view                    =      ""
-int     p_item_info_index                   =      -1
+string  p_item_nested_view                  =      ""
+int     p_item_nested_index                 =      -1
+int     p_item_nested_form                  =      -1
