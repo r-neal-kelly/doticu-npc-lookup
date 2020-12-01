@@ -7,6 +7,7 @@
 #include "skse64_common/skse_version.h"
 
 #include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/global.h"
 
@@ -84,10 +85,10 @@ namespace doticu_npcl {
     Bool_t Main_t::SKSE_Register_Functions(skylib::Virtual::Machine_t* machine)
     {
         #define REGISTER(TYPE_)                         \
-        M                                               \
+        SKYLIB_M                                        \
             TYPE_::Register_Me(machine);                \
             _MESSAGE("Added " #TYPE_ " functions.");    \
-        W
+        SKYLIB_W
 
         REGISTER(MCM::Main_t);
 

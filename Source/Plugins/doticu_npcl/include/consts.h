@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "doticu_skylib/intrinsic.h"
-
 #include "intrinsic.h"
 
 namespace doticu_skylib {

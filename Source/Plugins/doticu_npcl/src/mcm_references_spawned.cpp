@@ -6,6 +6,8 @@
 #include "doticu_skylib/cell.h"
 #include "doticu_skylib/game.h"
 
+#include "doticu_skylib/virtual_function.h"
+
 #include "consts.h"
 #include "filter.h"
 #include "spawned_actors.h"

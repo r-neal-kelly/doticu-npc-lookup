@@ -187,9 +187,9 @@ namespace doticu_npcl {
 
         static Filter_e Compare(Item_t item, String_t string)
         {
-            if (item && item->form_files) {
-                for (Index_t idx = 0, end = item->form_files->count; idx < end; idx += 1) {
-                    Mod_t* mod = item->form_files->entries[idx];
+            if (item && item->form_mods) {
+                for (Index_t idx = 0, end = item->form_mods->count; idx < end; idx += 1) {
+                    Mod_t* mod = item->form_mods->entries[idx];
                     if (mod) {
                         if (CString_t::Is_Length_Greater_Than(string, 1)) {
                             if (CString_t::Contains(mod->Name(), string, true)) {

@@ -46,6 +46,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;$(doticu_skylib)\include;$(doticu_mcmlib)\include;$(ProjectDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>common/IPrefix.h;</ForcedIncludeFiles>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>

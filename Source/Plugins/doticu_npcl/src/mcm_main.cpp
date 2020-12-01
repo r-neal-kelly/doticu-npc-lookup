@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/virtual_function.h"
 #include "doticu_skylib/virtual_macros.h"
 
 #include "consts.h"
@@ -414,11 +415,11 @@ namespace doticu_npcl { namespace MCM {
         Config_Base_t::Register_Me(machine);
 
         #define LMETHOD(FUNC_NAME_, ARG_COUNT_, RETURN_TYPE_, METHOD_, ...) \
-        M                                                                   \
+        SKYLIB_M                                                            \
             BIND_LATENT_METHOD(machine, Class_Name(), Main_t,               \
                                FUNC_NAME_, ARG_COUNT_,                      \
                                RETURN_TYPE_, METHOD_, __VA_ARGS__);         \
-        W
+        SKYLIB_W
 
         LMETHOD("OnConfigOpen", 0, void, On_Config_Open);
         LMETHOD("OnConfigClose", 0, void, On_Config_Close);

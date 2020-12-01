@@ -3,7 +3,6 @@
 */
 
 #include "doticu_skylib/actor.h"
-#include "doticu_skylib/utils.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/mod.h"
@@ -15,19 +14,19 @@
 namespace doticu_npcl {
 
     #define DEFINE_MOD(NAME_)                                   \
-    M                                                           \
+    SKYLIB_M                                                    \
         static skylib::Mod_t* mod = skylib::Game_t::Mod(NAME_); \
         return mod;                                             \
-    W
+    SKYLIB_W
 
     #define DEFINE_FORM(MOD_PTR_, TYPE_, LOWER_FORM_ID_)        \
-    M                                                           \
+    SKYLIB_M                                                    \
         SKYLIB_ASSERT(MOD_PTR_);                                \
         static TYPE_* form = static_cast<TYPE_*>                \
             (skylib::Game_t::Form(MOD_PTR_, LOWER_FORM_ID_));   \
         SKYLIB_ASSERT(form);                                    \
         return form;                                            \
-    W
+    SKYLIB_W
 
     skylib::Actor_t*        Consts_t::Skyrim_Player_Actor()         { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_t,        0x000014); }
 
