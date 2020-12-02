@@ -13,16 +13,16 @@
 
 namespace doticu_npcl {
 
-    #define DEFINE_MOD(NAME_)                                   \
-    SKYLIB_M                                                    \
-        static skylib::Mod_t* mod = skylib::Game_t::Mod(NAME_); \
-        return mod;                                             \
+    #define DEFINE_MOD(NAME_)                                           \
+    SKYLIB_M                                                            \
+        static skylib::Mod_t* mod = skylib::Mod_t::Active_Mod(NAME_);   \
+        return mod;                                                     \
     SKYLIB_W
 
     #define DEFINE_FORM(MOD_PTR_, TYPE_, LOWER_FORM_ID_)        \
     SKYLIB_M                                                    \
         SKYLIB_ASSERT(MOD_PTR_);                                \
-        static TYPE_* form = static_cast<TYPE_*>                \
+        static TYPE_* form = static_cast<maybe<TYPE_*>>         \
             (skylib::Game_t::Form(MOD_PTR_, LOWER_FORM_ID_));   \
         SKYLIB_ASSERT(form);                                    \
         return form;                                            \

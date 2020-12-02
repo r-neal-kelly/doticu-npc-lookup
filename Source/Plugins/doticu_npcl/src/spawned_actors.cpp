@@ -136,13 +136,13 @@ namespace doticu_npcl {
     Bool_t Spawned_Actors_t::Add(Form_ID_t actor_id, String_t actor_mod_name, Form_ID_t actor_base_id, String_t actor_base_mod_name)
     {
         if (actor_base_mod_name) {
-            Mod_t* actor_base_mod = Mod_t::From(actor_base_mod_name);
+            Mod_t* actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name.data);
             if (actor_base_mod) {
                 actor_base_id = Form_t::Reindex(actor_base_id, actor_base_mod);
                 if (actor_base_id > 0) {
                     if (Form_t::Is_Static(actor_id)) {
                         if (actor_mod_name) {
-                            Mod_t* actor_mod = Mod_t::From(actor_mod_name);
+                            Mod_t* actor_mod = Mod_t::Active_Mod(actor_mod_name.data);
                             if (actor_mod) {
                                 actor_id = Form_t::Reindex(actor_id, actor_mod);
                                 if (actor_id == 0) {
@@ -155,7 +155,7 @@ namespace doticu_npcl {
                             return false;
                         }
                     }
-                    Actor_t* actor = static_cast<Actor_t*>(Game_t::Form(actor_id));
+                    Actor_t* actor = static_cast<maybe<Actor_t*>>(Game_t::Form(actor_id));
                     if (actor && actor->Is_Valid()) {
                         Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
                         if (actor_base && actor_base->Is_Valid() && actor_base->form_id == actor_base_id) {

@@ -16,7 +16,8 @@ namespace doticu_skylib { namespace Virtual {
 
 namespace doticu_npcl {
 
-    class Main_t {
+    class Main_t
+    {
     public:
         static const SKSEInterface*             SKSE;
         static const SKSEPapyrusInterface*      SKSE_PAPYRUS;

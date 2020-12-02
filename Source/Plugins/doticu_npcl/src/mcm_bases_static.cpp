@@ -535,7 +535,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Static_Bases_Item_t::Current_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Static_Form_ID()));
         if (item && List()->Items().Has(item)) {
             return item;
         } else {
@@ -545,7 +545,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Static_Bases_Item_t::Previous_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Static_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -566,7 +566,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Static_Bases_Item_t::Next_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Static_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Static_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);

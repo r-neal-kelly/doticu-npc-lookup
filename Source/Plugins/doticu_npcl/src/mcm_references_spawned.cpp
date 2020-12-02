@@ -682,7 +682,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Spawned_References_Item_t::Current_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid() && List()->Items().Has(item)) {
             return std::move(item);
         } else {
@@ -692,7 +692,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Spawned_References_Item_t::Previous_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -713,7 +713,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Spawned_References_Item_t::Next_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Actor_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);

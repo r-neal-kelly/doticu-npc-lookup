@@ -553,7 +553,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Leveled_Bases_Item_t::Current_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Leveled_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Leveled_Form_ID()));
         if (item && List()->Items().Has(item)) {
             return item;
         } else {
@@ -563,7 +563,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Leveled_Bases_Item_t::Previous_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Leveled_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Leveled_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -584,7 +584,7 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Leveled_Bases_Item_t::Next_Item()
     {
-        Item_t item = static_cast<Item_t>(Game_t::Form(Leveled_Form_ID()));
+        Item_t item = static_cast<maybe<Item_t>>(Game_t::Form(Leveled_Form_ID()));
         if (item) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
@@ -607,7 +607,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Item_t current_item = Current_Item();
         if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item && current_item->Actor_Bases().Has(nested_item)) {
                 return nested_item;
             } else {
@@ -622,7 +622,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Item_t current_item = Current_Item();
         if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item) {
                 Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
                 Index_t idx = nested_items.Index_Of(nested_item);
@@ -648,7 +648,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Item_t current_item = Current_Item();
         if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item) {
                 Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
                 Index_t idx = nested_items.Index_Of(nested_item);
@@ -801,7 +801,7 @@ namespace doticu_npcl { namespace MCM {
 
         Leveled_Actor_Base_t* current_item = Current_Item();
         if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<Actor_Base_t*>(Game_t::Form(Nested_Form()));
+            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item && nested_item->Is_Valid()) {
                 Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
                 Index_t nested_index = nested_items.Index_Of(nested_item);

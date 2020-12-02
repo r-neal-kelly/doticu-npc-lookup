@@ -24,9 +24,18 @@ namespace doticu_npcl {
     using String_t      = skylib::String_t;
 
     template <typename Type>
+    using none          = skylib::none<Type>;
+    template <typename Type>
+    using some          = skylib::some<Type>;
+    template <typename Type>
+    using maybe         = skylib::maybe<Type>;
+
+    template <typename Type>
     using Enum_t        = skylib::Enum_t<Type>;
+
     template <typename Type>
     using Vector_t      = skylib::Vector_t<Type>;
+
     template <typename ...Types>
     using Callback_i    = skylib::Callback_i<Types...>;
 
