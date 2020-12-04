@@ -822,11 +822,10 @@ namespace doticu_npcl { namespace MCM {
                 Markers_t* markers = Markers_t::Self();
                 if (markers->Has_Marked(loaded_actor.actor)) {
                     Markers_t::Self()->Unmark(loaded_actor.actor);
-                    mcm->Text_Option_Value(option, mcm->ADD_MARKER, true);
                 } else {
                     Markers_t::Self()->Mark(loaded_actor.actor);
-                    mcm->Text_Option_Value(option, mcm->REMOVE_MARKER, true);
                 }
+                mcm->Reset_Page();
             }
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
