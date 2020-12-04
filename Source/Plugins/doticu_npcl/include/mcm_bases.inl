@@ -57,6 +57,12 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void Bases_t<B, I>::On_Init()
+    {
+        List()->do_update_items = true;
+    }
+
+    template <typename B, typename I>
     inline void Bases_t<B, I>::On_Load()
     {
         List()->do_update_items = true;

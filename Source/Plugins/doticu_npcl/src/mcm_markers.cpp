@@ -57,6 +57,35 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    void Markers_t::Refresh_Cache()
+    {
+        alias_actors.Clear();
+        for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
+            alias_actors.Push(
+                Alias_Actor_t(aliases.entries[idx + 1], none<Actor_t*>())
+            );
+        }
+
+        for (Index_t idx = 0, end = promoted_references.count; idx < end; idx += 1) {
+            skylib::Reference_Handle_t reference_handle = promoted_references.entries[idx];
+            Reference_t* reference = Reference_t::From_Handle(reference_handle);
+            if (reference && reference->Is_Valid()) {
+                skylib::Aliases_x* xaliases = reference->xlist.Get<skylib::Aliases_x>();
+                if (xaliases) {
+                    for (Index_t idx = 0, end = xaliases->instances.count; idx < end; idx += 1) {
+                        skylib::Aliases_x::Instance_t* instance = xaliases->instances.entries[idx];
+                        if (instance && instance->quest == this && instance->alias_base) {
+                            Index_t marker_idx = instance->alias_base->id - 1;
+                            if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
+                                alias_actors[marker_idx].actor = static_cast<Actor_t*>(reference);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     Int_t Markers_t::Marked_Count()
     {
         Int_t count = 0;
@@ -148,34 +177,14 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    void Markers_t::On_Init()
+    {
+        Refresh_Cache();
+    }
+
     void Markers_t::On_Load()
     {
-        alias_actors.Clear();
-
-        for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
-            alias_actors.Push(
-                Alias_Actor_t(aliases.entries[idx + 1], none<Actor_t*>())
-            );
-        }
-
-        for (Index_t idx = 0, end = promoted_references.count; idx < end; idx += 1) {
-            skylib::Reference_Handle_t reference_handle = promoted_references.entries[idx];
-            Reference_t* reference = Reference_t::From_Handle(reference_handle);
-            if (reference && reference->Is_Valid()) {
-                skylib::Aliases_x* xaliases = reference->xlist.Get<skylib::Aliases_x>();
-                if (xaliases) {
-                    for (Index_t idx = 0, end = xaliases->instances.count; idx < end; idx += 1) {
-                        skylib::Aliases_x::Instance_t* instance = xaliases->instances.entries[idx];
-                        if (instance && instance->quest == this && instance->alias_base) {
-                            Index_t marker_idx = instance->alias_base->id - 1;
-                            if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
-                                alias_actors[marker_idx].actor = static_cast<Actor_t*>(reference);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        Refresh_Cache();
     }
 
     void Markers_t::On_Save()

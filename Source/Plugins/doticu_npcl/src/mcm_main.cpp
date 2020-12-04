@@ -214,6 +214,16 @@ namespace doticu_npcl { namespace MCM {
         return skylib::CString_t::Is_Same(page_a, page_b, true);
     }
 
+    void Main_t::On_Init()
+    {
+        Static_Bases_t::Self()->On_Init();
+        Dynamic_Bases_t::Self()->On_Init();
+        Leveled_Bases_t::Self()->On_Init();
+        Loaded_References_t::Self()->On_Init();
+        Spawned_References_t::Self()->On_Init();
+        Markers_t::Self()->On_Init();
+    }
+
     void Main_t::On_Load()
     {
         Static_Bases_t::Self()->On_Load();

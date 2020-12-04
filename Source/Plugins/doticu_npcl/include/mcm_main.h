@@ -112,6 +112,7 @@ namespace doticu_npcl { namespace MCM {
         Int_t Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page);
 
     public:
+        void On_Init();
         void On_Load();
         void On_Save();
         Bool_t On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id);

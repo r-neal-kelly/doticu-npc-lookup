@@ -130,7 +130,7 @@ namespace doticu_npcl {
         {
             void operator()()
             {
-
+                MCM::Main_t::Self()->On_Init();
             }
         };
         skylib::Quest_t::Start(quests, new UCallback_t());
