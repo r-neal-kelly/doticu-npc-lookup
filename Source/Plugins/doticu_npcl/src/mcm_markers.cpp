@@ -2,8 +2,11 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/forward_list.inl"
+
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/quest_objective.h"
 
 #include "doticu_skylib/extra_aliases.h"
 #include "doticu_skylib/extra_list.inl"
@@ -102,6 +105,10 @@ namespace doticu_npcl { namespace MCM {
             for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
                 Alias_Actor_t& alias_actor = alias_actors[idx];
                 if (!alias_actor.actor) {
+                    maybe<skylib::Quest_Objective_t**> objective = alias_actor.alias->quest->objectives.Point(idx);
+                    if (objective && *objective) {
+                        (*objective)->display_text = std::string("NPC Lookup: ") + actor->Any_Name().data;
+                    }
                     alias_actor.alias->Fill(actor, new Mark_Callback_t(this, idx));
                     alias_actor.actor = actor();
                     return true;
@@ -143,6 +150,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::On_Load()
     {
+        alias_actors.Clear();
+
         for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
             alias_actors.Push(
                 Alias_Actor_t(aliases.entries[idx + 1], none<Actor_t*>())

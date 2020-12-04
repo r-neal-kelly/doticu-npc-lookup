@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "cached_leveled.h"
 #include "mcm_bases.h"
 
 namespace doticu_npcl { namespace MCM {
@@ -17,7 +18,7 @@ namespace doticu_npcl { namespace MCM {
     class Leveled_Bases_Base_t : public Quest_t
     {
     public:
-        using Item_t = Leveled_Actor_Base_t*;
+        using Item_t = Cached_Leveled_t*;
 
     public:
         static String_t             Class_Name();
@@ -40,6 +41,10 @@ namespace doticu_npcl { namespace MCM {
 
     class Leveled_Bases_t : public Bases_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
+    public:
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
     };
 
 }}
@@ -49,6 +54,16 @@ namespace doticu_npcl { namespace MCM {
     class Leveled_Bases_List_t : public Bases_List_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
     public:
+        static Vector_t<Cached_Leveled_t> cached_leveleds;
+
+    public:
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
+
+    public:
+        void                Refresh_Cache();
+
         Vector_t<Item_t>&   Items();
         Vector_t<Item_t>    Default_Items();
         Item_t              Null_Item();
@@ -97,15 +112,15 @@ namespace doticu_npcl { namespace MCM {
         void        Leveled_Form_ID(Form_ID_t value);
 
     public:
-        Item_t                  Current_Item();
-        Item_t                  Previous_Item();
-        Item_t                  Next_Item();
+        Item_t                          Current_Item();
+        Item_t                          Previous_Item();
+        Item_t                          Next_Item();
 
-        Vector_t<Actor_Base_t*> Nested_Items();
+        Vector_t<some<Actor_Base_t*>>   Nested_Items();
 
-        Actor_Base_t*           Current_Nested_Item();
-        Actor_Base_t*           Previous_Nested_Item();
-        Actor_Base_t*           Next_Nested_Item();
+        maybe<Actor_Base_t*>            Current_Nested_Item();
+        maybe<Actor_Base_t*>            Previous_Nested_Item();
+        maybe<Actor_Base_t*>            Next_Nested_Item();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

@@ -71,6 +71,9 @@
     <ClInclude Include="include\mcm_markers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\cached_leveled.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -101,6 +104,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\mcm_markers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cached_leveled.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

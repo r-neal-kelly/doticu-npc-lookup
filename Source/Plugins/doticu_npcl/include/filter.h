@@ -15,6 +15,7 @@
 #include "doticu_skylib/relation.h"
 
 #include "intrinsic.h"
+#include "cached_leveled.h"
 
 namespace doticu_npcl {
 
@@ -247,6 +248,28 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Mod_Filter_t<Cached_Leveled_t*> : public String_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Mod_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                return Mod_Filter_t<Form_t*>::Compare(item->leveled, string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Mod_Filter_t<Actor_Base_Leveleds_t> : public String_Filter_i<Actor_Base_Leveleds_t>
     {
     public:
@@ -416,6 +439,34 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Race_Filter_t<Cached_Leveled_t*> : public String_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Race_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Race_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Race_Filter_t<Actor_Base_Leveleds_t> : public String_Filter_i<Actor_Base_Leveleds_t>
     {
     public:
@@ -550,6 +601,34 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Base_Filter_t<Cached_Leveled_t*> : public String_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Base_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Base_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Base_Filter_t<Actor_Base_Leveleds_t> : public String_Filter_i<Actor_Base_Leveleds_t>
     {
     public:
@@ -659,6 +738,34 @@ namespace doticu_npcl {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Template_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Template_Filter_t<Cached_Leveled_t*> : public String_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Template_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
                     if (Template_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
@@ -1038,6 +1145,34 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Relation_Filter_t<Cached_Leveled_t*> : public Relation_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Relation_Filter_t(Filter_State_t<Item_t>& state, Actor_Base_t* base_to_compare, Relation_e relation, Bool_t do_negate) :
+            Relation_Filter_i<Item_t>(state, base_to_compare, relation, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Actor_Base_t* base_to_compare, Relation_e relation)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Relation_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], base_to_compare, relation) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Relation_Filter_t<Actor_Base_Leveleds_t> : public Relation_Filter_i<Actor_Base_Leveleds_t>
     {
     public:
@@ -1176,6 +1311,34 @@ namespace doticu_npcl {
     };
 
     template <>
+    class Male_Female_Filter_t<Cached_Leveled_t*> : public Binary_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Male_Female_Filter_t(Filter_State_t<Item_t>& state, Binary_e binary) :
+            Binary_Filter_i<Item_t>(state, binary, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Binary_e binary)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Male_Female_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], binary) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
     class Male_Female_Filter_t<Actor_Base_Leveleds_t> : public Binary_Filter_i<Actor_Base_Leveleds_t>
     {
     public:
@@ -1303,6 +1466,34 @@ namespace doticu_npcl {
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
                     Actor_Base_t* actor_base = actor_bases[idx];
                     if (Unique_Generic_Filter_t<Actor_Base_t*>::Compare(actor_base, binary) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Unique_Generic_Filter_t<Cached_Leveled_t*> : public Binary_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Unique_Generic_Filter_t(Filter_State_t<Item_t>& state, Binary_e binary) :
+            Binary_Filter_i<Item_t>(state, binary, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, Binary_e binary)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Unique_Generic_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], binary) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }

@@ -867,6 +867,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             Item_t current_item = Current_Item();
             Spawned_Actors_t::Self().Remove(current_item);
+            Markers_t::Self()->Unmark(current_item);
             current_item->Mark_For_Delete();
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);

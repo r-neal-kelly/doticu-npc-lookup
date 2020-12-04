@@ -79,6 +79,7 @@
     <None Include="include\mcm_references.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\cached_leveled.h" />
     <ClInclude Include="include\consts.h" />
     <ClInclude Include="include\filter.h" />
     <ClInclude Include="include\main.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="include\mcm_markers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\cached_leveled.cpp" />
     <ClCompile Include="src\mcm_markers.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />

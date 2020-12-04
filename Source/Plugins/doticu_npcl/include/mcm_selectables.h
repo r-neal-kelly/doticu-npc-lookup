@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "cached_leveled.h"
 #include "mcm_main.h"
 
 namespace doticu_npcl { namespace MCM {
@@ -195,6 +196,24 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Mods_t<Base_t, Cached_Leveled_t*> : public Selectable_Mods_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Mods_t() :
+            Selectable_Mods_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            Selectable_Mods_t<Base_t, Form_t*>::Select(item->leveled, output);
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Mods_t<Base_t, Actor_t*> : public Selectable_Mods_i<Base_t, Actor_t*>
     {
     public:
@@ -291,6 +310,24 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Races_t<Base_t, Cached_Leveled_t*> : public Selectable_Races_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Races_t() :
+            Selectable_Races_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            item->Race_Names(output);
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Races_t<Base_t, Actor_t*> : public Selectable_Races_i<Base_t, Actor_t*>
     {
     public:
@@ -368,6 +405,24 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         using Item_t = Leveled_Actor_Base_t*;
+
+    public:
+        Selectable_Bases_t() :
+            Selectable_Bases_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            item->Actor_Base_Names(output);
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Bases_t<Base_t, Cached_Leveled_t*> : public Selectable_Bases_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
 
     public:
         Selectable_Bases_t() :
@@ -477,6 +532,29 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
+                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                    Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Templates_t<Base_t, Cached_Leveled_t*> : public Selectable_Templates_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Templates_t() :
+            Selectable_Templates_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& bases = item->bases;
                 for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
                     Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
                 }
@@ -789,6 +867,33 @@ namespace doticu_npcl { namespace MCM {
                         if (!output.Has(relation_name)) {
                             output.push_back(relation_name);
                         }
+                    }
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Relations_t<Base_t, Cached_Leveled_t*> : public Selectable_Relations_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Relations_t(Actor_Base_t* base_to_compare) :
+            Selectable_Relations_i<Base_t, Item_t>(&Select, base_to_compare)
+        {
+        }
+
+        static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
+        {
+            Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+            for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                Relation_e relation = Relation_e::Between(actor_bases[idx], base_to_compare);
+                if (relation != Relation_e::NONE) {
+                    String_t relation_name = std::string(" ") + Relation_e::To_String(relation) + " ";
+                    if (!output.Has(relation_name)) {
+                        output.push_back(relation_name);
                     }
                 }
             }
