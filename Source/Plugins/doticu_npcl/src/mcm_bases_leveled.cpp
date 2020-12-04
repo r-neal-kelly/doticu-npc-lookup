@@ -4,6 +4,7 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/actor_base_leveleds.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
@@ -49,16 +50,44 @@ namespace doticu_npcl { namespace MCM {
         if (!items || do_update_items) {
             do_update_items = false;
 
-            size_t item_reserve = Leveled_Actor_Base_t::Leveled_Actor_Base_Count();
+            {
+                size_t item_reserve = Leveled_Actor_Base_t::Leveled_Actor_Base_Count();
 
-            read.reserve(item_reserve);
-            read.clear();
-            Leveled_Actor_Base_t::Leveled_Actor_Bases(read);
+                read.reserve(item_reserve);
+                read.clear();
+                Leveled_Actor_Base_t::Leveled_Actor_Bases(read);
 
-            write.reserve(item_reserve);
-            write.clear();
+                write.reserve(item_reserve);
+                write.clear();
 
-            items = Filter()->Execute(&read, &write).Results();
+                items = Filter()->Execute(&read, &write).Results();
+            }
+
+            /*{
+                size_t item_reserve = Leveled_Actor_Base_t::Leveled_Actor_Base_Count();
+
+                read.reserve(item_reserve);
+                read.clear();
+
+                size_t actor_base_count = Actor_Base_t::Actor_Base_Count();
+
+                static Vector_t<Actor_Base_Leveleds_t> read_leveleds;
+                read_leveleds.reserve(actor_base_count);
+                read_leveleds.clear();
+                Leveled_Actor_Base_t::Actor_Bases_Leveleds(read_leveleds);
+
+                static Vector_t<Actor_Base_Leveleds_t> write_leveleds;
+                write_leveleds.reserve(actor_base_count);
+                write_leveleds.clear();
+
+                Vector_t<Actor_Base_Leveleds_t>* results = Filter()->Execute(&read_leveleds, &write_leveleds).Results();
+
+                Leveled_Actor_Base_t::Leveled_Actor_Bases(read, *results);
+                items = &read;
+
+                read_leveleds.clear();
+                write_leveleds.clear();
+            }*/
 
             items->Sort(
                 [](Item_t* item_a, Item_t* item_b)->Int_t
@@ -603,16 +632,23 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    Actor_Base_t* Leveled_Bases_Item_t::Current_Nested_Item()
+    Vector_t<Actor_Base_t*> Leveled_Bases_Item_t::Nested_Items()
     {
         Item_t current_item = Current_Item();
         if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
-            if (nested_item && current_item->Actor_Bases().Has(nested_item)) {
-                return nested_item;
-            } else {
-                return nullptr;
-            }
+            Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
+            nested_items.Sort((Int_t(*)(Actor_Base_t**, Actor_Base_t**))Actor_Base_t::Compare_Names);
+            return nested_items;
+        } else {
+            return Vector_t<Actor_Base_t*>();
+        }
+    }
+
+    Actor_Base_t* Leveled_Bases_Item_t::Current_Nested_Item()
+    {
+        Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
+        if (nested_item && Nested_Items().Has(nested_item)) {
+            return nested_item;
         } else {
             return nullptr;
         }
@@ -620,22 +656,17 @@ namespace doticu_npcl { namespace MCM {
 
     Actor_Base_t* Leveled_Bases_Item_t::Previous_Nested_Item()
     {
-        Item_t current_item = Current_Item();
-        if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
-            if (nested_item) {
-                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
-                Index_t idx = nested_items.Index_Of(nested_item);
-                if (idx > -1) {
-                    if (idx == 0) {
-                        idx = nested_items.size() - 1;
-                    } else {
-                        idx -= 1;
-                    }
-                    return nested_items[idx];
+        Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
+        if (nested_item) {
+            Vector_t<Actor_Base_t*> nested_items = Nested_Items();
+            Index_t idx = nested_items.Index_Of(nested_item);
+            if (idx > -1) {
+                if (idx == 0) {
+                    idx = nested_items.size() - 1;
                 } else {
-                    return nullptr;
+                    idx -= 1;
                 }
+                return nested_items[idx];
             } else {
                 return nullptr;
             }
@@ -646,22 +677,17 @@ namespace doticu_npcl { namespace MCM {
 
     Actor_Base_t* Leveled_Bases_Item_t::Next_Nested_Item()
     {
-        Item_t current_item = Current_Item();
-        if (current_item && current_item->Is_Valid()) {
-            Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
-            if (nested_item) {
-                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
-                Index_t idx = nested_items.Index_Of(nested_item);
-                if (idx > -1) {
-                    if (idx == nested_items.size() - 1) {
-                        idx = 0;
-                    } else {
-                        idx += 1;
-                    }
-                    return nested_items[idx];
+        Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
+        if (nested_item) {
+            Vector_t<Actor_Base_t*> nested_items = Nested_Items();
+            Index_t idx = nested_items.Index_Of(nested_item);
+            if (idx > -1) {
+                if (idx == nested_items.size() - 1) {
+                    idx = 0;
                 } else {
-                    return nullptr;
+                    idx += 1;
                 }
+                return nested_items[idx];
             } else {
                 return nullptr;
             }
@@ -740,7 +766,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Cursor_Position(0);
             mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-            Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+            Vector_t<Actor_Base_t*> items = Nested_Items();
             size_t item_count = items.size();
             if (item_count) {
                 Int_t page_count = static_cast<Int_t>(ceilf(
@@ -756,7 +782,7 @@ namespace doticu_npcl { namespace MCM {
                     Nested_Index(page_index);
                 }
 
-                mcm->Title_Text(mcm->Title_Items(" Internal Actor Bases ", item_count, page_index, page_count));
+                mcm->Title_Text(mcm->Title_Items(" Internal Bases ", item_count, page_index, page_count));
 
                 Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
                 Primary_Option() = mcm->Add_Text_Option("", "");
@@ -781,7 +807,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(item->Any_Name(), "...");
                 }
             } else {
-                mcm->Title_Text(mcm->Title_Items(" Internal Actor Bases ", 0, 0, 1));
+                mcm->Title_Text(mcm->Title_Items(" Internal Bases ", 0, 0, 1));
 
                 Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
                 Primary_Option() = mcm->Add_Text_Option("", "");
@@ -803,17 +829,17 @@ namespace doticu_npcl { namespace MCM {
         if (current_item && current_item->Is_Valid()) {
             Actor_Base_t* nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item && nested_item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> nested_items = current_item->Actor_Bases();
+                Vector_t<Actor_Base_t*> nested_items = Nested_Items();
                 Index_t nested_index = nested_items.Index_Of(nested_item);
                 if (nested_index > -1) {
-                    mcm->Title_Text(mcm->Title_Item(" Internal Actor Base ", nested_item->Any_Name(), nested_index, nested_items.size()));
+                    mcm->Title_Text(mcm->Title_Item(" Internal Base ", nested_item->Any_Name(), nested_index, nested_items.size()));
 
                     mcm->Cursor_Position(0);
                     mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                     Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
                     Primary_Option() = mcm->Add_Text_Option(Main_t::SPAWN_LABEL, "");
-                    if (current_item->Actor_Bases().size() > 1) {
+                    if (nested_items.size() > 1) {
                         Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "");
                         Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "");
                     } else {
@@ -821,7 +847,7 @@ namespace doticu_npcl { namespace MCM {
                         Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "", Flag_e::DISABLE);
                     }
 
-                    mcm->Add_Header_Option(" Internal Actor Base ");
+                    mcm->Add_Header_Option(" Internal Base ");
                     mcm->Add_Header_Option("");
                     mcm->Add_Text_Option(std::string(" Name: ") + nested_item->Name(), "");
                     mcm->Add_Text_Option(std::string(" Form ID: ") + nested_item->Form_ID_String().data, "");
@@ -926,7 +952,7 @@ namespace doticu_npcl { namespace MCM {
 
             Leveled_Actor_Base_t* item = Current_Item();
             if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                Vector_t<Actor_Base_t*> items = Nested_Items();
                 size_t item_count = items.size();
                 if (item_count > 0) {
                     Int_t page_count = static_cast<Int_t>(ceilf(
@@ -949,7 +975,7 @@ namespace doticu_npcl { namespace MCM {
 
             Leveled_Actor_Base_t* item = Current_Item();
             if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                Vector_t<Actor_Base_t*> items = Nested_Items();
                 size_t item_count = items.size();
                 if (item_count > 0) {
                     Int_t page_count = static_cast<Int_t>(ceilf(
@@ -971,7 +997,7 @@ namespace doticu_npcl { namespace MCM {
         } else {
             Leveled_Actor_Base_t* item = Current_Item();
             if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> items = item->Actor_Bases();
+                Vector_t<Actor_Base_t*> items = Nested_Items();
                 Index_t item_index = mcm->Option_To_Item_Index(
                     option, items.size(), Nested_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
                 );

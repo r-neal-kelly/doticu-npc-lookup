@@ -192,7 +192,9 @@ namespace doticu_npcl { namespace MCM {
     public:
         String_t                Title();
         void                    Clear();
-        Filter_State_t<Item_t>  Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write);
+
+        template <typename Type_t>
+        Filter_State_t<Type_t>  Execute(Vector_t<Type_t>* read, Vector_t<Type_t>* write);
 
         Vector_t<String_t>      Selectable_Mods();
         Vector_t<String_t>      Selectable_Races();

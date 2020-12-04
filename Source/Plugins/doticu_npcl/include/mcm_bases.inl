@@ -432,21 +432,22 @@ namespace doticu_npcl { namespace MCM {
         Unique_Generic_Argument(Binary_e::NONE);
     }
 
-    template <typename Base_t, typename Item_t>
-    inline Filter_State_t<Item_t> Bases_Filter_t<Base_t, Item_t>::Execute(Vector_t<Item_t>* read, Vector_t<Item_t>* write)
+    template <typename B, typename I>
+    template <typename Type_t>
+    inline Filter_State_t<Type_t> Bases_Filter_t<B, I>::Execute(Vector_t<Type_t>* read, Vector_t<Type_t>* write)
     {
         Actor_Base_t* relatable_base = Consts_t::Skyrim_Player_Actor_Base();
         Relation_e relation_argument = Relation_e::From_String(Relation_Argument());
 
-        Filter_State_t<Item_t> filter_state(read, write);
+        Filter_State_t<Type_t> filter_state(read, write);
 
-        Mod_Filter_t<Item_t>(filter_state, Mod_Argument(), Mod_Do_Negate());
-        Race_Filter_t<Item_t>(filter_state, Race_Argument(), Race_Do_Negate());
-        Base_Filter_t<Item_t>(filter_state, Base_Argument(), Base_Do_Negate());
-        Template_Filter_t<Item_t>(filter_state, Template_Argument(), Template_Do_Negate());
-        Relation_Filter_t<Item_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
-        Male_Female_Filter_t<Item_t>(filter_state, Male_Female_Argument());
-        Unique_Generic_Filter_t<Item_t>(filter_state, Unique_Generic_Argument());
+        Mod_Filter_t<Type_t>(filter_state, Mod_Argument(), Mod_Do_Negate());
+        Race_Filter_t<Type_t>(filter_state, Race_Argument(), Race_Do_Negate());
+        Base_Filter_t<Type_t>(filter_state, Base_Argument(), Base_Do_Negate());
+        Template_Filter_t<Type_t>(filter_state, Template_Argument(), Template_Do_Negate());
+        Relation_Filter_t<Type_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
+        Male_Female_Filter_t<Type_t>(filter_state, Male_Female_Argument());
+        Unique_Generic_Filter_t<Type_t>(filter_state, Unique_Generic_Argument());
 
         return std::move(filter_state);
     }

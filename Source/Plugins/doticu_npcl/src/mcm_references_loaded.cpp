@@ -10,6 +10,7 @@
 #include "mcm_references.h"
 #include "mcm_references.inl"
 #include "mcm_references_loaded.h"
+#include "mcm_markers.h"
 
 namespace doticu_npcl { namespace MCM {
 
@@ -687,14 +688,27 @@ namespace doticu_npcl { namespace MCM {
 
             mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
             mcm->Add_Header_Option("");
+
             mcm->Add_Text_Option(std::string(" Name: ") + loaded_actor.actor->Name(), "");
             mcm->Add_Text_Option(std::string(" Form ID: ") + loaded_actor.actor->Form_ID_String().data, "");
-            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
-            if (loaded_actor.actor->base_form && loaded_actor.actor->base_form->Is_Valid()) {
-                mcm->Add_Text_Option(std::string(" Base Form ID: ") + loaded_actor.actor->base_form->Form_ID_String().data, "");
-            } else {
-                mcm->Add_Empty_Option();
+
+            Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
+            if (actor_base && actor_base->Is_Valid()) {
+                mcm->Add_Text_Option(std::string(" Base Name: ") + actor_base->Name(), "");
+                mcm->Add_Text_Option(std::string(" Base Form ID: ") + actor_base->Form_ID_String().data, "");
             }
+
+            Markers_t* markers = Markers_t::Self();
+            if (markers->Has_Marked(loaded_actor.actor)) {
+                Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->REMOVE_MARKER, "");
+            } else {
+                if (markers->Has_Space()) {
+                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "");
+                } else {
+                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "", Flag_e::DISABLE);
+                }
+            }
+            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
 
             mcm->Add_Header_Option(" Cell ");
             mcm->Add_Header_Option("");
@@ -801,6 +815,19 @@ namespace doticu_npcl { namespace MCM {
             }
             mcm->Reset_Page();
 
+        } else if (option == Mark_On_Map_Option()) {
+            mcm->Flicker_Option(option);
+            Loaded_Actor_t loaded_actor = Current_Item();
+            if (loaded_actor.Is_Valid()) {
+                Markers_t* markers = Markers_t::Self();
+                if (markers->Has_Marked(loaded_actor.actor)) {
+                    Markers_t::Self()->Unmark(loaded_actor.actor);
+                    mcm->Text_Option_Value(option, mcm->ADD_MARKER, true);
+                } else {
+                    Markers_t::Self()->Mark(loaded_actor.actor);
+                    mcm->Text_Option_Value(option, mcm->REMOVE_MARKER, true);
+                }
+            }
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();

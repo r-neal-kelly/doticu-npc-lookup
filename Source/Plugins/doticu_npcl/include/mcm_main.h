@@ -20,6 +20,8 @@ namespace doticu_npcl { namespace MCM {
 
     using Actor_t               = skylib::Actor_t;
     using Actor_Base_t          = skylib::Actor_Base_t;
+    using Actor_Base_Leveleds_t = skylib::Actor_Base_Leveleds_t;
+    using Alias_Base_t          = skylib::Alias_Base_t;
     using Cell_t                = skylib::Cell_t;
     using CString_t             = skylib::CString_t;
     using Form_ID_t             = skylib::Form_ID_t;
@@ -36,6 +38,7 @@ namespace doticu_npcl { namespace MCM {
     namespace V {
 
         using Array_t           = skylib::Virtual::Array_t;
+        using Callback_t        = skylib::Virtual::Callback_t;
         using Class_t           = skylib::Virtual::Class_t;
         using Machine_t         = skylib::Virtual::Machine_t;
         using Object_t          = skylib::Virtual::Object_t;
@@ -60,6 +63,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    LEVELED_BASES_PAGE      = " Leveled Bases ";
         static constexpr const char*    LOADED_REFERENCES_PAGE  = " Loaded References ";
         static constexpr const char*    SPAWNED_REFERENCES_PAGE = " Spawned References ";
+        static constexpr const char*    MARKERS_PAGE            = " Markers ";
         static constexpr const char*    DEFAULT_PAGE            = STATIC_BASES_PAGE;
 
         static constexpr const char*    FILTER_LABEL            = "                               Filter";
@@ -73,6 +77,9 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    RESET_LABEL             = "                              Reset";
         static constexpr const char*    SPAWN_LABEL             = "                             Spawn";
         static constexpr const char*    UNSPAWN_LABEL           = "                            Unspawn";
+
+        static constexpr const char*    ADD_MARKER              = " Add Marker to Map ";
+        static constexpr const char*    REMOVE_MARKER           = " Remove Marker from Map ";
 
     public:
         static Main_t*      Self();
@@ -96,9 +103,11 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
-        String_t Title_Item(const char* singular_type, const char* item_name);
-        String_t Title_Item(const char* singular_type, const char* item_name, Int_t item_index, Int_t item_count);
-        String_t Title_Items(const char* plural_type, Int_t item_count, Int_t page_index, Int_t page_count);
+        String_t Title_Item(const char* singular_name, const char* item_name);
+        String_t Title_Item(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count);
+        String_t Title_Items(const char* plural_name, Int_t item_count);
+        String_t Title_Items(const char* plural_name, Int_t item_count, Int_t item_max);
+        String_t Title_Items(const char* plural_name, Int_t item_count, Int_t page_index, Int_t page_count);
 
         Int_t Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page);
 

@@ -68,6 +68,9 @@
     <ClInclude Include="include\spawned_actors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\mcm_markers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -95,6 +98,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\spawned_actors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mcm_markers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

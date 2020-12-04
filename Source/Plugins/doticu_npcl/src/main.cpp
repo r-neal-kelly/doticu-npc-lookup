@@ -2,6 +2,7 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include <fstream>
 #include <ShlObj.h>
 
 #include "skse64_common/skse_version.h"
@@ -9,10 +10,17 @@
 #include "doticu_skylib/intrinsic.h"
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/game.h"
+#include "doticu_skylib/quest.h"
 #include "doticu_skylib/global.h"
+
+#include "doticu_skylib/extra_aliases.h"
+#include "doticu_skylib/extra_list.inl"
 
 #include "consts.h"
 #include "main.h"
+#include "spawned_actors.h"
 #include "mcm_main.h"
 
 namespace doticu_npcl {

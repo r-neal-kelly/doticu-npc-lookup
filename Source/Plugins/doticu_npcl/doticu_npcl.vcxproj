@@ -93,8 +93,10 @@
     <ClInclude Include="include\mcm_references_spawned.h" />
     <ClInclude Include="include\mcm_selectables.h" />
     <ClInclude Include="include\spawned_actors.h" />
+    <ClInclude Include="include\mcm_markers.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\mcm_markers.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mcm_bases_dynamic.cpp" />

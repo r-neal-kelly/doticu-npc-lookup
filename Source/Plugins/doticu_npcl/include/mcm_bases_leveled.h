@@ -97,13 +97,15 @@ namespace doticu_npcl { namespace MCM {
         void        Leveled_Form_ID(Form_ID_t value);
 
     public:
-        Item_t          Current_Item();
-        Item_t          Previous_Item();
-        Item_t          Next_Item();
+        Item_t                  Current_Item();
+        Item_t                  Previous_Item();
+        Item_t                  Next_Item();
 
-        Actor_Base_t*   Current_Nested_Item();
-        Actor_Base_t*   Previous_Nested_Item();
-        Actor_Base_t*   Next_Nested_Item();
+        Vector_t<Actor_Base_t*> Nested_Items();
+
+        Actor_Base_t*           Current_Nested_Item();
+        Actor_Base_t*           Previous_Nested_Item();
+        Actor_Base_t*           Next_Nested_Item();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);

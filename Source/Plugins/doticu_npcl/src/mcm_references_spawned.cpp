@@ -14,6 +14,7 @@
 #include "mcm_references.h"
 #include "mcm_references.inl"
 #include "mcm_references_spawned.h"
+#include "mcm_markers.h"
 
 namespace doticu_npcl { namespace MCM {
 
@@ -755,14 +756,27 @@ namespace doticu_npcl { namespace MCM {
 
             mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
             mcm->Add_Header_Option("");
+
             mcm->Add_Text_Option(std::string(" Name: ") + item->Name(), "");
             mcm->Add_Text_Option(std::string(" Form ID: ") + item->Form_ID_String().data, "");
-            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
-            if (item->base_form && item->base_form->Is_Valid()) {
-                mcm->Add_Text_Option(std::string(" Base Form ID: ") + item->base_form->Form_ID_String().data, "");
-            } else {
-                mcm->Add_Empty_Option();
+
+            Actor_Base_t* actor_base = item->Actor_Base();
+            if (actor_base && actor_base->Is_Valid()) {
+                mcm->Add_Text_Option(std::string(" Base Name: ") + actor_base->Name(), "");
+                mcm->Add_Text_Option(std::string(" Base Form ID: ") + actor_base->Form_ID_String().data, "");
             }
+
+            Markers_t* markers = Markers_t::Self();
+            if (markers->Has_Marked(item)) {
+                Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->REMOVE_MARKER, "");
+            } else {
+                if (markers->Has_Space()) {
+                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "");
+                } else {
+                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "", Flag_e::DISABLE);
+                }
+            }
+            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
 
             Cell_t* cell = item->Cell();
             if (cell && cell->Is_Valid()) {
@@ -878,6 +892,19 @@ namespace doticu_npcl { namespace MCM {
             }
             mcm->Reset_Page();
 
+        } else if (option == Mark_On_Map_Option()) {
+            mcm->Flicker_Option(option);
+            Item_t item = Current_Item();
+            if (item->Is_Valid()) {
+                Markers_t* markers = Markers_t::Self();
+                if (markers->Has_Marked(item)) {
+                    Markers_t::Self()->Unmark(item);
+                    mcm->Text_Option_Value(option, mcm->ADD_MARKER, true);
+                } else {
+                    Markers_t::Self()->Mark(item);
+                    mcm->Text_Option_Value(option, mcm->REMOVE_MARKER, true);
+                }
+            }
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
             Item_t item = Current_Item();
