@@ -257,7 +257,7 @@ namespace doticu_npcl { namespace MCM {
         pages.push_back(LEVELED_BASES_PAGE);
         pages.push_back(LOADED_REFERENCES_PAGE);
         pages.push_back(SPAWNED_REFERENCES_PAGE);
-        pages.push_back(MARKERS_PAGE);
+        pages.push_back(MARKED_REFERENCES_PAGE);
         Pages(pages);
 
         Static_Bases_t::Self()->On_Config_Open();
@@ -308,7 +308,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Page_Open(is_refresh, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -324,7 +324,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Select(option, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -340,7 +340,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Menu_Open(option, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -356,7 +356,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -372,7 +372,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Slider_Open(option, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -388,7 +388,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -404,7 +404,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -420,7 +420,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -436,7 +436,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Default(option, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;
@@ -452,7 +452,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, MARKERS_PAGE))               Markers_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Highlight(option, lcallback);
         else                                                Destroy_Latent_Callback(lcallback);
 
         return true;

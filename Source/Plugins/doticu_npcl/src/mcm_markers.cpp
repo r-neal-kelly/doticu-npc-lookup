@@ -303,7 +303,7 @@ namespace doticu_npcl { namespace MCM {
 
         Int_t marked_count = Marked_Count();
         if (marked_count > 0) {
-            mcm->Title_Text(mcm->Title_Items(" Markers ", marked_count, MAX_MARKERS));
+            mcm->Title_Text(mcm->Title_Items(" Marked References ", marked_count, MAX_MARKERS));
 
             mcm->Add_Header_Option("");
             mcm->Add_Header_Option("");
@@ -314,9 +314,9 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Add_Text_Option(alias_actor->actor->Any_Name(), "...");
             }
         } else {
-            mcm->Title_Text(mcm->Title_Items(" Markers ", 0, MAX_MARKERS));
+            mcm->Title_Text(mcm->Title_Items(" Marked References ", 0, MAX_MARKERS));
 
-            mcm->Add_Header_Option(" No Markers ");
+            mcm->Add_Header_Option(" No Marked References ");
         }
 
         mcm->Destroy_Latent_Callback(lcallback);

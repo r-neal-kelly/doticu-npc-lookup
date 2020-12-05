@@ -63,7 +63,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    LEVELED_BASES_PAGE      = " Leveled Bases ";
         static constexpr const char*    LOADED_REFERENCES_PAGE  = " Loaded References ";
         static constexpr const char*    SPAWNED_REFERENCES_PAGE = " Spawned References ";
-        static constexpr const char*    MARKERS_PAGE            = " Markers ";
+        static constexpr const char*    MARKED_REFERENCES_PAGE  = " Marked References ";
         static constexpr const char*    DEFAULT_PAGE            = STATIC_BASES_PAGE;
 
         static constexpr const char*    FILTER_LABEL            = "                               Filter";
