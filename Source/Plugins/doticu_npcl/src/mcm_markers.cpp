@@ -6,6 +6,7 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/player.h"
 #include "doticu_skylib/quest_objective.h"
 
 #include "doticu_skylib/extra_aliases.h"
@@ -30,30 +31,56 @@ namespace doticu_npcl { namespace MCM {
     class Mark_Callback_t : public V::Callback_t
     {
     public:
-        Quest_t* quest;
+        Markers_t* self;
         Index_t marker_index;
-        Mark_Callback_t(Quest_t* quest, Index_t marker_index) :
-            quest(quest), marker_index(marker_index)
+        Mark_Callback_t(Markers_t* self, Index_t marker_index) :
+            self(self), marker_index(marker_index)
         {
         }
         void operator()(V::Variable_t* result)
         {
-            quest->Display_Objective(marker_index, true);
+            class Display_Callback_t : public V::Callback_t
+            {
+            public:
+                Markers_t* self;
+                Display_Callback_t(Markers_t* self) :
+                    self(self)
+                {
+                }
+                void operator()(V::Variable_t* result)
+                {
+                    self->Refresh_Menu();
+                }
+            };
+            self->Display_Objective(marker_index, true, new Display_Callback_t(self));
         }
     };
 
     class Unmark_Callback_t : public V::Callback_t
     {
     public:
-        Quest_t* quest;
+        Markers_t* self;
         Index_t marker_index;
-        Unmark_Callback_t(Quest_t* quest, Index_t marker_index) :
-            quest(quest), marker_index(marker_index)
+        Unmark_Callback_t(Markers_t* self, Index_t marker_index) :
+            self(self), marker_index(marker_index)
         {
         }
         void operator()(V::Variable_t* result)
         {
-            quest->Undisplay_Objective(marker_index, true);
+            class Undisplay_Callback_t : public V::Callback_t
+            {
+            public:
+                Markers_t* self;
+                Undisplay_Callback_t(Markers_t* self) :
+                    self(self)
+                {
+                }
+                void operator()(V::Variable_t* result)
+                {
+                    self->Refresh_Menu();
+                }
+            };
+            self->Undisplay_Objective(marker_index, false, new Undisplay_Callback_t(self));
         }
     };
 
@@ -77,10 +104,35 @@ namespace doticu_npcl { namespace MCM {
                         if (instance && instance->quest == this && instance->alias_base) {
                             Index_t marker_idx = instance->alias_base->id - 1;
                             if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
-                                alias_actors[marker_idx].actor = static_cast<Actor_t*>(reference);
+                                Actor_t* actor = static_cast<Actor_t*>(reference);
+                                alias_actors[marker_idx].actor = actor;
                             }
                         }
                     }
+                }
+            }
+        }
+
+        Refresh_Menu();
+    }
+
+    void Markers_t::Refresh_Menu()
+    {
+        skylib::Player_t* player = skylib::Player_t::Self();
+        for (Index_t idx = 0, end = player->objectives.count; idx < end; idx += 1) {
+            auto& player_objective = player->objectives.entries[idx];
+            auto* objective = player_objective.objective;
+            if (objective && objective->quest == this) {
+                Index_t marker_idx = objective->index;
+                if (marker_idx > -1 && marker_idx < alias_actors.count) {
+                    maybe<Actor_t*> actor = alias_actors[marker_idx].actor;
+                    if (actor) {
+                        objective->state = skylib::Quest_Objective_State_e::DISPLAYED;
+                        objective->display_text = std::string("NPC Lookup: ") + actor->Any_Name().data;
+                    } else {
+                        objective->state = skylib::Quest_Objective_State_e::DORMANT;
+                    }
+                    player_objective.state = objective->state;
                 }
             }
         }
@@ -134,7 +186,7 @@ namespace doticu_npcl { namespace MCM {
             for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
                 Alias_Actor_t& alias_actor = alias_actors[idx];
                 if (!alias_actor.actor) {
-                    maybe<skylib::Quest_Objective_t**> objective = alias_actor.alias->quest->objectives.Point(idx);
+                    maybe<skylib::Quest_Objective_t**> objective = objectives.Point(idx);
                     if (objective && *objective) {
                         (*objective)->display_text = std::string("NPC Lookup: ") + actor->Any_Name().data;
                     }
@@ -170,11 +222,54 @@ namespace doticu_npcl { namespace MCM {
     {
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
+            alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
+            alias_actor.actor = none<Actor_t*>();
+        }
+    }
+
+    Vector_t<Alias_Actor_t*> Markers_t::Alias_Actors()
+    {
+        Vector_t<Alias_Actor_t*> results;
+        results.reserve(MAX_MARKERS);
+
+        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+            Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor) {
-                alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
-                alias_actor.actor = none<Actor_t*>();
+                if (alias_actor.actor->Is_Valid()) {
+                    if (alias_actor.actor->Is_Aliased(this, alias_actor.alias->id)) {
+                        results.push_back(&alias_actor);
+                    } else {
+                        alias_actor.actor = none<Actor_t*>();
+                    }
+                } else {
+                    alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
+                    alias_actor.actor = none<Actor_t*>();
+                }
             }
         }
+
+        results.Sort(
+            [](Alias_Actor_t** item_a, Alias_Actor_t** item_b)->Int_t
+            {
+                if (!item_a || !*item_a) {
+                    return Comparator_e::IS_UNORDERED;
+                } else if (!item_b || !*item_b) {
+                    return Comparator_e::IS_ORDERED;
+                } else {
+                    Comparator_e result = Form_t::Compare_Names(
+                        (*item_a)->actor->Any_Name(),
+                        (*item_b)->actor->Any_Name()
+                    );
+                    if (result == Comparator_e::IS_EQUAL) {
+                        return (*item_a)->actor->form_id - (*item_b)->actor->form_id;
+                    } else {
+                        return result;
+                    }
+                }
+            }
+        );
+
+        return results;
     }
 
     void Markers_t::On_Init()
@@ -213,11 +308,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option("");
             mcm->Add_Header_Option("");
 
-            for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
-                Alias_Actor_t& alias_actor = alias_actors[idx];
-                if (alias_actor.actor && alias_actor.actor->Is_Aliased(this, idx + 1)) {
-                    mcm->Add_Text_Option(alias_actor.actor->Any_Name(), "...");
-                }
+            Vector_t<Alias_Actor_t*> alias_actors = Alias_Actors();
+            for (Index_t idx = 0, end = alias_actors.size(); idx < end; idx += 1) {
+                Alias_Actor_t* alias_actor = alias_actors[idx];
+                mcm->Add_Text_Option(alias_actor->actor->Any_Name(), "...");
             }
         } else {
             mcm->Title_Text(mcm->Title_Items(" Markers ", 0, MAX_MARKERS));
@@ -248,9 +342,11 @@ namespace doticu_npcl { namespace MCM {
                 void operator()(Bool_t accept)
                 {
                     if (accept) {
-                        maybe<Actor_t*> actor = self->alias_actors[marker_index].actor;
-                        if (actor) {
-                            self->Unmark(actor);
+                        Vector_t<Alias_Actor_t*> alias_actors = self->Alias_Actors();
+                        if (marker_index > -1 && marker_index < alias_actors.size()) {
+                            Alias_Actor_t* alias_actor = alias_actors[marker_index];
+                            alias_actor->alias->Unfill(new Unmark_Callback_t(self, marker_index));
+                            alias_actor->actor = none<Actor_t*>();
                         }
                         mcm->Reset_Page();
                     }

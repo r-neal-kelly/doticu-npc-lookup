@@ -37,13 +37,17 @@ namespace doticu_npcl { namespace MCM {
         static Markers_t*   Self();
 
     public:
-        void    Refresh_Cache();
-        Int_t   Marked_Count();
-        Bool_t  Has_Space();
-        Bool_t  Has_Marked(some<Actor_t*> actor);
-        Bool_t  Mark(some<Actor_t*> actor);
-        Bool_t  Unmark(some<Actor_t*> actor);
-        void    Unmark_All();
+        void                        Refresh_Cache();
+        void                        Refresh_Menu();
+
+        Int_t                       Marked_Count();
+        Bool_t                      Has_Space();
+        Bool_t                      Has_Marked(some<Actor_t*> actor);
+        Bool_t                      Mark(some<Actor_t*> actor);
+        Bool_t                      Unmark(some<Actor_t*> actor);
+        void                        Unmark_All();
+
+        Vector_t<Alias_Actor_t*>    Alias_Actors();
 
     public:
         void On_Init();
