@@ -73,6 +73,26 @@ namespace doticu_npcl {
         }
     }
 
+    size_t Cached_Leveled_t::Byte_Count()
+    {
+        size_t byte_count = 0;
+
+        byte_count += sizeof(name);
+        byte_count += sizeof(leveled);
+
+        for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+            some<Actor_Base_t*> base = bases[idx];
+            byte_count += sizeof(base);
+        }
+
+        for (Index_t idx = 0, end = races.size(); idx < end; idx += 1) {
+            some<Race_t*> race = races[idx];
+            byte_count += sizeof(race);
+        }
+
+        return byte_count;
+    }
+
     Bool_t operator==(Cached_Leveled_t& cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled)
     {
         if (leveled) {

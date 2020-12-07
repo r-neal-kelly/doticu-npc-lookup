@@ -28,6 +28,8 @@ namespace doticu_npcl {
         void Race_Names(Vector_t<String_t>& output);
         void Actor_Base_Names(Vector_t<String_t>& output);
 
+        size_t Byte_Count();
+
         friend Bool_t operator==(Cached_Leveled_t& cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled);
         friend Bool_t operator==(Cached_Leveled_t* cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled);
     };

@@ -36,7 +36,7 @@ namespace doticu_npcl {
             info->infoVersion = PluginInfo::kInfoVersion;
             info->name = "doticu_npcl";
             info->version = 1;
-            return skse->skseVersion >= MAKE_EXE_VERSION(2, 0, 19);
+            return skse->skseVersion >= MAKE_EXE_VERSION(2, 0, 16);
         } else {
             return false;
         }
