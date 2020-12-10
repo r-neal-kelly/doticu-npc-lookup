@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "doticu_skylib/collections.h"
 
 #include "mcm_main.h"
@@ -28,6 +30,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr size_t MAX_MARKERS = 16;
 
     public:
+        static std::mutex cache_mutex;
         static skylib::Stack_Array_t<Alias_Actor_t, MAX_MARKERS> alias_actors;
 
     public:

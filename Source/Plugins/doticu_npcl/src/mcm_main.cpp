@@ -3,6 +3,7 @@
 */
 
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/translations.h"
 
 #include "doticu_skylib/virtual_function.h"
 #include "doticu_skylib/virtual_machine.h"
@@ -22,6 +23,10 @@
 #include "mcm_markers.h"
 
 namespace doticu_npcl { namespace MCM {
+
+    using Default_Page_t = Static_Bases_t;
+
+    std::mutex          Main_t::mutex;
 
     Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
     String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm_main"); }
@@ -142,56 +147,102 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
-    String_t Main_t::Title_Item(const char* singular_name, const char* item_name)
+    std::wstring Main_t::Translation(const wchar_t* key)
     {
-        return std::string(singular_name) + ": " + item_name;
+        std::wstring translation = Translations_t::Translation(key);
+        return translation[0] == L'_' ? translation.data() + 1 : translation.data();
     }
 
-    String_t Main_t::Title_Item(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count)
+    void Main_t::Translation(const wchar_t* key, std::wstring&& value_to_copy)
     {
-        std::string name =
-            std::string(singular_name) + ": " +
-            item_name;
-
-        std::string items =
-            std::string("Items: ") +
-            std::to_string(item_index + 1) + "/" +
-            std::to_string(item_count);
-
-        return name + "               " + items;
+        Translations_t::Translation(key, value_to_copy.c_str());
     }
 
-    String_t Main_t::Title_Items(const char* plural_name, Int_t item_count)
+    std::wstring Main_t::Singular_Title(const wchar_t* singular_name_key, const char* sub_title)
     {
-        std::string items =
-            std::string(plural_name) + ": " +
-            std::to_string(item_count);
+        return std::wstring(Translation(singular_name_key)) + L": " + CString_t::To<std::wstring>(sub_title);
+    }
+
+    std::wstring Main_t::Singular_Title(const wchar_t* singular_name_key, const char* item_name, Int_t item_index, Int_t item_count)
+    {
+        std::wstring name =
+            std::wstring(Translation(singular_name_key)) + L": " +
+            CString_t::To<std::wstring>(item_name);
+
+        std::wstring items =
+            std::wstring(Translation(COMPONENT_ITEM)) + L": " +
+            std::to_wstring(item_index + 1) + L"/" +
+            std::to_wstring(item_count);
+
+        return name + L"               " + items;
+    }
+
+    std::wstring Main_t::Plural_Title(const wchar_t* plural_name_key, const wchar_t* sub_title_key)
+    {
+        return std::wstring(Translation(plural_name_key)) + L": " + Translation(sub_title_key);
+    }
+
+    std::wstring Main_t::Plural_Title(const wchar_t* plural_name_key, Int_t item_count)
+    {
+        std::wstring items =
+            std::wstring(Translation(plural_name_key)) + L": " +
+            std::to_wstring(item_count);
 
         return items;
     }
 
-    String_t Main_t::Title_Items(const char* plural_name, Int_t item_count, Int_t item_max)
+    std::wstring Main_t::Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t item_max)
     {
-        std::string items =
-            std::string(plural_name) + ": " +
-            std::to_string(item_count) + "/" +
-            std::to_string(item_max);
+        std::wstring items =
+            std::wstring(Translation(plural_name_key)) + L": " +
+            std::to_wstring(item_count) + L"/" +
+            std::to_wstring(item_max);
 
         return items;
     }
 
-    String_t Main_t::Title_Items(const char* plural_name, Int_t item_count, Int_t page_index, Int_t page_count)
+    std::wstring Main_t::Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t page_index, Int_t page_count)
     {
-        std::string items =
-            std::string(plural_name) + ": " +
-            std::to_string(item_count);
+        std::wstring items =
+            std::wstring(Translation(plural_name_key)) + L": " +
+            std::to_wstring(item_count);
 
-        std::string pages =
-            std::string("Page: ") +
-            std::to_string(page_index + 1) + "/" +
-            std::to_string(page_count);
+        std::wstring pages =
+            std::wstring(Translation(COMPONENT_PAGE)) + L": " +
+            std::to_wstring(page_index + 1) + L"/" +
+            std::to_wstring(page_count);
 
-        return items + "               " + pages;
+        return items + L"               " + pages;
+    }
+
+    void Main_t::Translated_Title_Text(std::wstring&& translation)
+    {
+        Translation(PLACEHOLDER_TITLE_W, std::move(translation));
+        Title_Text(PLACEHOLDER_TITLE);
+    }
+
+    std::string Main_t::Pretty_ID(some<const char*> name, some<const char*> editor_id, some<const char*> form_id)
+    {
+        SKYLIB_ASSERT(name);
+        SKYLIB_ASSERT(editor_id);
+        SKYLIB_ASSERT(form_id);
+
+        if (name[0] && editor_id[0]) {
+            return
+                std::string(name) + _SPACED_DASH_ +
+                editor_id() + _SPACED_DASH_ +
+                form_id();
+        } else if (name[0]) {
+            return
+                std::string(name) + _SPACED_DASH_
+                + form_id();
+        } else if (editor_id[0]) {
+            return
+                std::string(editor_id) + _SPACED_DASH_ +
+                form_id();
+        } else {
+            return std::string(form_id);
+        }
     }
 
     Int_t Main_t::Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page)
@@ -216,6 +267,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Main_t::On_Init()
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Static_Bases_t::Self()->On_Init();
         Dynamic_Bases_t::Self()->On_Init();
         Leveled_Bases_t::Self()->On_Init();
@@ -226,6 +279,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Main_t::On_Load()
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Static_Bases_t::Self()->On_Load();
         Dynamic_Bases_t::Self()->On_Load();
         Leveled_Bases_t::Self()->On_Load();
@@ -236,6 +291,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Main_t::On_Save()
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Static_Bases_t::Self()->On_Save();
         Dynamic_Bases_t::Self()->On_Save();
         Leveled_Bases_t::Self()->On_Save();
@@ -246,18 +303,20 @@ namespace doticu_npcl { namespace MCM {
 
     Bool_t Main_t::On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
         Mod_Name(MOD_NAME);
 
         Vector_t<String_t> pages;
         pages.reserve(6);
-        pages.push_back(STATIC_BASES_PAGE);
-        pages.push_back(DYNAMIC_BASES_PAGE);
-        pages.push_back(LEVELED_BASES_PAGE);
-        pages.push_back(LOADED_REFERENCES_PAGE);
-        pages.push_back(SPAWNED_REFERENCES_PAGE);
-        pages.push_back(MARKED_REFERENCES_PAGE);
+        pages.push_back(STATIC_BASES);
+        pages.push_back(DYNAMIC_BASES);
+        pages.push_back(LEVELED_BASES);
+        pages.push_back(LOADED_REFERENCES);
+        pages.push_back(SPAWNED_REFERENCES);
+        pages.push_back(MARKED_REFERENCES);
         Pages(pages);
 
         Static_Bases_t::Self()->On_Config_Open();
@@ -274,6 +333,8 @@ namespace doticu_npcl { namespace MCM {
 
     Bool_t Main_t::On_Config_Close(V::Machine_t* machine, V::Stack_ID_t stack_id)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
         Static_Bases_t::Self()->On_Config_Close();
@@ -290,6 +351,8 @@ namespace doticu_npcl { namespace MCM {
 
     Bool_t Main_t::On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         Bool_t is_refresh = true;
         if (!current_page) {
             current_page = Current_Page();
@@ -303,157 +366,175 @@ namespace doticu_npcl { namespace MCM {
         String_t page = current_page;
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Page_Open(is_refresh, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else                                        Default_Page_t::Self()->On_Page_Open(is_refresh, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Select(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Select(option, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Select(option, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Select(option, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Select(option, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Menu_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Menu_Open(option, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Menu_Open(option, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Menu_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t idx)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Slider_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Slider_Open(option, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Slider_Open(option, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Slider_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Float_t value)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Input_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, String_t value)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Input_Accept(option, value, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Input_Accept(option, value, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Keymap_Change(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Default(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Default(option, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Default(option, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Default(option, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Default(option, lcallback);
 
         return true;
     }
 
     Bool_t Main_t::On_Option_Highlight(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         String_t page = Current_Page();
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-             if (Is_Same(page, STATIC_BASES_PAGE))          Static_Bases_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, DYNAMIC_BASES_PAGE))         Dynamic_Bases_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, LEVELED_BASES_PAGE))         Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, LOADED_REFERENCES_PAGE))     Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, SPAWNED_REFERENCES_PAGE))    Spawned_References_t::Self()->On_Option_Highlight(option, lcallback);
-        else if (Is_Same(page, MARKED_REFERENCES_PAGE))     Markers_t::Self()->On_Option_Highlight(option, lcallback);
-        else                                                Destroy_Latent_Callback(lcallback);
+             if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, LEVELED_BASES))      Leveled_Bases_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Highlight(option, lcallback);
+        else                                        Default_Page_t::Self()->On_Option_Highlight(option, lcallback);
 
         return true;
     }

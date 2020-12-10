@@ -26,9 +26,6 @@ namespace doticu_npcl { namespace MCM {
     Loaded_References_Options_t*    Loaded_References_Base_t::Options()             { return reinterpret_cast<Loaded_References_Options_t*>(this); }
     Loaded_References_Item_t*       Loaded_References_Base_t::Item()                { return reinterpret_cast<Loaded_References_Item_t*>(this); }
 
-    const char*                     Loaded_References_Base_t::Item_Type_Singular()  { return "Loaded Reference"; }
-    const char*                     Loaded_References_Base_t::Item_Type_Plural()    { return "Loaded References"; }
-
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -115,20 +112,20 @@ namespace doticu_npcl { namespace MCM {
                 Page_Index(page_index);
             }
 
-            mcm->Title_Text(Title(loaded_actor_count, page_index, page_count));
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, loaded_actor_count, page_index, page_count));
 
-            Filter_Option() = mcm->Add_Text_Option(Main_t::FILTER_LABEL, "");
-            Options_Option() = mcm->Add_Text_Option(Main_t::OPTIONS_LABEL, "");
+            Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
+            Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
             if (page_count > 1) {
-                Previous_Page_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "");
-                Next_Page_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "");
+                Previous_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_);
+                Next_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_);
             } else {
-                Previous_Page_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE);
-                Next_Page_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE);
+                Previous_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+                Next_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
             }
 
-            mcm->Add_Header_Option("");
-            mcm->Add_Header_Option("");
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            mcm->Add_Header_Option(Main_t::_NONE_);
 
             Int_t begin = ITEMS_PER_PAGE * page_index;
             Int_t end = begin + ITEMS_PER_PAGE;
@@ -137,17 +134,17 @@ namespace doticu_npcl { namespace MCM {
             }
             for (; begin < end; begin += 1) {
                 Loaded_Actor_t loaded_actor = loaded_actors[begin];
-                mcm->Add_Text_Option(loaded_actor.actor->Any_Name(), "...");
+                mcm->Add_Text_Option(loaded_actor.actor->Any_Name(), Main_t::_DOTS_);
             }
         } else {
-            mcm->Title_Text(Title(0, 0, 1));
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, 0, 0, 1));
 
-            Filter_Option() = mcm->Add_Text_Option(Main_t::FILTER_LABEL, "");
-            Options_Option() = mcm->Add_Text_Option(Main_t::OPTIONS_LABEL, "");
-            Previous_Page_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_PAGE_LABEL, "", Flag_e::DISABLE);
-            Next_Page_Option() = mcm->Add_Text_Option(Main_t::NEXT_PAGE_LABEL, "", Flag_e::DISABLE);
+            Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
+            Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
+            Previous_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+            Next_Page_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
 
-            mcm->Add_Header_Option(std::string(" No ") + Item_Type_Plural() + " ");
+            mcm->Add_Header_Option(Main_t::NO_LOADED_REFERENCES);
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -235,79 +232,79 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        mcm->Title_Text(Title());
+        mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_FILTER));
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
-        Clear_Option() = mcm->Add_Text_Option(Main_t::CLEAR_LABEL, "");
+        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        Clear_Option() = mcm->Add_Text_Option(Main_t::CENTER_CLEAR, Main_t::_NONE_);
 
-        mcm->Add_Header_Option(" Mod ");
-        mcm->Add_Header_Option("");
-        Mod_Search_Option() = mcm->Add_Input_Option(" Search ", Mod_Argument());
-        Mod_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Mod_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Mod_Do_Negate());
+        mcm->Add_Header_Option(Main_t::MOD);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Mod_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Mod_Argument());
+        Mod_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Mod_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Mod_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Race ");
-        mcm->Add_Header_Option("");
-        Race_Search_Option() = mcm->Add_Input_Option(" Search ", Race_Argument());
-        Race_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Race_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Race_Do_Negate());
+        mcm->Add_Header_Option(Main_t::RACE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Race_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Race_Argument());
+        Race_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Race_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Race_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Base ");
-        mcm->Add_Header_Option("");
-        Base_Search_Option() = mcm->Add_Input_Option(" Search ", Base_Argument());
-        Base_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Base_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Base_Do_Negate());
+        mcm->Add_Header_Option(Main_t::BASE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Base_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Base_Argument());
+        Base_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Base_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Base_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
-        mcm->Add_Header_Option("");
-        Reference_Search_Option() = mcm->Add_Input_Option(" Search ", Reference_Argument());
-        Reference_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Reference_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Reference_Do_Negate());
+        mcm->Add_Header_Option(Main_t::LOADED_REFERENCE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Reference_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Reference_Argument());
+        Reference_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Reference_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Reference_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Template ");
-        mcm->Add_Header_Option("");
-        Template_Search_Option() = mcm->Add_Input_Option(" Search ", Template_Argument());
-        Template_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Template_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Template_Do_Negate());
+        mcm->Add_Header_Option(Main_t::TEMPLATE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Template_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Template_Argument());
+        Template_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Template_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Template_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Location ");
-        mcm->Add_Header_Option("");
-        Location_Search_Option() = mcm->Add_Input_Option(" Search ", Location_Argument());
-        Location_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Location_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Location_Do_Negate());
+        mcm->Add_Header_Option(Main_t::LOCATION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Location_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Location_Argument());
+        Location_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Location_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Location_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Cell ");
-        mcm->Add_Header_Option("");
-        Cell_Search_Option() = mcm->Add_Input_Option(" Search ", Cell_Argument());
-        Cell_Select_Option() = mcm->Add_Menu_Option(" Select ", "...");
-        Cell_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Cell_Do_Negate());
+        mcm->Add_Header_Option(Main_t::CELL);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Cell_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Cell_Argument());
+        Cell_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Cell_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Cell_Do_Negate());
         mcm->Add_Empty_Option();
 
-        mcm->Add_Header_Option(" Relation ");
-        mcm->Add_Header_Option("");
-        Relation_Select_Option() = mcm->Add_Menu_Option(" Select ", Relation_Argument());
-        Relation_Negate_Option() = mcm->Add_Toggle_Option(" Negate ", Relation_Do_Negate());
+        mcm->Add_Header_Option(Main_t::RELATION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
+        Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
 
-        mcm->Add_Header_Option(" Other ");
-        mcm->Add_Header_Option("");
+        mcm->Add_Header_Option(Main_t::OTHER);
+        mcm->Add_Header_Option(Main_t::_NONE_);
 
-        Male_Option() = mcm->Add_Toggle_Option(" Is Male ", Male_Female_Argument() == Binary_e::A);
-        Female_Option() = mcm->Add_Toggle_Option(" Is Female ", Male_Female_Argument() == Binary_e::B);
+        Male_Option() = mcm->Add_Toggle_Option(Main_t::IS_MALE, Male_Female_Argument() == Binary_e::A);
+        Female_Option() = mcm->Add_Toggle_Option(Main_t::IS_FEMALE, Male_Female_Argument() == Binary_e::B);
 
-        Unique_Option() = mcm->Add_Toggle_Option(" Is Unique ", Unique_Generic_Argument() == Binary_e::A);
-        Generic_Option() = mcm->Add_Toggle_Option(" Is Generic ", Unique_Generic_Argument() == Binary_e::B);
+        Unique_Option() = mcm->Add_Toggle_Option(Main_t::IS_UNIQUE, Unique_Generic_Argument() == Binary_e::A);
+        Generic_Option() = mcm->Add_Toggle_Option(Main_t::IS_GENERIC, Unique_Generic_Argument() == Binary_e::B);
 
-        Interior_Option() = mcm->Add_Toggle_Option(" In Interior ", Interior_Exterior_Argument() == Binary_e::A);
-        Exterior_Option() = mcm->Add_Toggle_Option(" In Exterior ", Interior_Exterior_Argument() == Binary_e::B);
+        Interior_Option() = mcm->Add_Toggle_Option(Main_t::IN_INTERIOR, Interior_Exterior_Argument() == Binary_e::A);
+        Exterior_Option() = mcm->Add_Toggle_Option(Main_t::IN_EXTERIOR, Interior_Exterior_Argument() == Binary_e::B);
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -426,7 +423,7 @@ namespace doticu_npcl { namespace MCM {
 
         if (option == Mod_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> mods = Selectable_Mods();
                     if (idx < mods.size()) {
@@ -438,7 +435,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Race_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> races = Selectable_Races();
                     if (idx < races.size()) {
@@ -450,7 +447,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Base_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> bases = Selectable_Bases();
                     if (idx < bases.size()) {
@@ -462,7 +459,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Template_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> values = Selectable_Templates();
                     if (idx < values.size()) {
@@ -474,7 +471,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Reference_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> names = Selectable_References();
                     if (idx < names.size()) {
@@ -486,7 +483,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Location_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> locations = Selectable_Locations();
                     if (idx < locations.size()) {
@@ -498,7 +495,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Cell_Select_Option()) {
             if (idx > -1) {
-                String_t value = "";
+                String_t value = Main_t::_NONE_;
                 if (idx > 0) {
                     Vector_t<String_t> cells = Selectable_Cells();
                     if (idx < cells.size()) {
@@ -510,7 +507,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else if (option == Relation_Select_Option()) {
             if (idx > -1) {
-                String_t value = " Any ";
+                String_t value = Main_t::ANY;
                 if (idx > 0) {
                     Vector_t<String_t> relations = Selectable_Relations();
                     if (idx < relations.size()) {
@@ -563,17 +560,17 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        mcm->Title_Text(Title());
+        mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_OPTIONS));
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
-        Reset_Option() = mcm->Add_Text_Option(Main_t::RESET_LABEL, "");
+        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
 
-        mcm->Add_Header_Option("");
-        mcm->Add_Header_Option("");
-        Smart_Select_Option() = mcm->Add_Toggle_Option(" Smart Select ", Do_Smart_Select());
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -669,110 +666,148 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        Loaded_Actor_t loaded_actor = Current_Item();
-        if (loaded_actor.Is_Valid()) {
-            mcm->Title_Text(Title(loaded_actor.actor->Any_Name()));
+        Item_t item(Actor_Form_ID(), Cell_Form_ID());
+        if (item.Is_Valid()) {
+            Vector_t<Item_t>& items = List()->Items();
+            Index_t item_index = items.Index_Of(item);
+            if (item_index > -1) {
+                mcm->Translated_Title_Text(
+                    mcm->Singular_Title(Main_t::COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
+                );
 
-            mcm->Cursor_Position(0);
-            mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+                mcm->Cursor_Position(0);
+                mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-            Back_Option() = mcm->Add_Text_Option(Main_t::BACK_LABEL, "");
-            mcm->Add_Empty_Option();
-            if (List()->Items().size() > 1) {
-                Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "");
-                Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "");
-            } else {
-                Previous_Option() = mcm->Add_Text_Option(Main_t::PREVIOUS_ITEM_LABEL, "", Flag_e::DISABLE);
-                Next_Option() = mcm->Add_Text_Option(Main_t::NEXT_ITEM_LABEL, "", Flag_e::DISABLE);
-            }
-
-            mcm->Add_Header_Option(std::string(" ") + Item_Type_Singular() + " ");
-            mcm->Add_Header_Option("");
-
-            mcm->Add_Text_Option(std::string(" Name: ") + loaded_actor.actor->Name(), "");
-            mcm->Add_Text_Option(std::string(" Form ID: ") + loaded_actor.actor->Form_ID_String().data, "");
-
-            Actor_Base_t* actor_base = loaded_actor.actor->Actor_Base();
-            if (actor_base && actor_base->Is_Valid()) {
-                mcm->Add_Text_Option(std::string(" Base Name: ") + actor_base->Name(), "");
-                mcm->Add_Text_Option(std::string(" Base Form ID: ") + actor_base->Form_ID_String().data, "");
-            }
-
-            Markers_t* markers = Markers_t::Self();
-            if (markers->Has_Marked(loaded_actor.actor)) {
-                Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->REMOVE_MARKER, "");
-            } else {
-                if (markers->Has_Space()) {
-                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "");
-                } else {
-                    Mark_On_Map_Option() = mcm->Add_Text_Option(mcm->ADD_MARKER, "", Flag_e::DISABLE);
-                }
-            }
-            Select_In_Console_Option() = mcm->Add_Text_Option(" Select in Console ", "");
-
-            mcm->Add_Header_Option(" Cell ");
-            mcm->Add_Header_Option("");
-            mcm->Add_Text_Option(std::string(" Name: ") + loaded_actor.cell->Name(), "");
-            mcm->Add_Text_Option(std::string(" Editor ID: ") + loaded_actor.cell->Get_Editor_ID(), "");
-            mcm->Add_Text_Option(std::string(" Form ID: ") + loaded_actor.cell->Form_ID_String().data, "");
-            mcm->Add_Empty_Option();
-
-            Race_t* race = loaded_actor.actor->Race();
-            if (race) {
-                mcm->Add_Header_Option(" Race ");
-                mcm->Add_Header_Option("");
-                mcm->Add_Text_Option(std::string(" Name: ") + race->Name(), "");
-                mcm->Add_Text_Option(std::string(" Editor ID: ") + race->Get_Editor_ID(), "");
-                mcm->Add_Text_Option(std::string(" Form ID: ") + race->Form_ID_String().data, "");
+                Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
                 mcm->Add_Empty_Option();
-            }
+                if (List()->Items().size() > 1) {
+                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
+                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
+                } else {
+                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+                }
 
-            {
-                Vector_t<String_t> mod_names = loaded_actor.actor->Mod_Names();
-                size_t mod_name_count = mod_names.size();
-                if (mod_name_count > 0 && mcm->Can_Add_Options(2 + mod_name_count)) {
-                    mcm->Add_Header_Option(" Mods ");
-                    mcm->Add_Header_Option("");
-                    for (Index_t idx = 0, end = mod_name_count; idx < end; idx += 1) {
-                        String_t mod_name = mod_names[idx];
-                        mcm->Add_Text_Option(mod_name, "");
-                    }
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                        mcm->Add_Empty_Option();
+                mcm->Add_Header_Option(Main_t::LOADED_REFERENCE);
+                mcm->Add_Header_Option(Main_t::_NONE_);
+                {
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item.actor->Name(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item.actor->Form_ID_String().data, Main_t::_NONE_);
+
+                    Actor_Base_t* actor_base = item.actor->Actor_Base();
+                    if (actor_base && actor_base->Is_Valid()) {
+                        if (actor_base->Is_Male()) {
+                            mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
+                        } else {
+                            mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                        }
+                        if (actor_base->Is_Unique()) {
+                            mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
+                        } else {
+                            mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                        }
                     }
                 }
-            }
 
-            {
-                Vector_t<String_t> location_names = loaded_actor.cell->Location_Names();
-                size_t location_name_count = location_names.size();
-                if (location_name_count > 0 && mcm->Can_Add_Options(2 + location_name_count)) {
-                    mcm->Add_Header_Option(" Locations ");
-                    mcm->Add_Header_Option("");
-                    for (Index_t idx = 0, end = location_name_count; idx < end; idx += 1) {
-                        String_t location_name = location_names[idx];
-                        mcm->Add_Text_Option(location_name, "");
+                mcm->Add_Header_Option(Main_t::COMMANDS);
+                mcm->Add_Header_Option(Main_t::_NONE_);
+                {
+                    Markers_t* markers = Markers_t::Self();
+                    if (markers->Has_Marked(item.actor)) {
+                        Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::REMOVE_MARKER_FROM_MAP, Main_t::_NONE_);
+                    } else {
+                        if (markers->Has_Space()) {
+                            Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::ADD_MARKER_TO_MAP, Main_t::_NONE_);
+                        } else {
+                            Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::ADD_MARKER_TO_MAP, Main_t::_NONE_, Flag_e::DISABLE);
+                        }
                     }
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                        mcm->Add_Empty_Option();
+
+                    Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_);
+
+                    if (item.actor->Is_Disabled()) {
+                        Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::ENABLE_REFERENCE, Main_t::_NONE_);
+                    } else {
+                        Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::DISABLE_REFERENCE, Main_t::_NONE_);
+                    }
+
+                    Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_);
+                }
+
+                Race_t* race = item.actor->Race();
+                if (race && race->Is_Valid()) {
+                    mcm->Add_Header_Option(Main_t::RACE);
+                    mcm->Add_Header_Option(Main_t::_NONE_);
+                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
+                }
+
+                {
+                    Vector_t<Actor_Base_t*> actor_bases = item.actor->Actor_Bases();
+                    size_t actor_base_count = actor_bases.size();
+                    if (actor_base_count > 0 && mcm->Can_Add_Options(2 + actor_base_count)) {
+                        mcm->Add_Header_Option(Main_t::BASES);
+                        mcm->Add_Header_Option(Main_t::_NONE_);
+                        for (Index_t idx = 0, end = actor_base_count; idx < end; idx += 1) {
+                            Actor_Base_t* actor_base = actor_bases[idx];
+                            const char* name = actor_base->Name();
+                            const char* form_id = actor_base->Form_ID_String().data;
+                            mcm->Add_Text_Option(
+                                Main_t::_SPACE_ + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
+                                Main_t::_NONE_
+                            );
+                        }
+                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                            mcm->Add_Empty_Option();
+                        }
                     }
                 }
-            }
 
-            {
-                Vector_t<Actor_Base_t*> actor_bases = loaded_actor.actor->Actor_Bases();
-                size_t actor_base_count = actor_bases.size();
-                if (actor_base_count > 0 && mcm->Can_Add_Options(2 + actor_base_count)) {
-                    mcm->Add_Header_Option(" Bases ");
-                    mcm->Add_Header_Option("");
-                    for (Index_t idx = 0, end = actor_base_count; idx < end; idx += 1) {
-                        Actor_Base_t* actor_base = actor_bases[idx];
-                        mcm->Add_Text_Option(actor_base->Any_Name(), "");
-                    }
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                        mcm->Add_Empty_Option();
+                Cell_t* cell = item.actor->Cell();
+                if (cell && cell->Is_Valid()) {
+                    mcm->Add_Header_Option(Main_t::CELL);
+                    mcm->Add_Header_Option(Main_t::_NONE_);
+                    Cell_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_);
+                    if (cell->Is_Interior()) {
+                        mcm->Add_Text_Option(Main_t::IS_INTERIOR, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_EXTERIOR, Main_t::_NONE_);
                     }
                 }
+
+                if (cell && cell->Is_Valid()) {
+                    Vector_t<String_t> location_names = cell->Location_Names();
+                    size_t location_name_count = location_names.size();
+                    if (location_name_count > 0 && mcm->Can_Add_Options(2 + location_name_count)) {
+                        mcm->Add_Header_Option(Main_t::LOCATIONS);
+                        mcm->Add_Header_Option(Main_t::_NONE_);
+                        for (Index_t idx = 0, end = location_name_count; idx < end; idx += 1) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location_names[idx].data, Main_t::_NONE_);
+                        }
+                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                            mcm->Add_Empty_Option();
+                        }
+                    }
+                }
+
+                {
+                    Vector_t<String_t> mod_names = item.actor->Mod_Names();
+                    size_t mod_name_count = mod_names.size();
+                    if (mod_name_count > 0 && mcm->Can_Add_Options(2 + mod_name_count)) {
+                        mcm->Add_Header_Option(Main_t::MODS);
+                        mcm->Add_Header_Option(Main_t::_NONE_);
+                        for (Index_t idx = 0, end = mod_name_count; idx < end; idx += 1) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
+                        }
+                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                            mcm->Add_Empty_Option();
+                        }
+                    }
+                }
+            } else {
+                List()->do_update_items = true;
+                Current_View(Bases_View_e::LIST);
+                mcm->Reset_Page();
             }
         } else {
             List()->do_update_items = true;
@@ -827,6 +862,23 @@ namespace doticu_npcl { namespace MCM {
                 }
                 mcm->Reset_Page();
             }
+        } else if (option == Move_To_Player_Option()) {
+            mcm->Flicker_Option(option);
+            Loaded_Actor_t loaded_actor = Current_Item();
+            if (loaded_actor.Is_Valid()) {
+                loaded_actor.actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+            }
+        } else if (option == Enable_Disable_Option()) {
+            mcm->Flicker_Option(option);
+            Loaded_Actor_t loaded_actor = Current_Item();
+            if (loaded_actor.Is_Valid()) {
+                if (loaded_actor.actor->Is_Disabled()) {
+                    loaded_actor.actor->Enable();
+                } else {
+                    loaded_actor.actor->Disable();
+                }
+                mcm->Reset_Page();
+            }
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
@@ -834,6 +886,43 @@ namespace doticu_npcl { namespace MCM {
                 loaded_actor.actor->Select_In_Console();
             }
 
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
+    }
+
+    void Loaded_References_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        Item_t item = Current_Item();
+        if (item.Is_Valid()) {
+            if (option == Mark_On_Map_Option()) {
+                mcm->Info_Text(Main_t::HIGHLIGHT_ADD_REMOVE_MAP_MARKER);
+            } else if (option == Move_To_Player_Option()) {
+                mcm->Info_Text(Main_t::HIGHLIGHT_MOVE_TO_PLAYER);
+            } else if (option == Enable_Disable_Option()) {
+                mcm->Info_Text(Main_t::HIGHLIGHT_ENABLE_DISABLE_REFERENCE);
+            } else if (option == Select_In_Console_Option()) {
+                mcm->Info_Text(Main_t::HIGHLIGHT_SELECT_IN_CONSOLE);
+
+            } else if (option == Race_Name_Option()) {
+                Race_t* race = item.actor->Race();
+                if (race) {
+                    const char* name = race->Name();
+                    const char* editor_id = race->Get_Editor_ID();
+                    const char* form_id = race->Form_ID_String().data;
+                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
+                }
+            } else if (option == Cell_Name_Option()) {
+                Cell_t* cell = item.actor->Cell();
+                if (cell) {
+                    const char* name = cell->Name();
+                    const char* editor_id = cell->Get_Editor_ID();
+                    const char* form_id = cell->Form_ID_String().data;
+                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
+                }
+            }
         }
 
         mcm->Destroy_Latent_Callback(lcallback);

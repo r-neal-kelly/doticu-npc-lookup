@@ -94,7 +94,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Page_Open(is_refresh, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Page_Open(is_refresh, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Page_Open(is_refresh, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Page_Open(is_refresh, lcallback);
     }
 
     template <typename B, typename I>
@@ -105,7 +105,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Select(option, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Select(option, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Select(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Select(option, lcallback);
     }
 
     template <typename B, typename I>
@@ -116,7 +116,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Menu_Open(option, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Menu_Open(option, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Menu_Open(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Menu_Open(option, lcallback);
     }
 
     template <typename B, typename I>
@@ -127,7 +127,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Menu_Accept(option, idx, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Menu_Accept(option, idx, lcallback);
     }
 
     template <typename B, typename I>
@@ -138,7 +138,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Slider_Open(option, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Slider_Open(option, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Slider_Open(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Slider_Open(option, lcallback);
     }
 
     template <typename B, typename I>
@@ -149,7 +149,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Slider_Accept(option, value, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Slider_Accept(option, value, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Slider_Accept(option, value, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Slider_Accept(option, value, lcallback);
     }
 
     template <typename B, typename I>
@@ -160,7 +160,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Input_Accept(option, value, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Input_Accept(option, value, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Input_Accept(option, value, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Input_Accept(option, value, lcallback);
     }
 
     template <typename B, typename I>
@@ -171,7 +171,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
     }
 
     template <typename B, typename I>
@@ -182,7 +182,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Default(option, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Default(option, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Default(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Default(option, lcallback);
     }
 
     template <typename B, typename I>
@@ -193,7 +193,7 @@ namespace doticu_npcl { namespace MCM {
         else if (current_view == Bases_View_e::FILTER)  Filter()->On_Option_Highlight(option, lcallback);
         else if (current_view == Bases_View_e::OPTIONS) Options()->On_Option_Highlight(option, lcallback);
         else if (current_view == Bases_View_e::ITEM)    Item()->On_Option_Highlight(option, lcallback);
-        else                                            SKYLIB_ASSERT(false);
+        else                                            List()->On_Option_Highlight(option, lcallback);
     }
 
 }}
@@ -225,12 +225,6 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t    Bases_List_t<B, I>::Page_Index()            { return Page_Index_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_List_t<B, I>::Page_Index(Int_t value) { Page_Index_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t Bases_List_t<B, I>::Title(Int_t item_count, Int_t page_index, Int_t page_count)
-    {
-        return Main_t::Self()->Title_Items(Item_Type_Plural(), item_count, page_index, page_count);
-    }
 
     template <typename B, typename I>
     inline void Bases_List_t<B, I>::Clear()
@@ -411,12 +405,6 @@ namespace doticu_npcl { namespace MCM {
     inline void     Bases_Filter_t<B, I>::Unique_Generic_Argument(Binary_e value)   { Unique_Generic_Argument_Variable()->Value(value); }
 
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Title()
-    {
-        return std::string(Item_Type_Plural()) + ": Filter ";
-    }
-
-    template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::Clear()
     {
         Mod_Argument("");
@@ -579,12 +567,6 @@ namespace doticu_npcl { namespace MCM {
     inline void     Bases_Options_t<B, I>::Do_Static_Spawns(Bool_t value)       { Do_Static_Spawns_Variable()->Value(value); }
 
     template <typename B, typename I>
-    inline String_t Bases_Options_t<B, I>::Title()
-    {
-        return std::string(Item_Type_Plural()) + ": Options ";
-    }
-
-    template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Reset()
     {
         Do_Smart_Select(true);
@@ -645,17 +627,13 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (option == Smart_Select_Option()) {
-            mcm->Info_Text("On: Filter select menus are filtered dynamically, and thus narrow down results accurately." "\n"
-                           "Off: Filter select menus may have options that lead to no results.");
+            mcm->Info_Text(Main_t::HIGHLIGHT_SMART_SELECT);
         } else if (option == Uncombative_Spawns_Option()) {
-            mcm->Info_Text("On: Tries to stop aggressive spawns from attacking the player." "\n"
-                           "Off: Makes no attempt to stop a spawn from attacking the player.");
+            mcm->Info_Text(Main_t::HIGHLIGHT_UNCOMBATIVE_SPAWNS);
         } else if (option == Persistent_Spawns_Option()) {
-            mcm->Info_Text("On: Forces all spawns to be persistent so the engine doesn't try to delete them." "\n"
-                           "Off: Allows spawns to be temporary if their base is. Naturally persistent NPCs may still spawn.");
+            mcm->Info_Text(Main_t::HIGHLIGHT_PERSISTENT_SPAWNS);
         } else if (option == Static_Spawns_Option()) {
-            mcm->Info_Text("On: Finds the root base of dynamic spawns. Prevents the engine from changing their appearance." "\n"
-                           "Off: Allows dynamic spawns that the engine may change the appearance of over time.");
+            mcm->Info_Text(Main_t::HIGHLIGHT_STATIC_SPAWNS);
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -677,6 +655,10 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Item_t<B, I>::View_Item_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option() { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::Race_Name_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::Cell_Name_Option()  { DEFINE_OPTION(); }
 
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Item_t<B, I>::Nested_View_Variable()    { DEFINE_STRING("p_item_nested_view"); }
@@ -723,12 +705,6 @@ namespace doticu_npcl { namespace MCM {
     inline Form_ID_t    Bases_Item_t<B, I>::Nested_Form()                   { return Nested_Form_Variable()->Value(); }
     template <typename B, typename I>
     inline void         Bases_Item_t<B, I>::Nested_Form(Form_ID_t value)    { Nested_Form_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t Bases_Item_t<B, I>::Title(const char* item_name)
-    {
-        return Main_t::Self()->Title_Item(Item_Type_Singular(), item_name);
-    }
 
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Spawn(Actor_Base_t* base)

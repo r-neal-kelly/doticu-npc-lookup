@@ -225,7 +225,16 @@ namespace doticu_npcl {
 
         static Filter_e Compare(Item_t item, String_t string)
         {
-            return Mod_Filter_t<Form_t*>::Compare(item, string);
+            if (item && item->Is_Valid()) {
+                Item_t highest_static = item->Highest_Static();
+                if (highest_static) {
+                    return Mod_Filter_t<Form_t*>::Compare(highest_static, string);
+                } else {
+                    return Mod_Filter_t<Form_t*>::Compare(item, string);
+                }
+            } else {
+                return Filter_e::INVALID;
+            }
         }
     };
 

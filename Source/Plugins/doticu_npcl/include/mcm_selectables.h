@@ -72,7 +72,7 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Select(Select_f select_f)
         {
-            results.push_back(" Any ");
+            results.push_back(Main_t::ANY);
             for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
                 Item_t item = items.at(idx);
                 if (item) {
@@ -90,7 +90,7 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Select(Select_Relation_f select_f, Actor_Base_t* base_to_compare)
         {
-            results.push_back(" Any ");
+            results.push_back(Main_t::ANY);
             for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
                 Item_t item = items.at(idx);
                 if (item) {

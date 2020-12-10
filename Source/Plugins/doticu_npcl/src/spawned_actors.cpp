@@ -12,6 +12,8 @@
 
 namespace doticu_npcl {
 
+    std::mutex Spawned_Actors_t::global_mutex;
+
     Spawned_Actors_t& Spawned_Actors_t::Self()
     {
         static Spawned_Actors_t spawned_actors;
@@ -20,6 +22,8 @@ namespace doticu_npcl {
 
     size_t Spawned_Actors_t::Spawned_Actor_Count()
     {
+        std::lock_guard<std::mutex> guard(global_mutex);
+
         return Self().actors.size();
     }
 
@@ -33,6 +37,8 @@ namespace doticu_npcl {
 
     void Spawned_Actors_t::Spawned_Actors(Vector_t<Actor_t*>& results)
     {
+        std::lock_guard<std::mutex> guard(global_mutex);
+
         Spawned_Actors_t& self = Self();
         for (Index_t idx = 0, end = self.actors.size(); idx < end; idx += 1) {
             Actor_t* actor = self.actors[idx];
@@ -47,12 +53,14 @@ namespace doticu_npcl {
         Vector_t<Index_t> invalid_indices;
         invalid_indices.reserve(8);
 
+        std::lock_guard<std::mutex> guard(mutex);
         for (Index_t idx = 0, end = actors.size(); idx < end; idx += 1) {
             Actor_t* actor = actors[idx];
             if (!actor || !actor->Is_Valid()) {
                 invalid_indices.push_back(idx);
             }
         }
+        guard.~lock_guard();
 
         for (Index_t idx = 0, end = invalid_indices.size(); idx < end; idx += 1) {
             Remove(invalid_indices[idx]);
@@ -61,6 +69,8 @@ namespace doticu_npcl {
 
     void Spawned_Actors_t::Reserve(size_t count)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         actors.reserve(count);
         actor_ids.reserve(count);
         actor_mod_names.reserve(count);
@@ -70,6 +80,8 @@ namespace doticu_npcl {
 
     Index_t Spawned_Actors_t::Index_Of(Actor_t* actor)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         if (actor && actor->Is_Valid()) {
             for (Index_t idx = 0, end = actors.size(); idx < end; idx += 1) {
                 if (actors[idx] == actor) {
@@ -89,6 +101,8 @@ namespace doticu_npcl {
 
     static void Add_Impl(Spawned_Actors_t* self, Actor_t* actor, Actor_Base_t* actor_base, String_t actor_base_mod_name)
     {
+        std::lock_guard<std::mutex> guard(self->mutex);
+
         self->actors.push_back(actor);
         self->actor_ids.push_back(actor->form_id);
 
@@ -195,6 +209,8 @@ namespace doticu_npcl {
 
     Bool_t Spawned_Actors_t::Remove(Index_t index)
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         size_t end = actors.size();
         if (index > -1 && index < end) {
             if (index == end - 1) {
@@ -229,6 +245,8 @@ namespace doticu_npcl {
 
     void Spawned_Actors_t::Clear()
     {
+        std::lock_guard<std::mutex> guard(mutex);
+
         actors.clear();
         actor_ids.clear();
         actor_mod_names.clear();

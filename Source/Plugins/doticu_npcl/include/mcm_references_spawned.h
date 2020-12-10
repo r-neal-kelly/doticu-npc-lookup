@@ -29,9 +29,6 @@ namespace doticu_npcl { namespace MCM {
         Spawned_References_Filter_t*    Filter();
         Spawned_References_Options_t*   Options();
         Spawned_References_Item_t*      Item();
-
-        static const char*              Item_Type_Singular();
-        static const char*              Item_Type_Plural();
     };
 
 }}
@@ -105,8 +102,22 @@ namespace doticu_npcl { namespace MCM {
     class Spawned_References_Options_t : public References_Options_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
     public:
+        Int_t&              Do_Verify_Unspawns_Option();
+
+    public:
+        V::Bool_Variable_t* Do_Verify_Unspawns_Variable();
+
+    public:
+        Bool_t              Do_Verify_Unspawns();
+        void                Do_Verify_Unspawns(Bool_t value);
+
+    public:
+        void Reset();
+
+    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -127,9 +138,13 @@ namespace doticu_npcl { namespace MCM {
         Item_t  Previous_Item();
         Item_t  Next_Item();
 
+        void Back_To_List(some<Main_t*> mcm, some<Latent_Callback_i*> lcallback);
+        void Select_Unspawn(some<Main_t*> mcm, Int_t option, some<Latent_Callback_i*> lcallback);
+
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

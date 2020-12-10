@@ -29,9 +29,6 @@ namespace doticu_npcl { namespace MCM {
         Static_Bases_Filter_t*  Filter();
         Static_Bases_Options_t* Options();
         Static_Bases_Item_t*    Item();
-
-        static const char*      Item_Type_Singular();
-        static const char*      Item_Type_Plural();
     };
 
 }}
@@ -104,6 +101,7 @@ namespace doticu_npcl { namespace MCM {
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

@@ -87,7 +87,6 @@ namespace doticu_npcl { namespace MCM {
         void    Page_Index(Int_t value);
 
     public:
-        String_t    Title(Int_t item_count, Int_t page_index, Int_t page_count);
         void        Clear();
 
     public:
@@ -191,7 +190,6 @@ namespace doticu_npcl { namespace MCM {
         void        Unique_Generic_Argument(Binary_e value);
 
     public:
-        String_t                Title();
         void                    Clear();
 
         template <typename Type_t>
@@ -252,7 +250,6 @@ namespace doticu_npcl { namespace MCM {
         void    Do_Static_Spawns(Bool_t value);
 
     public:
-        String_t    Title();
         void        Reset();
 
     public:
@@ -302,6 +299,9 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  View_Item_Option();
         Int_t&  View_Bases_Option();
 
+        Int_t&  Race_Name_Option();
+        Int_t&  Cell_Name_Option();
+
     public:
         V::String_Variable_t*   Nested_View_Variable();
         V::Int_Variable_t*      Nested_Index_Variable();
@@ -316,7 +316,6 @@ namespace doticu_npcl { namespace MCM {
         void                Nested_Form(Form_ID_t value);
 
     public:
-        String_t    Title(const char* item_name);
         void        Spawn(Actor_Base_t* base);
         void        Spawn(Leveled_Actor_Base_t* leveled_base);
 

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "intrinsic.h"
 
 namespace doticu_npcl {
@@ -18,6 +20,8 @@ namespace doticu_npcl {
 
     class Spawned_Actors_t {
     public:
+        static std::mutex global_mutex;
+
         static Spawned_Actors_t&    Self();
 
         static size_t               Spawned_Actor_Count();
@@ -25,6 +29,7 @@ namespace doticu_npcl {
         static void                 Spawned_Actors(Vector_t<Actor_t*>& results);
 
     public:
+        std::mutex          mutex;
         Vector_t<Actor_t*>  actors;
         Vector_t<Form_ID_t> actor_ids;
         Vector_t<String_t>  actor_mod_names;

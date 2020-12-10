@@ -20,6 +20,7 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    std::mutex Markers_t::cache_mutex;
     skylib::Stack_Array_t<Alias_Actor_t, Markers_t::MAX_MARKERS> Markers_t::alias_actors;
 
     String_t        Markers_t::Class_Name() { DEFINE_CLASS_NAME("doticu_npcl_mcm_markers"); }
@@ -86,6 +87,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::Refresh_Cache()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         alias_actors.Clear();
         for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
             alias_actors.Push(
@@ -113,11 +116,15 @@ namespace doticu_npcl { namespace MCM {
             }
         }
 
+        guard.~lock_guard();
+
         Refresh_Menu();
     }
 
     void Markers_t::Refresh_Menu()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         skylib::Player_t* player = skylib::Player_t::Self();
         for (Index_t idx = 0, end = player->objectives.count; idx < end; idx += 1) {
             auto& player_objective = player->objectives.entries[idx];
@@ -140,6 +147,8 @@ namespace doticu_npcl { namespace MCM {
 
     Int_t Markers_t::Marked_Count()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         Int_t count = 0;
 
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
@@ -154,6 +163,8 @@ namespace doticu_npcl { namespace MCM {
 
     Bool_t Markers_t::Has_Space()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (!alias_actor.actor) {
@@ -167,6 +178,8 @@ namespace doticu_npcl { namespace MCM {
     Bool_t Markers_t::Has_Marked(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
+
+        std::lock_guard<std::mutex> guard(cache_mutex);
 
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
@@ -183,6 +196,8 @@ namespace doticu_npcl { namespace MCM {
         SKYLIB_ASSERT_SOME(actor);
 
         if (!Has_Marked(actor)) {
+            std::lock_guard<std::mutex> guard(cache_mutex);
+
             for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
                 Alias_Actor_t& alias_actor = alias_actors[idx];
                 if (!alias_actor.actor) {
@@ -206,6 +221,8 @@ namespace doticu_npcl { namespace MCM {
     {
         SKYLIB_ASSERT_SOME(actor);
 
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor && alias_actor.actor() == actor()) {
@@ -220,6 +237,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::Unmark_All()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
@@ -229,6 +248,8 @@ namespace doticu_npcl { namespace MCM {
 
     Vector_t<Alias_Actor_t*> Markers_t::Alias_Actors()
     {
+        std::lock_guard<std::mutex> guard(cache_mutex);
+
         Vector_t<Alias_Actor_t*> results;
         results.reserve(MAX_MARKERS);
 
@@ -303,20 +324,20 @@ namespace doticu_npcl { namespace MCM {
 
         Int_t marked_count = Marked_Count();
         if (marked_count > 0) {
-            mcm->Title_Text(mcm->Title_Items(" Marked References ", marked_count, MAX_MARKERS));
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, marked_count, MAX_MARKERS));
 
-            mcm->Add_Header_Option("");
-            mcm->Add_Header_Option("");
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            mcm->Add_Header_Option(Main_t::_NONE_);
 
             Vector_t<Alias_Actor_t*> alias_actors = Alias_Actors();
             for (Index_t idx = 0, end = alias_actors.size(); idx < end; idx += 1) {
                 Alias_Actor_t* alias_actor = alias_actors[idx];
-                mcm->Add_Text_Option(alias_actor->actor->Any_Name(), "...");
+                mcm->Add_Text_Option(alias_actor->actor->Any_Name(), Main_t::_DOTS_);
             }
         } else {
-            mcm->Title_Text(mcm->Title_Items(" Marked References ", 0, MAX_MARKERS));
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, 0, MAX_MARKERS));
 
-            mcm->Add_Header_Option(" No Marked References ");
+            mcm->Add_Header_Option(Main_t::NO_MARKED_REFERENCES);
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -355,12 +376,14 @@ namespace doticu_npcl { namespace MCM {
             };
             mcm->Flicker_Option(option);
             mcm->Show_Message(
-                "Remove marker?",
+                Main_t::CONFIRM_REMOVE_MARKER,
                 true,
-                "$Accept",
-                "$Cancel",
+                Main_t::YES,
+                Main_t::NO,
                 new Callback_t(mcm, this, marker_index, lcallback)
             );
+        } else {
+            mcm->Destroy_Latent_Callback(lcallback);
         }
     }
 

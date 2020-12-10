@@ -17,4 +17,4 @@ event OnOptionKeymapChange(int option, int key_code, string conflict, string con
 event OnOptionDefault(int option) native
 event OnOptionHighlight(int option) native
 
-ObjectReference[] function Lookup_References(int[] form_types, Keyword[] keywords) native
+;ObjectReference[] function Lookup_References(int[] form_types, Keyword[] keywords) native
