@@ -324,7 +324,8 @@ namespace doticu_npcl { namespace MCM {
 
         Int_t marked_count = Marked_Count();
         if (marked_count > 0) {
-            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, marked_count, MAX_MARKERS));
+            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, marked_count, MAX_MARKERS));
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_MARKED_REFERENCES, marked_count, MAX_MARKERS));
 
             mcm->Add_Header_Option(Main_t::_NONE_);
             mcm->Add_Header_Option(Main_t::_NONE_);
@@ -335,7 +336,8 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Add_Text_Option(alias_actor->actor->Any_Name(), Main_t::_DOTS_);
             }
         } else {
-            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, 0, MAX_MARKERS));
+            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_MARKED_REFERENCES, 0, MAX_MARKERS));
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_MARKED_REFERENCES, 0, MAX_MARKERS));
 
             mcm->Add_Header_Option(Main_t::NO_MARKED_REFERENCES);
         }

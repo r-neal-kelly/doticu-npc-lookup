@@ -193,6 +193,27 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const wchar_t* COMPONENT_PAGE                      = L"$dnpcl_component_page";
         static constexpr const wchar_t* COMPONENT_ITEM                      = L"$dnpcl_component_item";
 
+        static constexpr const char*    SAFE_COMPONENT_STATIC_BASE          = "Static Base";
+        static constexpr const char*    SAFE_COMPONENT_DYNAMIC_BASE         = "Dynamic Base";
+        static constexpr const char*    SAFE_COMPONENT_LEVELED_BASE         = "Leveled Base";
+        static constexpr const char*    SAFE_COMPONENT_INTERNAL_BASE        = "Internal Base";
+        static constexpr const char*    SAFE_COMPONENT_LOADED_REFERENCE     = "Loaded Reference";
+        static constexpr const char*    SAFE_COMPONENT_SPAWNED_REFERENCE    = "Spawned Reference";
+        static constexpr const char*    SAFE_COMPONENT_MARKED_REFERENCE     = "Marked Reference";
+
+        static constexpr const char*    SAFE_COMPONENT_STATIC_BASES         = "Static Bases";
+        static constexpr const char*    SAFE_COMPONENT_DYNAMIC_BASES        = "Dynamic Bases";
+        static constexpr const char*    SAFE_COMPONENT_LEVELED_BASES        = "Leveled Bases";
+        static constexpr const char*    SAFE_COMPONENT_INTERNAL_BASES       = "Internal Bases";
+        static constexpr const char*    SAFE_COMPONENT_LOADED_REFERENCES    = "Loaded References";
+        static constexpr const char*    SAFE_COMPONENT_SPAWNED_REFERENCES   = "Spawned References";
+        static constexpr const char*    SAFE_COMPONENT_MARKED_REFERENCES    = "Marked References";
+
+        static constexpr const char*    SAFE_COMPONENT_FILTER               = "Filter";
+        static constexpr const char*    SAFE_COMPONENT_OPTIONS              = "Options";
+        static constexpr const char*    SAFE_COMPONENT_PAGE                 = "Page";
+        static constexpr const char*    SAFE_COMPONENT_ITEM                 = "Item";
+
         static constexpr const char*    MOD_NAME                            = " NPC Lookup ";
         static constexpr const char*    DEFAULT_PAGE                        = STATIC_BASES;
 
@@ -220,7 +241,7 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
-        std::wstring        Translation(const wchar_t* key);
+        /*std::wstring        Translation(const wchar_t* key);
         void                Translation(const wchar_t* key, std::wstring&& translation);
 
         std::wstring        Singular_Title(const wchar_t* singular_name_key, const char* sub_title);
@@ -230,7 +251,14 @@ namespace doticu_npcl { namespace MCM {
         std::wstring        Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t item_max);
         std::wstring        Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t page_index, Int_t page_count);
 
-        void                Translated_Title_Text(std::wstring&& translation);
+        void                Translated_Title_Text(std::wstring&& translation);*/
+
+        std::string         Singular_Title(const char* singular_name, const char* sub_title);
+        std::string         Singular_Title(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count);
+        std::string         Plural_Title(const char* plural_name, const char* sub_title);
+        std::string         Plural_Title(const char* plural_name, Int_t item_count);
+        std::string         Plural_Title(const char* plural_name, Int_t item_count, Int_t item_max);
+        std::string         Plural_Title(const char* plural_name, Int_t item_count, Int_t page_index, Int_t page_count);
 
         std::string         Pretty_ID(some<const char*> name, some<const char*> editor_id, some<const char*> form_id);
 

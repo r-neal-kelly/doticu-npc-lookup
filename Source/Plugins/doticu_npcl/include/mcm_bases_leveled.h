@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "cached_leveled.h"
 #include "mcm_bases.h"
 
@@ -51,7 +53,8 @@ namespace doticu_npcl { namespace MCM {
     class Leveled_Bases_List_t : public Bases_List_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
     public:
-        static Vector_t<Cached_Leveled_t> cached_leveleds;
+        static Vector_t<Cached_Leveled_t>   cached_leveleds;
+        static std::mutex                   cached_leveleds_mutex;
 
     public:
         void On_Load();

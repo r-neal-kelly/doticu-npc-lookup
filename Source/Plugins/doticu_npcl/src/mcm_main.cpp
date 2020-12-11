@@ -147,7 +147,7 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
-    std::wstring Main_t::Translation(const wchar_t* key)
+    /*std::wstring Main_t::Translation(const wchar_t* key)
     {
         std::wstring translation = Translations_t::Translation(key);
         return translation[0] == L'_' ? translation.data() + 1 : translation.data();
@@ -219,6 +219,63 @@ namespace doticu_npcl { namespace MCM {
     {
         Translation(PLACEHOLDER_TITLE_W, std::move(translation));
         Title_Text(PLACEHOLDER_TITLE);
+    }*/
+
+    std::string Main_t::Singular_Title(const char* singular_name, const char* sub_title)
+    {
+        return std::string(singular_name) + ": " + sub_title;
+    }
+
+    std::string Main_t::Singular_Title(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count)
+    {
+        std::string name =
+            std::string(singular_name) + ": " +
+            item_name;
+
+        std::string items =
+            std::string(SAFE_COMPONENT_ITEM) + ": " +
+            std::to_string(item_index + 1) + "/" +
+            std::to_string(item_count);
+
+        return name + "               " + items;
+    }
+
+    std::string Main_t::Plural_Title(const char* plural_name, const char* sub_title)
+    {
+        return std::string(plural_name) + ": " + sub_title;
+    }
+
+    std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count)
+    {
+        std::string items =
+            std::string(plural_name) + ": " +
+            std::to_string(item_count);
+
+        return items;
+    }
+
+    std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count, Int_t item_max)
+    {
+        std::string items =
+            std::string(plural_name) + ": " +
+            std::to_string(item_count) + "/" +
+            std::to_string(item_max);
+
+        return items;
+    }
+
+    std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count, Int_t page_index, Int_t page_count)
+    {
+        std::string items =
+            std::string(plural_name) + ": " +
+            std::to_string(item_count);
+
+        std::string pages =
+            std::string(SAFE_COMPONENT_PAGE) + ": " +
+            std::to_string(page_index + 1) + "/" +
+            std::to_string(page_count);
+
+        return items + "               " + pages;
     }
 
     std::string Main_t::Pretty_ID(some<const char*> name, some<const char*> editor_id, some<const char*> form_id)
