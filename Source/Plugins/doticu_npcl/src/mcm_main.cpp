@@ -21,6 +21,7 @@
 #include "mcm_references_loaded.h"
 #include "mcm_references_spawned.h"
 #include "mcm_markers.h"
+#include "mcm_global_options.h"
 
 namespace doticu_npcl { namespace MCM {
 
@@ -147,7 +148,12 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
-    /*std::wstring Main_t::Translation(const wchar_t* key)
+    Bool_t Main_t::Should_Translate_Page_Titles()
+    {
+        return Global_Options_t::Self()->Translate_Page_Titles(); // maybe add a non english check here.
+    }
+
+    std::wstring Main_t::Translation(const wchar_t* key)
     {
         std::wstring translation = Translations_t::Translation(key);
         return translation[0] == L'_' ? translation.data() + 1 : translation.data();
@@ -219,7 +225,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Translation(PLACEHOLDER_TITLE_W, std::move(translation));
         Title_Text(PLACEHOLDER_TITLE);
-    }*/
+    }
 
     std::string Main_t::Singular_Title(const char* singular_name, const char* sub_title)
     {
@@ -332,6 +338,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_t::Self()->On_Init();
         Spawned_References_t::Self()->On_Init();
         Markers_t::Self()->On_Init();
+        Global_Options_t::Self()->On_Init();
     }
 
     void Main_t::On_Load()
@@ -344,6 +351,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_t::Self()->On_Load();
         Spawned_References_t::Self()->On_Load();
         Markers_t::Self()->On_Load();
+        Global_Options_t::Self()->On_Load();
     }
 
     void Main_t::On_Save()
@@ -356,6 +364,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_t::Self()->On_Save();
         Spawned_References_t::Self()->On_Save();
         Markers_t::Self()->On_Save();
+        Global_Options_t::Self()->On_Save();
     }
 
     Bool_t Main_t::On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id)
@@ -364,16 +373,15 @@ namespace doticu_npcl { namespace MCM {
 
         Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
 
-        Mod_Name(MOD_NAME);
-
         Vector_t<String_t> pages;
-        pages.reserve(6);
+        pages.reserve(7);
         pages.push_back(STATIC_BASES);
         pages.push_back(DYNAMIC_BASES);
         pages.push_back(LEVELED_BASES);
         pages.push_back(LOADED_REFERENCES);
         pages.push_back(SPAWNED_REFERENCES);
         pages.push_back(MARKED_REFERENCES);
+        pages.push_back(GLOBAL_OPTIONS);
         Pages(pages);
 
         Static_Bases_t::Self()->On_Config_Open();
@@ -382,6 +390,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_t::Self()->On_Config_Open();
         Spawned_References_t::Self()->On_Config_Open();
         Markers_t::Self()->On_Config_Open();
+        Global_Options_t::Self()->On_Config_Open();
 
         Destroy_Latent_Callback(lcallback);
 
@@ -400,6 +409,7 @@ namespace doticu_npcl { namespace MCM {
         Loaded_References_t::Self()->On_Config_Close();
         Spawned_References_t::Self()->On_Config_Close();
         Markers_t::Self()->On_Config_Close();
+        Global_Options_t::Self()->On_Config_Close();
 
         Destroy_Latent_Callback(lcallback);
 
@@ -429,6 +439,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Page_Open(is_refresh, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Page_Open(is_refresh, lcallback);
         else                                        Default_Page_t::Self()->On_Page_Open(is_refresh, lcallback);
 
         return true;
@@ -447,6 +458,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Select(option, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Select(option, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Select(option, lcallback);
 
         return true;
@@ -465,6 +477,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Menu_Open(option, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Menu_Open(option, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Menu_Open(option, lcallback);
 
         return true;
@@ -483,6 +496,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
 
         return true;
@@ -501,6 +515,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Slider_Open(option, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Slider_Open(option, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Slider_Open(option, lcallback);
 
         return true;
@@ -519,6 +534,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
 
         return true;
@@ -537,6 +553,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Input_Accept(option, value, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Input_Accept(option, value, lcallback);
 
         return true;
@@ -555,6 +572,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
 
         return true;
@@ -573,6 +591,7 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Default(option, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Default(option, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Default(option, lcallback);
 
         return true;
@@ -591,9 +610,15 @@ namespace doticu_npcl { namespace MCM {
         else if (Is_Same(page, LOADED_REFERENCES))  Loaded_References_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, SPAWNED_REFERENCES)) Spawned_References_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, MARKED_REFERENCES))  Markers_t::Self()->On_Option_Highlight(option, lcallback);
+        else if (Is_Same(page, GLOBAL_OPTIONS))     Global_Options_t::Self()->On_Option_Highlight(option, lcallback);
         else                                        Default_Page_t::Self()->On_Option_Highlight(option, lcallback);
 
         return true;
+    }
+
+    void Main_t::Update_1_1_1()
+    {
+        Global_Options_t::Self()->Prioritize_MCM_Menu(true);
     }
 
     void Main_t::Register_Me(V::Machine_t* machine)

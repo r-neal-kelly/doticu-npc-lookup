@@ -16,6 +16,7 @@
 #include "mcm_bases.h"
 #include "mcm_bases.inl"
 #include "mcm_bases_dynamic.h"
+#include "mcm_global_options.h"
 
 namespace doticu_npcl { namespace MCM {
 
@@ -117,8 +118,11 @@ namespace doticu_npcl { namespace MCM {
                 Page_Index(page_index);
             }
 
-            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, actor_base_count, page_index, page_count));
-            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, actor_base_count, page_index, page_count));
+            if (mcm->Should_Translate_Page_Titles()) {
+                mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, actor_base_count, page_index, page_count));
+            } else {
+                mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, actor_base_count, page_index, page_count));
+            }
 
             Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
             Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
@@ -143,8 +147,11 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Add_Text_Option(actor_base->Any_Name(), Main_t::_DOTS_);
             }
         } else {
-            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, 0, 0, 1));
-            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, 0, 0, 1));
+            if (mcm->Should_Translate_Page_Titles()) {
+                mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, 0, 0, 1));
+            } else {
+                mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, 0, 0, 1));
+            }
 
             Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
             Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
@@ -238,8 +245,11 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_FILTER));
-        mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, Main_t::SAFE_COMPONENT_FILTER));
+        if (mcm->Should_Translate_Page_Titles()) {
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_FILTER));
+        } else {
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, Main_t::SAFE_COMPONENT_FILTER));
+        }
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -469,8 +479,11 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_OPTIONS));
-        mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, Main_t::SAFE_COMPONENT_OPTIONS));
+        if (mcm->Should_Translate_Page_Titles()) {
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_OPTIONS));
+        } else {
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASES, Main_t::SAFE_COMPONENT_OPTIONS));
+        }
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -593,12 +606,15 @@ namespace doticu_npcl { namespace MCM {
             Vector_t<Item_t>& items = List()->Items();
             Index_t item_index = items.Index_Of(item);
             if (item_index > -1) {
-                ////mcm->Translated_Title_Text(
-                ////    mcm->Singular_Title(Main_t::COMPONENT_DYNAMIC_BASE, item->Any_Name(), item_index, items.size())
-                ////);
-                mcm->Title_Text(
-                    mcm->Singular_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASE, item->Any_Name(), item_index, items.size())
-                );
+                if (mcm->Should_Translate_Page_Titles()) {
+                    mcm->Translated_Title_Text(
+                        mcm->Singular_Title(Main_t::COMPONENT_DYNAMIC_BASE, item->Any_Name(), item_index, items.size())
+                    );
+                } else {
+                    mcm->Title_Text(
+                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_DYNAMIC_BASE, item->Any_Name(), item_index, items.size())
+                    );
+                }
 
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);

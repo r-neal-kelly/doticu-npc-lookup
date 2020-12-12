@@ -121,6 +121,7 @@ namespace doticu_npcl { namespace MCM {
         Int_t& Select_In_Console_Option();
         Int_t& Mark_On_Map_Option();
         Int_t& Move_To_Player_Option();
+        Int_t& Go_To_Reference_Option();
         Int_t& Enable_Disable_Option();
     };
 

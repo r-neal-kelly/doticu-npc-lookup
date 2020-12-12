@@ -188,6 +188,8 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Move_To_Player_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
+    inline Int_t& References_Item_t<B, I>::Go_To_Reference_Option()     { DEFINE_OPTION(); }
+    template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Enable_Disable_Option()      { DEFINE_OPTION(); }
 
 }}

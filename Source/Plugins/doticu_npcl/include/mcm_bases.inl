@@ -538,7 +538,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Options_t<B, I>::Persistent_Spawns_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option() { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option()       { DEFINE_OPTION(); }
 
     template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Smart_Select_Variable()       { DEFINE_BOOL("p_options_do_smart_select"); }
@@ -547,7 +547,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Persistent_Spawns_Variable()  { DEFINE_BOOL("p_options_do_persistent_spawns"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Static_Spawns_Variable() { DEFINE_BOOL("p_options_do_static_spawns"); }
+    inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Static_Spawns_Variable()      { DEFINE_BOOL("p_options_do_static_spawns"); }
 
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Select()                    { return Do_Smart_Select_Variable()->Value(); }
@@ -626,7 +626,10 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Smart_Select_Option()) {
+        if (option == Reset_Option()) {
+            mcm->Info_Text(Main_t::HIGHLIGHT_RESET_OPTIONS);
+
+        } else if (option == Smart_Select_Option()) {
             mcm->Info_Text(Main_t::HIGHLIGHT_SMART_SELECT);
         } else if (option == Uncombative_Spawns_Option()) {
             mcm->Info_Text(Main_t::HIGHLIGHT_UNCOMBATIVE_SPAWNS);

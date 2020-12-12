@@ -8,6 +8,8 @@
 #include "skse64_common/skse_version.h"
 
 #include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/math.h"
+
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/alias_base.h"
@@ -122,6 +124,9 @@ namespace doticu_npcl {
         SKYLIB_ASSERT(!Is_Installed());
 
         Consts_t::NPCL_Is_Installed_Global()->Bool(true);
+        Consts_t::NPCL_Major_Version_Global()->Long(Consts_t::NPCL_Major_Version());
+        Consts_t::NPCL_Minor_Version_Global()->Long(Consts_t::NPCL_Minor_Version());
+        Consts_t::NPCL_Patch_Version_Global()->Long(Consts_t::NPCL_Patch_Version());
 
         Vector_t<skylib::Quest_t*> quests;
         quests.push_back(Consts_t::NPCL_MCM_Quest());
@@ -141,6 +146,8 @@ namespace doticu_npcl {
         SKYLIB_ASSERT(Is_Installed());
 
         MCM::Main_t::Self()->On_Load();
+
+        Try_To_Update();
     }
 
     void Main_t::Before_Save()
@@ -148,6 +155,41 @@ namespace doticu_npcl {
         SKYLIB_ASSERT(Is_Installed());
 
         MCM::Main_t::Self()->On_Save();
+    }
+
+    Bool_t Main_t::Try_To_Update()
+    {
+        Word_t saved_major = Consts_t::NPCL_Major_Version_Global()->Long();
+        Word_t saved_minor = Consts_t::NPCL_Minor_Version_Global()->Long();
+        Word_t saved_patch = Consts_t::NPCL_Patch_Version_Global()->Long();
+        Word_t current_major = Consts_t::NPCL_Major_Version();
+        Word_t current_minor = Consts_t::NPCL_Minor_Version();
+        Word_t current_patch = Consts_t::NPCL_Patch_Version();
+
+        auto Is_Less_Than = [saved_major, saved_minor, saved_patch](Word_t major, Word_t minor, Word_t patch)->Bool_t
+        {
+            return skylib::Is_Version_Less_Than(saved_major, saved_minor, saved_patch, major, minor, patch);
+        };
+
+        if (Is_Less_Than(current_major, current_minor, current_patch)) {
+
+            if (Is_Less_Than(1, 1, 1)) {
+                Update_1_1_1();
+            }
+
+            Consts_t::NPCL_Major_Version_Global()->Long(current_major);
+            Consts_t::NPCL_Minor_Version_Global()->Long(current_minor);
+            Consts_t::NPCL_Patch_Version_Global()->Long(current_patch);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void Main_t::Update_1_1_1()
+    {
+        MCM::Main_t::Self()->Update_1_1_1();
     }
 
 }

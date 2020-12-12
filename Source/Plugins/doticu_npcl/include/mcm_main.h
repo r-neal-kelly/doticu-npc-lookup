@@ -131,6 +131,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    ADD_MARKER_TO_MAP                   = "$dnpcl_add_marker_to_map";
         static constexpr const char*    REMOVE_MARKER_FROM_MAP              = "$dnpcl_remove_marker_from_map";
         static constexpr const char*    MOVE_TO_PLAYER                      = "$dnpcl_move_to_player";
+        static constexpr const char*    GO_TO_REFERENCE                     = "$dnpcl_go_to_reference";
         static constexpr const char*    ENABLE_REFERENCE                    = "$dnpcl_enable_reference";
         static constexpr const char*    DISABLE_REFERENCE                   = "$dnpcl_disable_reference";
         static constexpr const char*    SELECT_IN_CONSOLE                   = "$dnpcl_select_in_console";
@@ -139,6 +140,10 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    CONFIRM_REMOVE_MARKER               = "$dnpcl_confirm_remove_marker";
         static constexpr const char*    YES                                 = "$dnpcl_yes";
         static constexpr const char*    NO                                  = "$dnpcl_no";
+
+        static constexpr const char*    GLOBAL_OPTIONS                      = "$dnpcl_global_options";
+        static constexpr const char*    PRIORITIZE_MCM_MENU                 = "$dnpcl_prioritize_mcm_menu";
+        static constexpr const char*    TRANSLATE_PAGE_TITLES               = "$dnpcl_translate_page_titles";
 
         static constexpr const char*    CENTER_FILTER                       = "$dnpcl_center_filter";
         static constexpr const char*    CENTER_OPTIONS                      = "$dnpcl_center_options";
@@ -152,6 +157,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    CENTER_SPAWN                        = "$dnpcl_center_spawn";
         static constexpr const char*    CENTER_UNSPAWN                      = "$dnpcl_center_unspawn";
 
+        static constexpr const char*    HIGHLIGHT_RESET_OPTIONS             = "$dnpcl_highlight_reset_options";
         static constexpr const char*    HIGHLIGHT_SMART_SELECT              = "$dnpcl_highlight_smart_select";
         static constexpr const char*    HIGHLIGHT_UNCOMBATIVE_SPAWNS        = "$dnpcl_highlight_uncombative_spawns";
         static constexpr const char*    HIGHLIGHT_PERSISTENT_SPAWNS         = "$dnpcl_highlight_persistent_spawns";
@@ -164,8 +170,12 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    HIGHLIGHT_VIEW_INTERNAL_BASES       = "$dnpcl_highlight_view_internal_bases";
         static constexpr const char*    HIGHLIGHT_ADD_REMOVE_MAP_MARKER     = "$dnpcl_highlight_add_remove_map_marker";
         static constexpr const char*    HIGHLIGHT_MOVE_TO_PLAYER            = "$dnpcl_highlight_move_to_player";
+        static constexpr const char*    HIGHLIGHT_GO_TO_REFERENCE           = "$dnpcl_highlight_go_to_reference";
         static constexpr const char*    HIGHLIGHT_ENABLE_DISABLE_REFERENCE  = "$dnpcl_highlight_enable_disable_reference";
         static constexpr const char*    HIGHLIGHT_SELECT_IN_CONSOLE         = "$dnpcl_highlight_select_in_console";
+
+        static constexpr const char*    HIGHLIGHT_PRIORITIZE_MCM_MENU       = "$dnpcl_highlight_prioritize_mcm_menu";
+        static constexpr const char*    HIGHLIGHT_TRANSLATE_PAGE_TITLES     = "$dnpcl_highlight_translate_page_titles";
 
         static constexpr const char*    PLACEHOLDER_TITLE                   = "$dnpcl_placeholder_title";
         static constexpr const wchar_t* PLACEHOLDER_TITLE_W                 = L"$dnpcl_placeholder_title";
@@ -214,7 +224,8 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    SAFE_COMPONENT_PAGE                 = "Page";
         static constexpr const char*    SAFE_COMPONENT_ITEM                 = "Item";
 
-        static constexpr const char*    MOD_NAME                            = " NPC Lookup ";
+        static constexpr const char*    PRIORITIZED_MOD_NAME                = " NPC Lookup ";
+        static constexpr const char*    UNPRIORITIZED_MOD_NAME              = "NPC Lookup ";
         static constexpr const char*    DEFAULT_PAGE                        = STATIC_BASES;
 
     public:
@@ -241,17 +252,16 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
-        /*std::wstring        Translation(const wchar_t* key);
+        Bool_t              Should_Translate_Page_Titles();
+        std::wstring        Translation(const wchar_t* key);
         void                Translation(const wchar_t* key, std::wstring&& translation);
-
         std::wstring        Singular_Title(const wchar_t* singular_name_key, const char* sub_title);
         std::wstring        Singular_Title(const wchar_t* singular_name_key, const char* item_name, Int_t item_index, Int_t item_count);
         std::wstring        Plural_Title(const wchar_t* plural_name_key, const wchar_t* sub_title_key);
         std::wstring        Plural_Title(const wchar_t* plural_name_key, Int_t item_count);
         std::wstring        Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t item_max);
         std::wstring        Plural_Title(const wchar_t* plural_name_key, Int_t item_count, Int_t page_index, Int_t page_count);
-
-        void                Translated_Title_Text(std::wstring&& translation);*/
+        void                Translated_Title_Text(std::wstring&& translation);
 
         std::string         Singular_Title(const char* singular_name, const char* sub_title);
         std::string         Singular_Title(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count);
@@ -280,6 +290,9 @@ namespace doticu_npcl { namespace MCM {
         Bool_t On_Option_Keymap_Change(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod);
         Bool_t On_Option_Default(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
         Bool_t On_Option_Highlight(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
+
+    public:
+        void Update_1_1_1();
 
     public:
         static void Register_Me(V::Machine_t* machine);

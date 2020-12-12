@@ -36,6 +36,10 @@ namespace doticu_npcl {
         static void     Init();
         static void     After_Load();
         static void     Before_Save();
+
+    public:
+        static Bool_t   Try_To_Update();
+        static void     Update_1_1_1();
     };
 
 }

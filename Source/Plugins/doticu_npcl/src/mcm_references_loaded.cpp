@@ -4,6 +4,9 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/worldspace.h"
+
+#include "doticu_skylib/virtual_utils.h"
 
 #include "consts.h"
 #include "filter.h"
@@ -112,8 +115,11 @@ namespace doticu_npcl { namespace MCM {
                 Page_Index(page_index);
             }
 
-            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, loaded_actor_count, page_index, page_count));
-            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, loaded_actor_count, page_index, page_count));
+            if (mcm->Should_Translate_Page_Titles()) {
+                mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, loaded_actor_count, page_index, page_count));
+            } else {
+                mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, loaded_actor_count, page_index, page_count));
+            }
 
             Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
             Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
@@ -138,8 +144,11 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Add_Text_Option(loaded_actor.actor->Any_Name(), Main_t::_DOTS_);
             }
         } else {
-            ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, 0, 0, 1));
-            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, 0, 0, 1));
+            if (mcm->Should_Translate_Page_Titles()) {
+                mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, 0, 0, 1));
+            } else {
+                mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, 0, 0, 1));
+            }
 
             Filter_Option() = mcm->Add_Text_Option(Main_t::CENTER_FILTER, Main_t::_NONE_);
             Options_Option() = mcm->Add_Text_Option(Main_t::CENTER_OPTIONS, Main_t::_NONE_);
@@ -234,8 +243,11 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_FILTER));
-        mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_FILTER));
+        if (mcm->Should_Translate_Page_Titles()) {
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_FILTER));
+        } else {
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_FILTER));
+        }
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -563,8 +575,11 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        ////mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_OPTIONS));
-        mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_OPTIONS));
+        if (mcm->Should_Translate_Page_Titles()) {
+            mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_OPTIONS));
+        } else {
+            mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_OPTIONS));
+        }
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -675,12 +690,15 @@ namespace doticu_npcl { namespace MCM {
             Vector_t<Item_t>& items = List()->Items();
             Index_t item_index = items.Index_Of(item);
             if (item_index > -1) {
-                ////mcm->Translated_Title_Text(
-                ////    mcm->Singular_Title(Main_t::COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
-                ////);
-                mcm->Title_Text(
-                    mcm->Singular_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
-                );
+                if (mcm->Should_Translate_Page_Titles()) {
+                    mcm->Translated_Title_Text(
+                        mcm->Singular_Title(Main_t::COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
+                    );
+                } else {
+                    mcm->Title_Text(
+                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
+                    );
+                }
 
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -730,7 +748,11 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
+                    mcm->Add_Empty_Option();
+
                     Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_);
+
+                    Go_To_Reference_Option() = mcm->Add_Text_Option(Main_t::GO_TO_REFERENCE, Main_t::_NONE_);
 
                     if (item.actor->Is_Disabled()) {
                         Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::ENABLE_REFERENCE, Main_t::_NONE_);
@@ -875,6 +897,28 @@ namespace doticu_npcl { namespace MCM {
             if (loaded_actor.Is_Valid()) {
                 loaded_actor.actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
             }
+        } else if (option == Go_To_Reference_Option()) {
+            mcm->Disable_Option(option);
+            Loaded_Actor_t loaded_actor = Current_Item();
+            if (loaded_actor.Is_Valid()) {
+                struct Callback_t : public skylib::Callback_i<Bool_t>
+                {
+                    Actor_t* actor;
+                    Callback_t(Actor_t* actor) :
+                        actor(actor)
+                    {
+                    }
+                    void operator()(Bool_t did_close)
+                    {
+                        if (did_close && actor && actor->Is_Valid()) {
+                            Consts_t::Skyrim_Player_Actor()->Move_To_Orbit(actor, 160.0f, 0.0f);
+                        }
+                    }
+                };
+                skylib::Virtual::Utils_t::Close_Menus(new Callback_t(loaded_actor.actor));
+            } else {
+                mcm->Enable_Option(option);
+            }
         } else if (option == Enable_Disable_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
@@ -908,6 +952,8 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Info_Text(Main_t::HIGHLIGHT_ADD_REMOVE_MAP_MARKER);
             } else if (option == Move_To_Player_Option()) {
                 mcm->Info_Text(Main_t::HIGHLIGHT_MOVE_TO_PLAYER);
+            } else if (option == Go_To_Reference_Option()) {
+                mcm->Info_Text(Main_t::HIGHLIGHT_GO_TO_REFERENCE);
             } else if (option == Enable_Disable_Option()) {
                 mcm->Info_Text(Main_t::HIGHLIGHT_ENABLE_DISABLE_REFERENCE);
             } else if (option == Select_In_Console_Option()) {

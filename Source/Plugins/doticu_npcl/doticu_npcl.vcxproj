@@ -87,6 +87,7 @@
     <ClInclude Include="include\mcm_bases_dynamic.h" />
     <ClInclude Include="include\mcm_bases_leveled.h" />
     <ClInclude Include="include\mcm_bases_static.h" />
+    <ClInclude Include="include\mcm_global_options.h" />
     <ClInclude Include="include\mcm_main.h" />
     <ClInclude Include="include\intrinsic.h" />
     <ClInclude Include="include\mcm_references.h" />
@@ -98,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cached_leveled.cpp" />
+    <ClCompile Include="src\mcm_global_options.cpp" />
     <ClCompile Include="src\mcm_markers.cpp" />
     <ClCompile Include="src\consts.cpp" />
     <ClCompile Include="src\main.cpp" />

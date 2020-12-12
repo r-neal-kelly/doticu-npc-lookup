@@ -27,6 +27,9 @@ namespace doticu_npcl {
         static skylib::Actor_Base_t*    Skyrim_Player_Actor_Base();
 
         static skylib::Global_t*        NPCL_Is_Installed_Global();
+        static skylib::Global_t*        NPCL_Major_Version_Global();
+        static skylib::Global_t*        NPCL_Minor_Version_Global();
+        static skylib::Global_t*        NPCL_Patch_Version_Global();
 
         static skylib::Mod_t*           Skyrim_Mod();
         static skylib::Mod_t*           NPCL_Mod();
