@@ -21,6 +21,9 @@ bool    p_filter_base_do_negate             =   false
 string  p_filter_template_argument          =      ""
 bool    p_filter_template_do_negate         =   false
 
+string  p_filter_faction_argument           =      ""
+bool    p_filter_faction_do_negate          =   false
+
 string  p_filter_relation_argument          =      ""
 bool    p_filter_relation_do_negate         =   false
 

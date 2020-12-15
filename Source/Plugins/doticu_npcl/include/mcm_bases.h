@@ -129,6 +129,10 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Template_Select_Option();
         Int_t&  Template_Negate_Option();
 
+        Int_t&  Faction_Search_Option();
+        Int_t&  Faction_Select_Option();
+        Int_t&  Faction_Negate_Option();
+
         Int_t&  Relation_Select_Option();
         Int_t&  Relation_Negate_Option();
 
@@ -150,6 +154,9 @@ namespace doticu_npcl { namespace MCM {
 
         V::String_Variable_t*   Template_Argument_Variable();
         V::Bool_Variable_t*     Template_Do_Negate_Variable();
+
+        V::String_Variable_t*   Faction_Argument_Variable();
+        V::Bool_Variable_t*     Faction_Do_Negate_Variable();
 
         V::String_Variable_t*   Relation_Argument_Variable();
         V::Bool_Variable_t*     Relation_Do_Negate_Variable();
@@ -178,6 +185,11 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Template_Do_Negate();
         void        Template_Do_Negate(Bool_t value);
 
+        String_t    Faction_Argument();
+        void        Faction_Argument(String_t value);
+        Bool_t      Faction_Do_Negate();
+        void        Faction_Do_Negate(Bool_t value);
+
         String_t    Relation_Argument();
         void        Relation_Argument(String_t value);
         Bool_t      Relation_Do_Negate();
@@ -199,6 +211,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Races();
         Vector_t<String_t>      Selectable_Bases();
         Vector_t<String_t>      Selectable_Templates();
+        Vector_t<String_t>      Selectable_Factions();
         Vector_t<String_t>      Selectable_Relations();
 
     public:

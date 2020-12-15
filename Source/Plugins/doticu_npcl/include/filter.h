@@ -7,6 +7,7 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/faction.h"
 #include "doticu_skylib/form.h"
 #include "doticu_skylib/leveled_actor_base.h"
 #include "doticu_skylib/location.h"
@@ -28,6 +29,8 @@ namespace doticu_npcl {
     using Actor_Base_t          = skylib::Actor_Base_t;
     using Actor_Base_Leveleds_t = skylib::Actor_Base_Leveleds_t;
     using Cell_t                = skylib::Cell_t;
+    using Faction_t             = skylib::Faction_t;
+    using Faction_And_Rank_t    = skylib::Faction_And_Rank_t;
     using Form_t                = skylib::Form_t;
     using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
     using Loaded_Actor_t        = skylib::Loaded_Actor_t;
@@ -843,6 +846,203 @@ namespace doticu_npcl {
         {
             if (item.Is_Valid()) {
                 return Template_Filter_t<Actor_Base_t*>::Compare(item.actor->Actor_Base(), string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <typename Item_t>
+    class Faction_Filter_t : public String_Filter_i<Item_t>
+    {
+    };
+
+    template <>
+    class Faction_Filter_t<Faction_t*> : public String_Filter_i<Faction_t*>
+    {
+    public:
+        using Item_t = Faction_t*;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                if (CString_t::Is_Length_Greater_Than(string, 1)) {
+                    if (CString_t::Contains(item->Name(), string, true) ||
+                        CString_t::Contains(item->Editor_ID(), string, true) ||
+                        CString_t::Contains(item->Form_ID_String(), string, true)) {
+                        return Filter_e::IS_MATCH;
+                    } else {
+                        return Filter_e::ISNT_MATCH;
+                    }
+                } else {
+                    if (CString_t::Starts_With(item->Name(), string, true) ||
+                        CString_t::Starts_With(item->Editor_ID(), string, true) ||
+                        CString_t::Starts_With(item->Form_ID_String(), string, true)) {
+                        return Filter_e::IS_MATCH;
+                    } else {
+                        return Filter_e::ISNT_MATCH;
+                    }
+                }
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Actor_Base_t*> : public String_Filter_i<Actor_Base_t*>
+    {
+    public:
+        using Item_t = Actor_Base_t*;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
+                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                    Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction, string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Leveled_Actor_Base_t*> : public String_Filter_i<Leveled_Actor_Base_t*>
+    {
+    public:
+        using Item_t = Leveled_Actor_Base_t*;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Faction_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Cached_Leveled_t*> : public String_Filter_i<Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    if (Faction_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Actor_Base_Leveleds_t> : public String_Filter_i<Actor_Base_Leveleds_t>
+    {
+    public:
+        using Item_t = Actor_Base_Leveleds_t;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            return Faction_Filter_t<Actor_Base_t*>::Compare(item.actor_base, string);
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
+                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                    Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction, string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Faction_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Faction_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item.Is_Valid()) {
+                return Faction_Filter_t<Actor_t*>::Compare(item.actor, string);
             } else {
                 return Filter_e::INVALID;
             }

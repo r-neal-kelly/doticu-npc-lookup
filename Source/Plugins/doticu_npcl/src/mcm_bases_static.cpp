@@ -4,6 +4,7 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
@@ -286,6 +287,13 @@ namespace doticu_npcl { namespace MCM {
         Template_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Template_Do_Negate());
         mcm->Add_Empty_Option();
 
+        mcm->Add_Header_Option(Main_t::FACTION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Faction_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Faction_Argument());
+        Faction_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Faction_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Faction_Do_Negate());
+        mcm->Add_Empty_Option();
+
         mcm->Add_Header_Option(Main_t::RELATION);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
@@ -333,6 +341,10 @@ namespace doticu_npcl { namespace MCM {
             Bool_t value = Template_Do_Negate();
             Template_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Faction_Negate_Option()) {
+            Bool_t value = Faction_Do_Negate();
+            Faction_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
         } else if (option == Relation_Negate_Option()) {
             Bool_t value = Relation_Do_Negate();
             Relation_Do_Negate(!value);
@@ -372,6 +384,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Template_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Templates());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Faction_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Factions());
             mcm->Menu_Dialog_Default(0);
         } else if (option == Relation_Select_Option()) {
             mcm->Flicker_Option(option);
@@ -434,6 +450,18 @@ namespace doticu_npcl { namespace MCM {
                 Template_Argument(value);
                 mcm->Input_Option_Value(Template_Search_Option(), value, true);
             }
+        } else if (option == Faction_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> values = Selectable_Factions();
+                    if (idx < values.size()) {
+                        value = values[idx];
+                    }
+                }
+                Faction_Argument(value);
+                mcm->Input_Option_Value(Faction_Search_Option(), value, true);
+            }
         } else if (option == Relation_Select_Option()) {
             if (idx > -1) {
                 String_t value = Main_t::ANY;
@@ -466,6 +494,9 @@ namespace doticu_npcl { namespace MCM {
             mcm->Input_Option_Value(option, value, true);
         } else if (option == Template_Search_Option()) {
             Template_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Faction_Search_Option()) {
+            Faction_Argument(value);
             mcm->Input_Option_Value(option, value, true);
         }
 
@@ -670,6 +701,30 @@ namespace doticu_npcl { namespace MCM {
                                 Main_t::_SPACE_ + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
                                 Main_t::_NONE_
                             );
+                        }
+                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                            mcm->Add_Empty_Option();
+                        }
+                    }
+                }
+
+                {
+                    Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
+                    size_t count = factions_and_ranks.size();
+                    if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+                        mcm->Add_Header_Option(Main_t::FACTIONS);
+                        mcm->Add_Header_Option(Main_t::_NONE_);
+                        for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                            Faction_t* faction = factions_and_ranks[idx].faction;
+                            if (faction && faction->Is_Valid()) {
+                                const char* name = faction->Name();
+                                const char* editor_id = faction->Editor_ID();
+                                const char* form_id = faction->Form_ID_String().data;
+                                mcm->Add_Text_Option(
+                                    Main_t::_SPACE_ + mcm->Pretty_ID(name, editor_id, form_id),
+                                    Main_t::_NONE_
+                                );
+                            }
                         }
                         if (skylib::Is_Odd(mcm->Cursor_Position())) {
                             mcm->Add_Empty_Option();

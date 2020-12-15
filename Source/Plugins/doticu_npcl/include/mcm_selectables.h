@@ -603,6 +603,147 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t, typename Item_t>
+    class Selectable_Factions_i : public Selectable_Data_t<Base_t, Item_t>
+    {
+    public:
+        Selectable_Factions_i(Select_f select_f) :
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Faction_Argument, &Filter_t::Faction_Argument, select_f)
+        {
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Factions_t : public Selectable_Factions_i<Base_t, Item_t>
+    {
+    };
+
+    template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Actor_Base_t*> : public Selectable_Factions_i<Base_t, Actor_Base_t*>
+    {
+    public:
+        using Item_t = Actor_Base_t*;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Faction_And_Rank_t> factions_and_Ranks = item->Factions_And_Ranks();
+                for (Index_t idx = 0, end = factions_and_Ranks.size(); idx < end; idx += 1) {
+                    Faction_And_Rank_t& faction_and_rank = factions_and_Ranks[idx];
+                    Faction_t* faction = faction_and_rank.faction;
+                    if (faction && faction->Is_Valid()) {
+                        String_t editor_id = faction->Editor_ID();
+                        if (editor_id && !output.Has(editor_id)) {
+                            output.push_back(editor_id);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Factions_i<Base_t, Leveled_Actor_Base_t*>
+    {
+    public:
+        using Item_t = Leveled_Actor_Base_t*;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
+                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                    Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Cached_Leveled_t*> : public Selectable_Factions_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& bases = item->bases;
+                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                    Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Actor_t*> : public Selectable_Factions_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
+                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                    Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                    Faction_t* faction = faction_and_rank.faction;
+                    if (faction && faction->Is_Valid()) {
+                        String_t editor_id = faction->Editor_ID();
+                        if (editor_id && !output.Has(editor_id)) {
+                            output.push_back(editor_id);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Loaded_Actor_t> : public Selectable_Factions_i<Base_t, Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item.Is_Valid()) {
+                Selectable_Factions_t<Base_t, Actor_t*>::Select(item.actor, output);
+            }
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
     class Selectable_References_i : public Selectable_Data_t<Base_t, Item_t>
     {
     public:

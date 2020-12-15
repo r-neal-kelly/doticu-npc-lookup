@@ -318,6 +318,12 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Template_Negate_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Faction_Search_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Faction_Select_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Faction_Negate_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Select_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Negate_Option()  { DEFINE_OPTION(); }
@@ -346,6 +352,10 @@ namespace doticu_npcl { namespace MCM {
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Template_Argument_Variable()          { DEFINE_STRING("p_filter_template_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Template_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_template_do_negate"); }
+    template <typename B, typename I>
+    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Faction_Argument_Variable()           { DEFINE_STRING("p_filter_faction_argument"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Faction_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_faction_do_negate"); }
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_STRING("p_filter_relation_argument"); }
     template <typename B, typename I>
@@ -388,6 +398,14 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Template_Do_Negate(Bool_t value)          { Template_Do_Negate_Variable()->Value(value); }
     template <typename B, typename I>
+    inline String_t Bases_Filter_t<B, I>::Faction_Argument()                        { return Faction_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Faction_Argument(String_t value)          { Faction_Argument_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Bool_t   Bases_Filter_t<B, I>::Faction_Do_Negate()                       { return Faction_Do_Negate_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Faction_Do_Negate(Bool_t value)           { Faction_Do_Negate_Variable()->Value(value); }
+    template <typename B, typename I>
     inline String_t Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
@@ -419,6 +437,9 @@ namespace doticu_npcl { namespace MCM {
         Template_Argument("");
         Template_Do_Negate(false);
 
+        Faction_Argument("");
+        Faction_Do_Negate(false);
+
         Relation_Argument("");
         Relation_Do_Negate(false);
 
@@ -439,6 +460,7 @@ namespace doticu_npcl { namespace MCM {
         Race_Filter_t<Type_t>(filter_state, Race_Argument(), Race_Do_Negate());
         Base_Filter_t<Type_t>(filter_state, Base_Argument(), Base_Do_Negate());
         Template_Filter_t<Type_t>(filter_state, Template_Argument(), Template_Do_Negate());
+        Faction_Filter_t<Type_t>(filter_state, Faction_Argument(), Faction_Do_Negate());
         Relation_Filter_t<Type_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
         Male_Female_Filter_t<Type_t>(filter_state, Male_Female_Argument());
         Unique_Generic_Filter_t<Type_t>(filter_state, Unique_Generic_Argument());
@@ -465,6 +487,11 @@ namespace doticu_npcl { namespace MCM {
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Templates()
     {
         return Selectable_Templates_t<B, I>().Results();
+    }
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Factions()
+    {
+        return Selectable_Factions_t<B, I>().Results();
     }
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Relations()
