@@ -760,6 +760,141 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Base(Actor_Base_t* base, const char* type_name)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (base && base->Is_Valid()) {
+            mcm->Add_Header_Option(type_name);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            {
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_);
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_);
+
+                if (base->Is_Male()) {
+                    mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
+                } else {
+                    mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                }
+                if (base->Is_Unique()) {
+                    mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
+                } else {
+                    mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                }
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Factions_And_Ranks(Vector_t<Faction_And_Rank_t> factions_and_ranks)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = factions_and_ranks.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::FACTIONS);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                Faction_t* faction = factions_and_ranks[idx].faction;
+                if (faction && faction->Is_Valid()) {
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + faction->Editor_ID(), Main_t::_NONE_);
+                }
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Header(const char* primary_option_name, size_t listed_item_count)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        Primary_Option() = mcm->Add_Text_Option(primary_option_name, Main_t::_NONE_);
+        if (listed_item_count > 1) {
+            Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
+            Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
+        } else {
+            Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+            Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (leveled_base && leveled_base->Is_Valid()) {
+            mcm->Add_Header_Option(Main_t::LEVELED_BASE);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            {
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_);
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_);
+                View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_);
+                mcm->Add_Empty_Option();
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Mod_Names(Vector_t<String_t> mod_names)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = mod_names.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::MODS);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Race(Race_t* race)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (race && race->Is_Valid()) {
+            mcm->Add_Header_Option(Main_t::RACE);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
+            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Templates(Vector_t<Actor_Base_t*> templates)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = templates.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::TEMPLATES);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                Actor_Base_t* base_template = templates[idx];
+                const char* name = base_template->Name();
+                const char* form_id = base_template->Form_ID_String().data;
+                mcm->Add_Text_Option(
+                    std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
+                    Main_t::_NONE_
+                );
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
+            }
+        }
+    }
+
+    template <typename B, typename I>
     inline void Bases_Item_t<B, I>::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);

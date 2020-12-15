@@ -192,6 +192,126 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Enable_Disable_Option()      { DEFINE_OPTION(); }
 
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Bases(Vector_t<Actor_Base_t*> actor_bases)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = actor_bases.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::BASES);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                Actor_Base_t* actor_base = actor_bases[idx];
+                const char* name = actor_base->Name();
+                const char* form_id = actor_base->Form_ID_String().data;
+                mcm->Add_Text_Option(
+                    std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
+                    Main_t::_NONE_
+                );
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Cell(Cell_t* cell)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (cell && cell->Is_Valid()) {
+            mcm->Add_Header_Option(Main_t::CELL);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            Cell_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_);
+            if (cell->Is_Interior()) {
+                mcm->Add_Text_Option(Main_t::IS_INTERIOR, Main_t::_NONE_);
+            } else {
+                mcm->Add_Text_Option(Main_t::IS_EXTERIOR, Main_t::_NONE_);
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Locations(Cell_t* cell)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (cell && cell->Is_Valid()) {
+            Vector_t<String_t> location_names = cell->Location_Names();
+            size_t count = location_names.size();
+            if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+                mcm->Add_Header_Option(Main_t::LOCATIONS);
+                mcm->Add_Header_Option(Main_t::_NONE_);
+                for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location_names[idx].data, Main_t::_NONE_);
+                }
+                if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    mcm->Add_Empty_Option();
+                }
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Reference(Actor_t* actor, const char* type_name)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (actor && actor->Is_Valid()) {
+            mcm->Add_Header_Option(type_name);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            {
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_);
+                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_);
+
+                Actor_Base_t* actor_base = actor->Actor_Base();
+                if (actor_base && actor_base->Is_Valid()) {
+                    if (actor_base->Is_Male()) {
+                        mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                    }
+                    if (actor_base->Is_Unique()) {
+                        mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                    }
+                }
+            }
+
+            mcm->Add_Header_Option(Main_t::COMMANDS);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            {
+                Markers_t* markers = Markers_t::Self();
+                if (markers->Has_Marked(actor)) {
+                    Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::REMOVE_MARKER_FROM_MAP, Main_t::_NONE_);
+                } else {
+                    if (markers->Has_Space()) {
+                        Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::ADD_MARKER_TO_MAP, Main_t::_NONE_);
+                    } else {
+                        Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::ADD_MARKER_TO_MAP, Main_t::_NONE_, Flag_e::DISABLE);
+                    }
+                }
+
+                mcm->Add_Empty_Option();
+
+                Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_);
+
+                Go_To_Reference_Option() = mcm->Add_Text_Option(Main_t::GO_TO_REFERENCE, Main_t::_NONE_);
+
+                if (actor->Is_Disabled()) {
+                    Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::ENABLE_REFERENCE, Main_t::_NONE_);
+                } else {
+                    Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::DISABLE_REFERENCE, Main_t::_NONE_);
+                }
+
+                Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_);
+            }
+        }
+    }
+
 }}
 
 #undef DEFINE_BOOL

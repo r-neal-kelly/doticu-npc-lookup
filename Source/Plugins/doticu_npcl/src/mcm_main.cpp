@@ -292,19 +292,20 @@ namespace doticu_npcl { namespace MCM {
 
         if (name[0] && editor_id[0]) {
             return
-                std::string(name) + _SPACED_DASH_ +
+                std::string(name()) + _SPACED_DASH_ +
                 editor_id() + _SPACED_DASH_ +
                 form_id();
         } else if (name[0]) {
             return
-                std::string(name) + _SPACED_DASH_
-                + form_id();
+                std::string(name()) + _SPACED_DASH_ +
+                form_id();
         } else if (editor_id[0]) {
             return
-                std::string(editor_id) + _SPACED_DASH_ +
+                std::string(editor_id()) + _SPACED_DASH_ +
                 form_id();
         } else {
-            return std::string(form_id);
+            return
+                std::string(form_id());
         }
     }
 

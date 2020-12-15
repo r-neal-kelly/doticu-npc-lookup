@@ -118,11 +118,17 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_t : public Bases_Item_t<Base_t, Item_t>
     {
     public:
-        Int_t& Select_In_Console_Option();
-        Int_t& Mark_On_Map_Option();
-        Int_t& Move_To_Player_Option();
-        Int_t& Go_To_Reference_Option();
-        Int_t& Enable_Disable_Option();
+        Int_t&  Select_In_Console_Option();
+        Int_t&  Mark_On_Map_Option();
+        Int_t&  Move_To_Player_Option();
+        Int_t&  Go_To_Reference_Option();
+        Int_t&  Enable_Disable_Option();
+
+    public:
+        void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);
+        void    Build_Cell(Cell_t* cell);
+        void    Build_Locations(Cell_t* cell);
+        void    Build_Reference(Actor_t* actor, const char* type_name);
     };
 
 }}

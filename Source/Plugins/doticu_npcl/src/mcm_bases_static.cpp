@@ -651,101 +651,12 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-                Primary_Option() = mcm->Add_Text_Option(Main_t::CENTER_SPAWN, Main_t::_NONE_);
-                if (List()->Items().size() > 1) {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
-                } else {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
-                }
-
-                mcm->Add_Header_Option(Main_t::STATIC_BASE);
-                mcm->Add_Header_Option(Main_t::_NONE_);
-                {
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item->Name(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item->Form_ID_String().data, Main_t::_NONE_);
-
-                    if (item->Is_Male()) {
-                        mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
-                    } else {
-                        mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
-                    }
-                    if (item->Is_Unique()) {
-                        mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
-                    } else {
-                        mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
-                    }
-                }
-
-                Race_t* race = item->Race();
-                if (race && race->Is_Valid()) {
-                    mcm->Add_Header_Option(Main_t::RACE);
-                    mcm->Add_Header_Option(Main_t::_NONE_);
-                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
-                }
-
-                {
-                    Vector_t<Actor_Base_t*> templates = item->Templates();
-                    size_t template_count = templates.size();
-                    if (template_count > 0 && mcm->Can_Add_Options(2 + template_count)) {
-                        mcm->Add_Header_Option(Main_t::TEMPLATES);
-                        mcm->Add_Header_Option(Main_t::_NONE_);
-                        for (Index_t idx = 0, end = template_count; idx < end; idx += 1) {
-                            Actor_Base_t* base_template = templates[idx];
-                            const char* name = base_template->Name();
-                            const char* form_id = base_template->Form_ID_String().data;
-                            mcm->Add_Text_Option(
-                                Main_t::_SPACE_ + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
-                                Main_t::_NONE_
-                            );
-                        }
-                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                            mcm->Add_Empty_Option();
-                        }
-                    }
-                }
-
-                {
-                    Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
-                    size_t count = factions_and_ranks.size();
-                    if (count > 0 && mcm->Can_Add_Options(2 + count)) {
-                        mcm->Add_Header_Option(Main_t::FACTIONS);
-                        mcm->Add_Header_Option(Main_t::_NONE_);
-                        for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                            Faction_t* faction = factions_and_ranks[idx].faction;
-                            if (faction && faction->Is_Valid()) {
-                                const char* name = faction->Name();
-                                const char* editor_id = faction->Editor_ID();
-                                const char* form_id = faction->Form_ID_String().data;
-                                mcm->Add_Text_Option(
-                                    Main_t::_SPACE_ + mcm->Pretty_ID(name, editor_id, form_id),
-                                    Main_t::_NONE_
-                                );
-                            }
-                        }
-                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                            mcm->Add_Empty_Option();
-                        }
-                    }
-                }
-
-                {
-                    Vector_t<String_t> mod_names = item->Mod_Names();
-                    size_t mod_name_count = mod_names.size();
-                    if (mod_name_count > 0 && mcm->Can_Add_Options(2 + mod_name_count)) {
-                        mcm->Add_Header_Option(Main_t::MODS);
-                        mcm->Add_Header_Option(Main_t::_NONE_);
-                        for (Index_t idx = 0, end = mod_name_count; idx < end; idx += 1) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
-                        }
-                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                            mcm->Add_Empty_Option();
-                        }
-                    }
-                }
+                Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
+                Build_Base(item, Main_t::STATIC_BASE);
+                Build_Race(item->Race());
+                Build_Templates(item->Templates());
+                Build_Factions_And_Ranks(item->Factions_And_Ranks());
+                Build_Mod_Names(item->Mod_Names());
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

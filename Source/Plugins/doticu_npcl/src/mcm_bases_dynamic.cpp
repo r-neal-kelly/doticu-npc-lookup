@@ -4,6 +4,7 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
@@ -285,6 +286,13 @@ namespace doticu_npcl { namespace MCM {
         Template_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Template_Do_Negate());
         mcm->Add_Empty_Option();
 
+        mcm->Add_Header_Option(Main_t::FACTION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Faction_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Faction_Argument());
+        Faction_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Faction_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Faction_Do_Negate());
+        mcm->Add_Empty_Option();
+
         mcm->Add_Header_Option(Main_t::RELATION);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
@@ -332,6 +340,10 @@ namespace doticu_npcl { namespace MCM {
             Bool_t value = Template_Do_Negate();
             Template_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
+        } else if (option == Faction_Negate_Option()) {
+            Bool_t value = Faction_Do_Negate();
+            Faction_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
         } else if (option == Relation_Negate_Option()) {
             Bool_t value = Relation_Do_Negate();
             Relation_Do_Negate(!value);
@@ -371,6 +383,10 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Template_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Templates());
+            mcm->Menu_Dialog_Default(0);
+        } else if (option == Faction_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Factions());
             mcm->Menu_Dialog_Default(0);
         } else if (option == Relation_Select_Option()) {
             mcm->Flicker_Option(option);
@@ -433,6 +449,18 @@ namespace doticu_npcl { namespace MCM {
                 Template_Argument(value);
                 mcm->Input_Option_Value(Template_Search_Option(), value, true);
             }
+        } else if (option == Faction_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> values = Selectable_Factions();
+                    if (idx < values.size()) {
+                        value = values[idx];
+                    }
+                }
+                Faction_Argument(value);
+                mcm->Input_Option_Value(Faction_Search_Option(), value, true);
+            }
         } else if (option == Relation_Select_Option()) {
             if (idx > -1) {
                 String_t value = Main_t::ANY;
@@ -465,6 +493,9 @@ namespace doticu_npcl { namespace MCM {
             mcm->Input_Option_Value(option, value, true);
         } else if (option == Template_Search_Option()) {
             Template_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+        } else if (option == Faction_Search_Option()) {
+            Faction_Argument(value);
             mcm->Input_Option_Value(option, value, true);
         }
 
@@ -619,77 +650,12 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-                Primary_Option() = mcm->Add_Text_Option(Main_t::CENTER_SPAWN, Main_t::_NONE_);
-                if (List()->Items().size() > 1) {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
-                } else {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
-                }
-
-                mcm->Add_Header_Option(Main_t::DYNAMIC_BASE);
-                mcm->Add_Header_Option(Main_t::_NONE_);
-                {
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item->Name(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + item->Form_ID_String().data, Main_t::_NONE_);
-
-                    if (item->Is_Male()) {
-                        mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
-                    } else {
-                        mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
-                    }
-                    if (item->Is_Unique()) {
-                        mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
-                    } else {
-                        mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
-                    }
-                }
-
-                Race_t* race = item->Race();
-                if (race && race->Is_Valid()) {
-                    mcm->Add_Header_Option(Main_t::RACE);
-                    mcm->Add_Header_Option(Main_t::_NONE_);
-                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
-                }
-
-                {
-                    Vector_t<Actor_Base_t*> templates = item->Templates();
-                    size_t template_count = templates.size();
-                    if (template_count > 0 && mcm->Can_Add_Options(2 + template_count)) {
-                        mcm->Add_Header_Option(Main_t::TEMPLATES);
-                        mcm->Add_Header_Option(Main_t::_NONE_);
-                        for (Index_t idx = 0, end = template_count; idx < end; idx += 1) {
-                            Actor_Base_t* base_template = templates[idx];
-                            const char* name = base_template->Name();
-                            const char* form_id = base_template->Form_ID_String().data;
-                            mcm->Add_Text_Option(
-                                Main_t::_SPACE_ + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
-                                Main_t::_NONE_
-                            );
-                        }
-                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                            mcm->Add_Empty_Option();
-                        }
-                    }
-                }
-
-                {
-                    Vector_t<String_t> mod_names = item->Mod_Names();
-                    size_t mod_name_count = mod_names.size();
-                    if (mod_name_count > 0 && mcm->Can_Add_Options(2 + mod_name_count)) {
-                        mcm->Add_Header_Option(Main_t::MODS);
-                        mcm->Add_Header_Option(Main_t::_NONE_);
-                        for (Index_t idx = 0, end = mod_name_count; idx < end; idx += 1) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
-                        }
-                        if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                            mcm->Add_Empty_Option();
-                        }
-                    }
-                }
+                Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
+                Build_Base(item, Main_t::DYNAMIC_BASE);
+                Build_Race(item->Race());
+                Build_Templates(item->Templates());
+                Build_Factions_And_Ranks(item->Factions_And_Ranks());
+                Build_Mod_Names(item->Mod_Names());
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

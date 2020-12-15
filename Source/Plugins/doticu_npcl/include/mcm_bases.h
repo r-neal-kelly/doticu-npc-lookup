@@ -333,6 +333,15 @@ namespace doticu_npcl { namespace MCM {
         void        Spawn(Leveled_Actor_Base_t* leveled_base);
 
     public:
+        void        Build_Base(Actor_Base_t* base, const char* type_name);
+        void        Build_Factions_And_Ranks(Vector_t<Faction_And_Rank_t> factions_and_ranks);
+        void        Build_Header(const char* primary_option_name, size_t listed_item_count);
+        void        Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base);
+        void        Build_Mod_Names(Vector_t<String_t> mod_names);
+        void        Build_Race(Race_t* race);
+        void        Build_Templates(Vector_t<Actor_Base_t*> templates);
+
+    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
