@@ -9,10 +9,25 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    class Bases_View_e : public skylib::Enum_t<skylib::Word_t>
+    class Toggle_Type_e : public Enum_t<Word_t>
     {
     public:
-        enum
+        enum : Word_t
+        {
+            EITHER,
+            ANY,
+        };
+        using Enum_t::Enum_t;
+    };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
+
+    class Bases_View_e : public Enum_t<Word_t>
+    {
+    public:
+        enum : Word_t
         {
             LIST,
             FILTER,
@@ -133,6 +148,10 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Faction_Select_Option();
         Int_t&  Faction_Negate_Option();
 
+        Int_t&  Keyword_Search_Option();
+        Int_t&  Keyword_Select_Option();
+        Int_t&  Keyword_Negate_Option();
+
         Int_t&  Relation_Select_Option();
         Int_t&  Relation_Negate_Option();
 
@@ -157,6 +176,9 @@ namespace doticu_npcl { namespace MCM {
 
         V::String_Variable_t*   Faction_Argument_Variable();
         V::Bool_Variable_t*     Faction_Do_Negate_Variable();
+
+        V::String_Variable_t*   Keyword_Argument_Variable();
+        V::Bool_Variable_t*     Keyword_Do_Negate_Variable();
 
         V::String_Variable_t*   Relation_Argument_Variable();
         V::Bool_Variable_t*     Relation_Do_Negate_Variable();
@@ -190,6 +212,11 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Faction_Do_Negate();
         void        Faction_Do_Negate(Bool_t value);
 
+        String_t    Keyword_Argument();
+        void        Keyword_Argument(String_t value);
+        Bool_t      Keyword_Do_Negate();
+        void        Keyword_Do_Negate(Bool_t value);
+
         String_t    Relation_Argument();
         void        Relation_Argument(String_t value);
         Bool_t      Relation_Do_Negate();
@@ -212,7 +239,11 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Bases();
         Vector_t<String_t>      Selectable_Templates();
         Vector_t<String_t>      Selectable_Factions();
+        Vector_t<String_t>      Selectable_Keywords();
         Vector_t<String_t>      Selectable_Relations();
+
+    public:
+        void Build_Filters(const char* type_name);
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
@@ -263,7 +294,7 @@ namespace doticu_npcl { namespace MCM {
         void    Do_Static_Spawns(Bool_t value);
 
     public:
-        void        Reset();
+        void    Reset();
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
@@ -336,6 +367,7 @@ namespace doticu_npcl { namespace MCM {
         void        Build_Base(Actor_Base_t* base, const char* type_name);
         void        Build_Factions_And_Ranks(Vector_t<Faction_And_Rank_t> factions_and_ranks);
         void        Build_Header(const char* primary_option_name, size_t listed_item_count);
+        void        Build_Keywords(Vector_t<Keyword_t*> keywords);
         void        Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base);
         void        Build_Mod_Names(Vector_t<String_t> mod_names);
         void        Build_Race(Race_t* race);

@@ -324,6 +324,12 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Faction_Negate_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Keyword_Search_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Keyword_Select_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Keyword_Negate_Option()   { DEFINE_OPTION(); }
+    template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Select_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Negate_Option()  { DEFINE_OPTION(); }
@@ -356,6 +362,10 @@ namespace doticu_npcl { namespace MCM {
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Faction_Argument_Variable()           { DEFINE_STRING("p_filter_faction_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Faction_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_faction_do_negate"); }
+    template <typename B, typename I>
+    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Keyword_Argument_Variable()           { DEFINE_STRING("p_filter_keyword_argument"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Keyword_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_keyword_do_negate"); }
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_STRING("p_filter_relation_argument"); }
     template <typename B, typename I>
@@ -406,6 +416,14 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Faction_Do_Negate(Bool_t value)           { Faction_Do_Negate_Variable()->Value(value); }
     template <typename B, typename I>
+    inline String_t Bases_Filter_t<B, I>::Keyword_Argument()                        { return Keyword_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Keyword_Argument(String_t value)          { Keyword_Argument_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Bool_t   Bases_Filter_t<B, I>::Keyword_Do_Negate()                       { return Keyword_Do_Negate_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Filter_t<B, I>::Keyword_Do_Negate(Bool_t value)           { Keyword_Do_Negate_Variable()->Value(value); }
+    template <typename B, typename I>
     inline String_t Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
@@ -440,6 +458,9 @@ namespace doticu_npcl { namespace MCM {
         Faction_Argument("");
         Faction_Do_Negate(false);
 
+        Keyword_Argument("");
+        Keyword_Do_Negate(false);
+
         Relation_Argument("");
         Relation_Do_Negate(false);
 
@@ -461,6 +482,7 @@ namespace doticu_npcl { namespace MCM {
         Base_Filter_t<Type_t>(filter_state, Base_Argument(), Base_Do_Negate());
         Template_Filter_t<Type_t>(filter_state, Template_Argument(), Template_Do_Negate());
         Faction_Filter_t<Type_t>(filter_state, Faction_Argument(), Faction_Do_Negate());
+        Keyword_Filter_t<Type_t>(filter_state, Keyword_Argument(), Keyword_Do_Negate());
         Relation_Filter_t<Type_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
         Male_Female_Filter_t<Type_t>(filter_state, Male_Female_Argument());
         Unique_Generic_Filter_t<Type_t>(filter_state, Unique_Generic_Argument());
@@ -494,9 +516,108 @@ namespace doticu_npcl { namespace MCM {
         return Selectable_Factions_t<B, I>().Results();
     }
     template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Keywords()
+    {
+        return Selectable_Keywords_t<B, I>().Results();
+    }
+    template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Relations()
     {
         return Selectable_Relations_t<B, I>(Consts_t::Skyrim_Player_Actor_Base()).Results();
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::Build_Filters(const char* type_name)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        Clear_Option() = mcm->Add_Text_Option(Main_t::CENTER_CLEAR, Main_t::_NONE_);
+
+        mcm->Add_Header_Option(Main_t::MOD);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Mod_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Mod_Argument());
+        Mod_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Mod_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Mod_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::RACE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Race_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Race_Argument());
+        Race_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Race_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Race_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(type_name);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Base_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Base_Argument());
+        Base_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Base_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Base_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::TEMPLATE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Template_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Template_Argument());
+        Template_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Template_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Template_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::FACTION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Faction_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Faction_Argument());
+        Faction_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Faction_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Faction_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::KEYWORD);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Keyword_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Keyword_Argument());
+        Keyword_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Keyword_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Keyword_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::RELATION);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
+        Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
+
+        mcm->Add_Header_Option(Main_t::OTHER);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        if (Toggle_Type() == Toggle_Type_e::EITHER) {
+
+            Male_Option() = mcm->Add_Toggle_Option(Main_t::IS_MALE, Male_Female_Argument() == Binary_e::A);
+            Female_Option() = mcm->Add_Toggle_Option(Main_t::IS_FEMALE, Male_Female_Argument() == Binary_e::B);
+
+            Unique_Option() = mcm->Add_Toggle_Option(Main_t::IS_UNIQUE, Unique_Generic_Argument() == Binary_e::A);
+            Generic_Option() = mcm->Add_Toggle_Option(Main_t::IS_GENERIC, Unique_Generic_Argument() == Binary_e::B);
+
+        } else if (Toggle_Type() == Toggle_Type_e::ANY) {
+
+            Binary_e male_female_argument = Male_Female_Argument();
+            Male_Option() = mcm->Add_Toggle_Option(
+                Main_t::HAS_MALE,
+                male_female_argument == Binary_e::A ||
+                male_female_argument == Binary_e::ALL
+            );
+            Female_Option() = mcm->Add_Toggle_Option(
+                Main_t::HAS_FEMALE,
+                male_female_argument == Binary_e::B ||
+                male_female_argument == Binary_e::ALL
+            );
+
+            Binary_e unique_generic_argument = Unique_Generic_Argument();
+            Unique_Option() = mcm->Add_Toggle_Option(
+                Main_t::HAS_UNIQUE,
+                unique_generic_argument == Binary_e::A ||
+                unique_generic_argument == Binary_e::ALL
+            );
+            Generic_Option() = mcm->Add_Toggle_Option(
+                Main_t::HAS_GENERIC,
+                unique_generic_argument == Binary_e::B ||
+                unique_generic_argument == Binary_e::ALL
+            );
+
+        }
     }
 
     template <typename B, typename I>
@@ -504,46 +625,293 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option()) {
+            mcm->Disable_Option(option);
+            List()->do_update_items = true;
+            Current_View(Bases_View_e::LIST);
+            mcm->Reset_Page();
+
+        } else if (option == Clear_Option()) {
+            mcm->Disable_Option(option);
+            Clear();
+            mcm->Reset_Page();
+
+        } else if (option == Mod_Negate_Option()) {
+            Bool_t value = Mod_Do_Negate();
+            Mod_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Race_Negate_Option()) {
+            Bool_t value = Race_Do_Negate();
+            Race_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Base_Negate_Option()) {
+            Bool_t value = Base_Do_Negate();
+            Base_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Template_Negate_Option()) {
+            Bool_t value = Template_Do_Negate();
+            Template_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Faction_Negate_Option()) {
+            Bool_t value = Faction_Do_Negate();
+            Faction_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Keyword_Negate_Option()) {
+            Bool_t value = Keyword_Do_Negate();
+            Keyword_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Relation_Negate_Option()) {
+            Bool_t value = Relation_Do_Negate();
+            Relation_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else {
+            if (Toggle_Type() == Toggle_Type_e::EITHER) {
+                if (option == Male_Option()) {
+                    mcm->Toggle_Either(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
+                } else if (option == Female_Option()) {
+                    mcm->Toggle_Either(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
+
+                } else if (option == Unique_Option()) {
+                    mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
+                } else if (option == Generic_Option()) {
+                    mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
+
+                }
+            } else if (Toggle_Type() == Toggle_Type_e::ANY) {
+                if (option == Male_Option()) {
+                    mcm->Toggle_Any(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
+                } else if (option == Female_Option()) {
+                    mcm->Toggle_Any(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
+
+                } else if (option == Unique_Option()) {
+                    mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
+                } else if (option == Generic_Option()) {
+                    mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
+
+                }
+            }
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Mod_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Mods());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Race_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Races());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Base_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Bases());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Template_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Templates());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Faction_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Factions());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Keyword_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Keywords());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Relation_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Relations());
+            mcm->Menu_Dialog_Default(0);
+
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Mod_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> mods = Selectable_Mods();
+                    if (idx < mods.size()) {
+                        value = mods[idx];
+                    }
+                }
+                Mod_Argument(value);
+                mcm->Input_Option_Value(Mod_Search_Option(), value, true);
+            }
+
+        } else if (option == Race_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> races = Selectable_Races();
+                    if (idx < races.size()) {
+                        value = races[idx];
+                    }
+                }
+                Race_Argument(value);
+                mcm->Input_Option_Value(Race_Search_Option(), value, true);
+            }
+
+        } else if (option == Base_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> names = Selectable_Bases();
+                    if (idx < names.size()) {
+                        value = names[idx];
+                    }
+                }
+                Base_Argument(value);
+                mcm->Input_Option_Value(Base_Search_Option(), value, true);
+            }
+
+        } else if (option == Template_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> values = Selectable_Templates();
+                    if (idx < values.size()) {
+                        value = values[idx];
+                    }
+                }
+                Template_Argument(value);
+                mcm->Input_Option_Value(Template_Search_Option(), value, true);
+            }
+
+        } else if (option == Faction_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> values = Selectable_Factions();
+                    if (idx < values.size()) {
+                        value = values[idx];
+                    }
+                }
+                Faction_Argument(value);
+                mcm->Input_Option_Value(Faction_Search_Option(), value, true);
+            }
+
+        } else if (option == Keyword_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> values = Selectable_Keywords();
+                    if (idx < values.size()) {
+                        value = values[idx];
+                    }
+                }
+                Keyword_Argument(value);
+                mcm->Input_Option_Value(Keyword_Search_Option(), value, true);
+            }
+
+        } else if (option == Relation_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::ANY;
+                if (idx > 0) {
+                    Vector_t<String_t> relations = Selectable_Relations();
+                    if (idx < relations.size()) {
+                        value = relations[idx];
+                    }
+                }
+                Relation_Argument(value);
+                mcm->Menu_Option_Value(option, value, true);
+            }
+
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Mod_Search_Option()) {
+            Mod_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Race_Search_Option()) {
+            Race_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Base_Search_Option()) {
+            Base_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Template_Search_Option()) {
+            Template_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Faction_Search_Option()) {
+            Faction_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Keyword_Search_Option()) {
+            Keyword_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        }
+
+        mcm->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Default(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
@@ -795,9 +1163,14 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option(Main_t::FACTIONS);
             mcm->Add_Header_Option(Main_t::_NONE_);
             for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                Faction_t* faction = factions_and_ranks[idx].faction;
+                Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                Faction_t* faction = faction_and_rank.faction;
+                skylib::Faction_Rank_t rank = faction_and_rank.rank;
                 if (faction && faction->Is_Valid()) {
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + faction->Editor_ID(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(
+                        std::string(Main_t::_SPACE_) + faction->Editor_ID() + ": " + std::to_string(rank),
+                        Main_t::_NONE_
+                    );
                 }
             }
             if (skylib::Is_Odd(mcm->Cursor_Position())) {
@@ -819,6 +1192,27 @@ namespace doticu_npcl { namespace MCM {
         } else {
             Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
             Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Build_Keywords(Vector_t<Keyword_t*> keywords)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = keywords.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::KEYWORDS);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                Keyword_t* keyword = keywords[idx];
+                if (keyword && keyword->Is_Valid()) {
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name().data, Main_t::_NONE_);
+                }
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
+            }
         }
     }
 

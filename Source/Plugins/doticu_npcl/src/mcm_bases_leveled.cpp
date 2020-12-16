@@ -6,7 +6,6 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
-#include "doticu_skylib/actor_base_leveleds.h"
 #include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
@@ -34,6 +33,8 @@ namespace doticu_npcl { namespace MCM {
     Leveled_Bases_Filter_t*     Leveled_Bases_Base_t::Filter()              { return reinterpret_cast<Leveled_Bases_Filter_t*>(this); }
     Leveled_Bases_Options_t*    Leveled_Bases_Base_t::Options()             { return reinterpret_cast<Leveled_Bases_Options_t*>(this); }
     Leveled_Bases_Item_t*       Leveled_Bases_Base_t::Item()                { return reinterpret_cast<Leveled_Bases_Item_t*>(this); }
+
+    Toggle_Type_e               Leveled_Bases_Base_t::Toggle_Type()         { return Toggle_Type_e::ANY; }
 
 }}
 
@@ -324,267 +325,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-        Clear_Option() = mcm->Add_Text_Option(Main_t::CENTER_CLEAR, Main_t::_NONE_);
-
-        mcm->Add_Header_Option(Main_t::MOD);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Mod_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Mod_Argument());
-        Mod_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
-        Mod_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Mod_Do_Negate());
-        mcm->Add_Empty_Option();
-
-        mcm->Add_Header_Option(Main_t::RACE);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Race_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Race_Argument());
-        Race_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
-        Race_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Race_Do_Negate());
-        mcm->Add_Empty_Option();
-
-        mcm->Add_Header_Option(Main_t::LEVELED_BASE);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Base_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Base_Argument());
-        Base_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
-        Base_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Base_Do_Negate());
-        mcm->Add_Empty_Option();
-
-        mcm->Add_Header_Option(Main_t::TEMPLATE);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Template_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Template_Argument());
-        Template_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
-        Template_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Template_Do_Negate());
-        mcm->Add_Empty_Option();
-
-        mcm->Add_Header_Option(Main_t::FACTION);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Faction_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Faction_Argument());
-        Faction_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
-        Faction_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Faction_Do_Negate());
-        mcm->Add_Empty_Option();
-
-        mcm->Add_Header_Option(Main_t::RELATION);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
-        Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
-
-        mcm->Add_Header_Option(Main_t::OTHER);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-
-        Binary_e male_female_argument = Male_Female_Argument();
-        Male_Option() = mcm->Add_Toggle_Option(
-            Main_t::HAS_MALE,
-            male_female_argument == Binary_e::A ||
-            male_female_argument == Binary_e::ALL
-        );
-        Female_Option() = mcm->Add_Toggle_Option(
-            Main_t::HAS_FEMALE,
-            male_female_argument == Binary_e::B ||
-            male_female_argument == Binary_e::ALL
-        );
-
-        Binary_e unique_generic_argument = Unique_Generic_Argument();
-        Unique_Option() = mcm->Add_Toggle_Option(
-            Main_t::HAS_UNIQUE,
-            unique_generic_argument == Binary_e::A ||
-            unique_generic_argument == Binary_e::ALL
-        );
-        Generic_Option() = mcm->Add_Toggle_Option(
-            Main_t::HAS_GENERIC,
-            unique_generic_argument == Binary_e::B ||
-            unique_generic_argument == Binary_e::ALL
-        );
-
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Leveled_Bases_Filter_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Clear_Option()) {
-            mcm->Disable_Option(option);
-            Clear();
-            mcm->Reset_Page();
-
-        } else if (option == Mod_Negate_Option()) {
-            Bool_t value = Mod_Do_Negate();
-            Mod_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Race_Negate_Option()) {
-            Bool_t value = Race_Do_Negate();
-            Race_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Base_Negate_Option()) {
-            Bool_t value = Base_Do_Negate();
-            Base_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Template_Negate_Option()) {
-            Bool_t value = Template_Do_Negate();
-            Template_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Faction_Negate_Option()) {
-            Bool_t value = Faction_Do_Negate();
-            Faction_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Relation_Negate_Option()) {
-            Bool_t value = Relation_Do_Negate();
-            Relation_Do_Negate(!value);
-            mcm->Toggle_Option_Value(option, !value);
-
-        } else if (option == Male_Option()) {
-            mcm->Toggle_Any(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
-        } else if (option == Female_Option()) {
-            mcm->Toggle_Any(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
-
-        } else if (option == Unique_Option()) {
-            mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
-        } else if (option == Generic_Option()) {
-            mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
-
-        }
-
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Leveled_Bases_Filter_t::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Mod_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Mods());
-            mcm->Menu_Dialog_Default(0);
-        } else if (option == Race_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Races());
-            mcm->Menu_Dialog_Default(0);
-        } else if (option == Base_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Bases());
-            mcm->Menu_Dialog_Default(0);
-        } else if (option == Template_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Templates());
-            mcm->Menu_Dialog_Default(0);
-        } else if (option == Faction_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Factions());
-            mcm->Menu_Dialog_Default(0);
-        } else if (option == Relation_Select_Option()) {
-            mcm->Flicker_Option(option);
-            mcm->Menu_Dialog_Values(Selectable_Relations());
-            mcm->Menu_Dialog_Default(0);
-        }
-
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Leveled_Bases_Filter_t::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Mod_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::_NONE_;
-                if (idx > 0) {
-                    Vector_t<String_t> mods = Selectable_Mods();
-                    if (idx < mods.size()) {
-                        value = mods[idx];
-                    }
-                }
-                Mod_Argument(value);
-                mcm->Input_Option_Value(Mod_Search_Option(), value, true);
-            }
-        } else if (option == Race_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::_NONE_;
-                if (idx > 0) {
-                    Vector_t<String_t> races = Selectable_Races();
-                    if (idx < races.size()) {
-                        value = races[idx];
-                    }
-                }
-                Race_Argument(value);
-                mcm->Input_Option_Value(Race_Search_Option(), value, true);
-            }
-        } else if (option == Base_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::_NONE_;
-                if (idx > 0) {
-                    Vector_t<String_t> bases = Selectable_Bases();
-                    if (idx < bases.size()) {
-                        value = bases[idx];
-                    }
-                }
-                Base_Argument(value);
-                mcm->Input_Option_Value(Base_Search_Option(), value, true);
-            }
-        } else if (option == Template_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::_NONE_;
-                if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Templates();
-                    if (idx < values.size()) {
-                        value = values[idx];
-                    }
-                }
-                Template_Argument(value);
-                mcm->Input_Option_Value(Template_Search_Option(), value, true);
-            }
-        } else if (option == Faction_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::_NONE_;
-                if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Factions();
-                    if (idx < values.size()) {
-                        value = values[idx];
-                    }
-                }
-                Faction_Argument(value);
-                mcm->Input_Option_Value(Faction_Search_Option(), value, true);
-            }
-        } else if (option == Relation_Select_Option()) {
-            if (idx > -1) {
-                String_t value = Main_t::ANY;
-                if (idx > 0) {
-                    Vector_t<String_t> relations = Selectable_Relations();
-                    if (idx < relations.size()) {
-                        value = relations[idx];
-                    }
-                }
-                Relation_Argument(value);
-                mcm->Menu_Option_Value(option, value, true);
-            }
-        }
-
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Leveled_Bases_Filter_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Mod_Search_Option()) {
-            Mod_Argument(value);
-            mcm->Input_Option_Value(option, value, true);
-        } else if (option == Race_Search_Option()) {
-            Race_Argument(value);
-            mcm->Input_Option_Value(option, value, true);
-        } else if (option == Base_Search_Option()) {
-            Base_Argument(value);
-            mcm->Input_Option_Value(option, value, true);
-        } else if (option == Template_Search_Option()) {
-            Template_Argument(value);
-            mcm->Input_Option_Value(option, value, true);
-        } else if (option == Faction_Search_Option()) {
-            Faction_Argument(value);
-            mcm->Input_Option_Value(option, value, true);
-        }
+        Build_Filters(Main_t::LEVELED_BASE);
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -938,6 +679,7 @@ namespace doticu_npcl { namespace MCM {
                     Build_Race(nested_item->Race());
                     Build_Templates(nested_item->Templates());
                     Build_Factions_And_Ranks(nested_item->Factions_And_Ranks());
+                    Build_Keywords(nested_item->Keywords());
                     Build_Mod_Names(nested_item->Mod_Names());
                 } else {
                     Nested_View(Bases_Item_View_e::BASES);

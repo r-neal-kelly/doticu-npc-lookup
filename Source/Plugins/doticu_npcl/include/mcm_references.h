@@ -98,6 +98,15 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Worldspaces();
         Vector_t<String_t>      Selectable_Locations();
         Vector_t<String_t>      Selectable_Cells();
+
+    public:
+        void Build_Filters(const char* type_name);
+
+    public:
+        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
     };
 
 }}

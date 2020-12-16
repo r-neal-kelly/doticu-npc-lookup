@@ -23,7 +23,6 @@ namespace doticu_npcl { namespace MCM {
 
     using Actor_t               = skylib::Actor_t;
     using Actor_Base_t          = skylib::Actor_Base_t;
-    using Actor_Base_Leveleds_t = skylib::Actor_Base_Leveleds_t;
     using Alias_Base_t          = skylib::Alias_Base_t;
     using Cell_t                = skylib::Cell_t;
     using CString_t             = skylib::CString_t;
@@ -31,6 +30,7 @@ namespace doticu_npcl { namespace MCM {
     using Faction_And_Rank_t    = skylib::Faction_And_Rank_t;
     using Form_ID_t             = skylib::Form_ID_t;
     using Game_t                = skylib::Game_t;
+    using Keyword_t             = skylib::Keyword_t;
     using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
     using Loaded_Actor_t        = skylib::Loaded_Actor_t;
     using Location_t            = skylib::Location_t;
@@ -101,6 +101,8 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    TEMPLATES                           = "$dnpcl_templates";
         static constexpr const char*    FACTION                             = "$dnpcl_faction";
         static constexpr const char*    FACTIONS                            = "$dnpcl_factions";
+        static constexpr const char*    KEYWORD                             = "$dnpcl_keyword";
+        static constexpr const char*    KEYWORDS                            = "$dnpcl_keywords";
         static constexpr const char*    RELATION                            = "$dnpcl_relation";
         static constexpr const char*    LOCATION                            = "$dnpcl_location";
         static constexpr const char*    LOCATIONS                           = "$dnpcl_locations";

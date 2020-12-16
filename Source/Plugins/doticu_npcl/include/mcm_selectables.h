@@ -618,6 +618,29 @@ namespace doticu_npcl { namespace MCM {
     };
 
     template <typename Base_t>
+    class Selectable_Factions_t<Base_t, Faction_t*> : public Selectable_Factions_i<Base_t, Faction_t*>
+    {
+    public:
+        using Item_t = Faction_t*;
+
+    public:
+        Selectable_Factions_t() :
+            Selectable_Factions_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                String_t name = item->Editor_Or_Form_ID();
+                if (!output.Has(name)) {
+                    output.push_back(name);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
     class Selectable_Factions_t<Base_t, Actor_Base_t*> : public Selectable_Factions_i<Base_t, Actor_Base_t*>
     {
     public:
@@ -632,16 +655,9 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Vector_t<Faction_And_Rank_t> factions_and_Ranks = item->Factions_And_Ranks();
-                for (Index_t idx = 0, end = factions_and_Ranks.size(); idx < end; idx += 1) {
-                    Faction_And_Rank_t& faction_and_rank = factions_and_Ranks[idx];
-                    Faction_t* faction = faction_and_rank.faction;
-                    if (faction && faction->Is_Valid()) {
-                        String_t editor_id = faction->Editor_ID();
-                        if (editor_id && !output.Has(editor_id)) {
-                            output.push_back(editor_id);
-                        }
-                    }
+                Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
+                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction, output);
                 }
             }
         }
@@ -710,14 +726,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->Is_Valid()) {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
-                    Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
-                    Faction_t* faction = faction_and_rank.faction;
-                    if (faction && faction->Is_Valid()) {
-                        String_t editor_id = faction->Editor_ID();
-                        if (editor_id && !output.Has(editor_id)) {
-                            output.push_back(editor_id);
-                        }
-                    }
+                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction, output);
                 }
             }
         }
@@ -739,6 +748,136 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item.Is_Valid()) {
                 Selectable_Factions_t<Base_t, Actor_t*>::Select(item.actor, output);
+            }
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Keywords_i : public Selectable_Data_t<Base_t, Item_t>
+    {
+    public:
+        Selectable_Keywords_i(Select_f select_f) :
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Keyword_Argument, &Filter_t::Keyword_Argument, select_f)
+        {
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Keywords_t : public Selectable_Keywords_i<Base_t, Item_t>
+    {
+    };
+
+    template <typename Base_t>
+    class Selectable_Keywords_t<Base_t, Actor_Base_t*> : public Selectable_Keywords_i<Base_t, Actor_Base_t*>
+    {
+    public:
+        using Item_t = Actor_Base_t*;
+
+    public:
+        Selectable_Keywords_t() :
+            Selectable_Keywords_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Keyword_t*> keywords = item->Keywords();
+                for (Index_t idx = 0, end = keywords.size(); idx < end; idx += 1) {
+                    Keyword_t* keyword = keywords[idx];
+                    if (keyword && keyword->Is_Valid()) {
+                        String_t name = keyword->Any_Name();
+                        if (!output.Has(name)) {
+                            output.push_back(name);
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Keywords_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Keywords_i<Base_t, Leveled_Actor_Base_t*>
+    {
+    public:
+        using Item_t = Leveled_Actor_Base_t*;
+
+    public:
+        Selectable_Keywords_t() :
+            Selectable_Keywords_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
+                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                    Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Keywords_t<Base_t, Cached_Leveled_t*> : public Selectable_Keywords_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Keywords_t() :
+            Selectable_Keywords_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& bases = item->bases;
+                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                    Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Keywords_t<Base_t, Actor_t*> : public Selectable_Keywords_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Keywords_t() :
+            Selectable_Keywords_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Keywords_t<Base_t, Loaded_Actor_t> : public Selectable_Keywords_i<Base_t, Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Selectable_Keywords_t() :
+            Selectable_Keywords_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item.Is_Valid()) {
+                Selectable_Keywords_t<Base_t, Actor_t*>::Select(item.actor, output);
             }
         }
     };
