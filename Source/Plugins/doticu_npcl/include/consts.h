@@ -36,9 +36,8 @@ namespace doticu_npcl {
 
         static skylib::Quest_t*         NPCL_MCM_Quest();
 
-        static skylib::Word_t           NPCL_Major_Version();
-        static skylib::Word_t           NPCL_Minor_Version();
-        static skylib::Word_t           NPCL_Patch_Version();
+        static const Version_t<u8>      Skyrim_Required_Version();
+        static const Version_t<u8>      NPCL_Version();
     };
 
 }

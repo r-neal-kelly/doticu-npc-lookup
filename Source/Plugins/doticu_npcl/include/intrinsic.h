@@ -23,6 +23,8 @@ namespace doticu_npcl {
     using Float_t       = skylib::Float_t;
     using String_t      = skylib::String_t;
 
+    using u8            = skylib::u8;
+
     template <typename Type>
     using none          = skylib::none<Type>;
     template <typename Type>
@@ -32,6 +34,9 @@ namespace doticu_npcl {
 
     template <typename Type>
     using Enum_t        = skylib::Enum_t<Type>;
+
+    template <typename Type>
+    using Version_t     = skylib::Version_t<Type>;
 
     template <typename Type>
     using Vector_t      = skylib::Vector_t<Type>;

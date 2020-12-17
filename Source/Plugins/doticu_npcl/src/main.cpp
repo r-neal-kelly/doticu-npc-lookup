@@ -14,8 +14,10 @@
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/game.h"
-#include "doticu_skylib/quest.h"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/mod.h"
+#include "doticu_skylib/quest.h"
+#include "doticu_skylib/ui.h"
 
 #include "doticu_skylib/extra_aliases.h"
 #include "doticu_skylib/extra_list.inl"
@@ -58,7 +60,7 @@ namespace doticu_npcl {
                     {
                         if (message) {
                             if (message->type == SKSEMessagingInterface::kMessage_SaveGame) {
-                                if (Is_Active()) {
+                                if (Has_Requirements() && Is_Active()) {
                                     if (Is_Installed()) {
                                         Before_Save();
                                     } else {
@@ -66,7 +68,7 @@ namespace doticu_npcl {
                                     }
                                 }
                             } else if (message->type == SKSEMessagingInterface::kMessage_PostLoadGame && message->data != nullptr) {
-                                if (Is_Active()) {
+                                if (Has_Requirements() && Is_Active()) {
                                     if (Is_Installed()) {
                                         After_Load();
                                     } else {
@@ -109,9 +111,46 @@ namespace doticu_npcl {
         return true;
     }
 
+    Bool_t Main_t::Has_Requirements()
+    {
+        const Version_t<skylib::u8>& running_skyrim_version = Game_t::Version();
+        const Version_t<skylib::u8>& required_skyrim_version = Consts_t::Skyrim_Required_Version();
+
+        if (running_skyrim_version < required_skyrim_version) {
+            skylib::UI_t::Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
+                                      std::to_string(running_skyrim_version.major) + "." +
+                                      std::to_string(running_skyrim_version.minor) + "." +
+                                      std::to_string(running_skyrim_version.patch) + "." +
+                                      std::to_string(running_skyrim_version.build) + ")\n" +
+                                      "This version of NPC Lookup was written for: (" +
+                                      std::to_string(required_skyrim_version.major) + "." +
+                                      std::to_string(required_skyrim_version.minor) + "." +
+                                      std::to_string(required_skyrim_version.patch) + "." +
+                                      std::to_string(required_skyrim_version.build) + ")\n" +
+                                      "You need to update your version of Skyrim.");
+            return false;
+        } else if (running_skyrim_version > required_skyrim_version) {
+            skylib::UI_t::Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
+                                      std::to_string(running_skyrim_version.major) + "." +
+                                      std::to_string(running_skyrim_version.minor) + "." +
+                                      std::to_string(running_skyrim_version.patch) + "." +
+                                      std::to_string(running_skyrim_version.build) + ")\n" +
+                                      "This version of NPC Lookup was written for: (" +
+                                      std::to_string(required_skyrim_version.major) + "." +
+                                      std::to_string(required_skyrim_version.minor) + "." +
+                                      std::to_string(required_skyrim_version.patch) + "." +
+                                      std::to_string(required_skyrim_version.build) + ")\n" +
+                                      "You should check for an update to NPC Lookup.");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     Bool_t Main_t::Is_Active()
     {
-        return Consts_t::NPCL_Mod() != nullptr;
+        Mod_t* npcl_mod = Consts_t::NPCL_Mod();
+        return npcl_mod && npcl_mod->Is_Active();
     }
 
     Bool_t Main_t::Is_Installed()
@@ -123,10 +162,12 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(!Is_Installed());
 
+        const Version_t<u8>& npcl_version = Consts_t::NPCL_Version();
+
         Consts_t::NPCL_Is_Installed_Global()->Bool(true);
-        Consts_t::NPCL_Major_Version_Global()->Long(Consts_t::NPCL_Major_Version());
-        Consts_t::NPCL_Minor_Version_Global()->Long(Consts_t::NPCL_Minor_Version());
-        Consts_t::NPCL_Patch_Version_Global()->Long(Consts_t::NPCL_Patch_Version());
+        Consts_t::NPCL_Major_Version_Global()->Long(npcl_version.major);
+        Consts_t::NPCL_Minor_Version_Global()->Long(npcl_version.minor);
+        Consts_t::NPCL_Patch_Version_Global()->Long(npcl_version.patch);
 
         Vector_t<skylib::Quest_t*> quests;
         quests.push_back(Consts_t::NPCL_MCM_Quest());
@@ -159,27 +200,19 @@ namespace doticu_npcl {
 
     Bool_t Main_t::Try_To_Update()
     {
-        Word_t saved_major = Consts_t::NPCL_Major_Version_Global()->Long();
-        Word_t saved_minor = Consts_t::NPCL_Minor_Version_Global()->Long();
-        Word_t saved_patch = Consts_t::NPCL_Patch_Version_Global()->Long();
-        Word_t current_major = Consts_t::NPCL_Major_Version();
-        Word_t current_minor = Consts_t::NPCL_Minor_Version();
-        Word_t current_patch = Consts_t::NPCL_Patch_Version();
+        const Version_t<u8>& current = Consts_t::NPCL_Version();
+        const Version_t<u8> saved(Consts_t::NPCL_Major_Version_Global()->Long(),
+                                  Consts_t::NPCL_Minor_Version_Global()->Long(),
+                                  Consts_t::NPCL_Patch_Version_Global()->Long());
 
-        auto Is_Less_Than = [saved_major, saved_minor, saved_patch](Word_t major, Word_t minor, Word_t patch)->Bool_t
-        {
-            return skylib::Is_Version_Less_Than(saved_major, saved_minor, saved_patch, major, minor, patch);
-        };
-
-        if (Is_Less_Than(current_major, current_minor, current_patch)) {
-
-            if (Is_Less_Than(1, 1, 1)) {
+        if (saved < current) {
+            if (saved < Version_t<u8>(1, 1, 1)) {
                 Update_1_1_1();
             }
 
-            Consts_t::NPCL_Major_Version_Global()->Long(current_major);
-            Consts_t::NPCL_Minor_Version_Global()->Long(current_minor);
-            Consts_t::NPCL_Patch_Version_Global()->Long(current_patch);
+            Consts_t::NPCL_Major_Version_Global()->Long(current.major);
+            Consts_t::NPCL_Minor_Version_Global()->Long(current.minor);
+            Consts_t::NPCL_Patch_Version_Global()->Long(current.patch);
 
             return true;
         } else {

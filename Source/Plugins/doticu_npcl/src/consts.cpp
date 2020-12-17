@@ -28,6 +28,12 @@ namespace doticu_npcl {
         return form;                                            \
     SKYLIB_W
 
+    #define DEFINE_VERSION(...)                             \
+    SKYLIB_M                                                \
+        static const Version_t<u8> version(__VA_ARGS__);    \
+        return version;                                     \
+    SKYLIB_W
+
     skylib::Actor_t*        Consts_t::Skyrim_Player_Actor()         { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_t,        0x000014); }
 
     skylib::Actor_Base_t*   Consts_t::Skyrim_Player_Actor_Base()    { DEFINE_FORM(Skyrim_Mod(), skylib::Actor_Base_t,   0x000007); }
@@ -42,11 +48,11 @@ namespace doticu_npcl {
 
     skylib::Quest_t*        Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(),   skylib::Quest_t,        0x000D62); }
 
-    skylib::Word_t          Consts_t::NPCL_Major_Version()          { return 1; }
-    skylib::Word_t          Consts_t::NPCL_Minor_Version()          { return 1; }
-    skylib::Word_t          Consts_t::NPCL_Patch_Version()          { return 1; }
+    const Version_t<u8>     Consts_t::Skyrim_Required_Version()     { DEFINE_VERSION(1, 5, 97, 0); }
+    const Version_t<u8>     Consts_t::NPCL_Version()                { DEFINE_VERSION(1, 1, 1); }
 
     #undef DEFINE_MOD
     #undef DEFINE_FORM
+    #undef DEFINE_VERSION
 
 }

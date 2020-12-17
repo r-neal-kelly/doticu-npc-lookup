@@ -30,6 +30,7 @@ namespace doticu_npcl {
         static Bool_t   SKSE_Register_Functions(skylib::Virtual::Machine_t* machine);
 
     public:
+        static Bool_t   Has_Requirements();
         static Bool_t   Is_Active();
         static Bool_t   Is_Installed();
 
