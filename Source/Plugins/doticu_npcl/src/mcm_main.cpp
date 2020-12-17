@@ -25,6 +25,38 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    some<const char*> Main_t::To_Vitality_Key(Vitality_e vitality)
+    {
+        if (vitality == Vitality_e::MORTAL) {
+            return MORTAL;
+        } else if (vitality == Vitality_e::PROTECTED) {
+            return PROTECTED;
+        } else if (vitality == Vitality_e::ESSENTIAL) {
+            return ESSENTIAL;
+        } else if (vitality == Vitality_e::INVULNERABLE) {
+            return INVULNERABLE;
+        } else {
+            return ANY;
+        }
+    }
+
+    Vitality_e Main_t::From_Vitality_Key(some<const char*> vitality_key)
+    {
+        SKYLIB_ASSERT_SOME(vitality_key);
+
+        if (CString_t::Is_Same(MORTAL, vitality_key, false)) {
+            return Vitality_e::MORTAL;
+        } else if (CString_t::Is_Same(PROTECTED, vitality_key, false)) {
+            return Vitality_e::PROTECTED;
+        } else if (CString_t::Is_Same(ESSENTIAL, vitality_key, false)) {
+            return Vitality_e::ESSENTIAL;
+        } else if (CString_t::Is_Same(INVULNERABLE, vitality_key, false)) {
+            return Vitality_e::INVULNERABLE;
+        } else {
+            return Vitality_e::NONE;
+        }
+    }
+
     using Default_Page_t = Static_Bases_t;
 
     std::mutex          Main_t::mutex;

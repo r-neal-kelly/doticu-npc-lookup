@@ -155,6 +155,9 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Relation_Select_Option();
         Int_t&  Relation_Negate_Option();
 
+        Int_t&  Vitality_Select_Option();
+        Int_t&  Vitality_Negate_Option();
+
         Int_t&  Male_Option();
         Int_t&  Female_Option();
 
@@ -182,6 +185,9 @@ namespace doticu_npcl { namespace MCM {
 
         V::String_Variable_t*   Relation_Argument_Variable();
         V::Bool_Variable_t*     Relation_Do_Negate_Variable();
+
+        V::Int_Variable_t*      Vitality_Argument_Variable();
+        V::Bool_Variable_t*     Vitality_Do_Negate_Variable();
 
         V::Int_Variable_t*      Male_Female_Argument_Variable();
         V::Int_Variable_t*      Unique_Generic_Argument_Variable();
@@ -222,6 +228,11 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Relation_Do_Negate();
         void        Relation_Do_Negate(Bool_t value);
 
+        Vitality_e  Vitality_Argument();
+        void        Vitality_Argument(Vitality_e value);
+        Bool_t      Vitality_Do_Negate();
+        void        Vitality_Do_Negate(Bool_t value);
+
         Binary_e    Male_Female_Argument();
         void        Male_Female_Argument(Binary_e value);
 
@@ -241,6 +252,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Factions();
         Vector_t<String_t>      Selectable_Keywords();
         Vector_t<String_t>      Selectable_Relations();
+        Vector_t<String_t>      Selectable_Vitalities();
 
     public:
         void Build_Filters(const char* type_name);

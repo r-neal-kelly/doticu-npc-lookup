@@ -293,50 +293,64 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Filter_t<B, I>::Back_Option()             { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Clear_Option()            { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Mod_Search_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Mod_Select_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Mod_Negate_Option()       { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Race_Search_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Race_Select_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Race_Negate_Option()      { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Base_Search_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Base_Select_Option()      { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Base_Negate_Option()      { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Template_Search_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Template_Select_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Template_Negate_Option()  { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Faction_Search_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Faction_Select_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Faction_Negate_Option()   { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Keyword_Search_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Keyword_Select_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Keyword_Negate_Option()   { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Select_Option()  { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Relation_Negate_Option()  { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Vitality_Select_Option()  { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Filter_t<B, I>::Vitality_Negate_Option()  { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Male_Option()             { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Female_Option()           { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Unique_Option()           { DEFINE_OPTION(); }
     template <typename B, typename I>
@@ -346,99 +360,128 @@ namespace doticu_npcl { namespace MCM {
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Mod_Argument_Variable()               { DEFINE_STRING("p_filter_mod_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Mod_Do_Negate_Variable()              { DEFINE_BOOL("p_filter_mod_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Race_Argument_Variable()              { DEFINE_STRING("p_filter_race_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Race_Do_Negate_Variable()             { DEFINE_BOOL("p_filter_race_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Base_Argument_Variable()              { DEFINE_STRING("p_filter_base_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Base_Do_Negate_Variable()             { DEFINE_BOOL("p_filter_base_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Template_Argument_Variable()          { DEFINE_STRING("p_filter_template_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Template_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_template_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Faction_Argument_Variable()           { DEFINE_STRING("p_filter_faction_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Faction_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_faction_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Keyword_Argument_Variable()           { DEFINE_STRING("p_filter_keyword_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Keyword_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_keyword_do_negate"); }
+
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_STRING("p_filter_relation_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Relation_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_relation_do_negate"); }
+
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Vitality_Argument_Variable()          { DEFINE_INT("p_filter_vitality_argument"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Vitality_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_vitality_do_negate"); }
+
     template <typename B, typename I>
     inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Male_Female_Argument_Variable()       { DEFINE_INT("p_filter_male_female_argument"); }
     template <typename B, typename I>
     inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Unique_Generic_Argument_Variable()    { DEFINE_INT("p_filter_unique_generic_argument"); }
 
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Mod_Argument()                            { return Mod_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Mod_Argument()                            { return Mod_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Mod_Argument(String_t value)              { Mod_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Mod_Argument(String_t value)              { Mod_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Mod_Do_Negate()                           { return Mod_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Mod_Do_Negate()                           { return Mod_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Mod_Do_Negate(Bool_t value)               { Mod_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Mod_Do_Negate(Bool_t value)               { Mod_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Race_Argument()                           { return Race_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Race_Argument()                           { return Race_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Race_Argument(String_t value)             { Race_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Race_Argument(String_t value)             { Race_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Race_Do_Negate()                          { return Race_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Race_Do_Negate()                          { return Race_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Race_Do_Negate(Bool_t value)              { Race_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Race_Do_Negate(Bool_t value)              { Race_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Base_Argument()                           { return Base_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Base_Argument()                           { return Base_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Base_Argument(String_t value)             { Base_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Base_Argument(String_t value)             { Base_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Base_Do_Negate()                          { return Base_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Base_Do_Negate()                          { return Base_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Base_Do_Negate(Bool_t value)              { Base_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Base_Do_Negate(Bool_t value)              { Base_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Template_Argument()                       { return Template_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Template_Argument()                       { return Template_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Template_Argument(String_t value)         { Template_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Template_Argument(String_t value)         { Template_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Template_Do_Negate()                      { return Template_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Template_Do_Negate()                      { return Template_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Template_Do_Negate(Bool_t value)          { Template_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Template_Do_Negate(Bool_t value)          { Template_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Faction_Argument()                        { return Faction_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Faction_Argument()                        { return Faction_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Faction_Argument(String_t value)          { Faction_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Faction_Argument(String_t value)          { Faction_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Faction_Do_Negate()                       { return Faction_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Faction_Do_Negate()                       { return Faction_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Faction_Do_Negate(Bool_t value)           { Faction_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Faction_Do_Negate(Bool_t value)           { Faction_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Keyword_Argument()                        { return Keyword_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Keyword_Argument()                        { return Keyword_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Keyword_Argument(String_t value)          { Keyword_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Keyword_Argument(String_t value)          { Keyword_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Keyword_Do_Negate()                       { return Keyword_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Keyword_Do_Negate()                       { return Keyword_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Keyword_Do_Negate(Bool_t value)           { Keyword_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Keyword_Do_Negate(Bool_t value)           { Keyword_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline String_t Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
+    inline String_t     Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Bool_t   Bases_Filter_t<B, I>::Relation_Do_Negate()                      { return Relation_Do_Negate_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Relation_Do_Negate()                      { return Relation_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Relation_Do_Negate(Bool_t value)          { Relation_Do_Negate_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Relation_Do_Negate(Bool_t value)          { Relation_Do_Negate_Variable()->Value(value); }
+
     template <typename B, typename I>
-    inline Binary_e Bases_Filter_t<B, I>::Male_Female_Argument()                    { return Male_Female_Argument_Variable()->Value(); }
+    inline Vitality_e   Bases_Filter_t<B, I>::Vitality_Argument()                       { return Vitality_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Male_Female_Argument(Binary_e value)      { Male_Female_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Vitality_Argument(Vitality_e value)       { Vitality_Argument_Variable()->Value(value); }
     template <typename B, typename I>
-    inline Binary_e Bases_Filter_t<B, I>::Unique_Generic_Argument()                 { return Unique_Generic_Argument_Variable()->Value(); }
+    inline Bool_t       Bases_Filter_t<B, I>::Vitality_Do_Negate()                      { return Vitality_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
-    inline void     Bases_Filter_t<B, I>::Unique_Generic_Argument(Binary_e value)   { Unique_Generic_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Vitality_Do_Negate(Bool_t value)          { Vitality_Do_Negate_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Binary_e     Bases_Filter_t<B, I>::Male_Female_Argument()                    { return Male_Female_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Filter_t<B, I>::Male_Female_Argument(Binary_e value)      { Male_Female_Argument_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Binary_e     Bases_Filter_t<B, I>::Unique_Generic_Argument()                 { return Unique_Generic_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Filter_t<B, I>::Unique_Generic_Argument(Binary_e value)   { Unique_Generic_Argument_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::Clear()
@@ -464,6 +507,9 @@ namespace doticu_npcl { namespace MCM {
         Relation_Argument("");
         Relation_Do_Negate(false);
 
+        Vitality_Argument(Vitality_e::NONE);
+        Vitality_Do_Negate(false);
+
         Male_Female_Argument(Binary_e::NONE);
         Unique_Generic_Argument(Binary_e::NONE);
     }
@@ -484,6 +530,7 @@ namespace doticu_npcl { namespace MCM {
         Faction_Filter_t<Type_t>(filter_state, Faction_Argument(), Faction_Do_Negate());
         Keyword_Filter_t<Type_t>(filter_state, Keyword_Argument(), Keyword_Do_Negate());
         Relation_Filter_t<Type_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
+        Vitality_Filter_t<Type_t>(filter_state, Vitality_Argument(), Vitality_Do_Negate());
         Male_Female_Filter_t<Type_t>(filter_state, Male_Female_Argument());
         Unique_Generic_Filter_t<Type_t>(filter_state, Unique_Generic_Argument());
 
@@ -495,35 +542,47 @@ namespace doticu_npcl { namespace MCM {
     {
         return Selectable_Mods_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Races()
     {
         return Selectable_Races_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Bases()
     {
         return Selectable_Bases_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Templates()
     {
         return Selectable_Templates_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Factions()
     {
         return Selectable_Factions_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Keywords()
     {
         return Selectable_Keywords_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Relations()
     {
         return Selectable_Relations_t<B, I>(Consts_t::Skyrim_Player_Actor_Base()).Results();
+    }
+
+    template <typename B, typename I>
+    inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Vitalities()
+    {
+        return Selectable_Vitalities_t<B, I>().Results();
     }
 
     template <typename B, typename I>
@@ -580,6 +639,11 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option(Main_t::_NONE_);
         Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
         Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
+
+        mcm->Add_Header_Option(Main_t::VITALITY);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Vitality_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Vitality_Key(Vitality_Argument())());
+        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::OTHER);
         mcm->Add_Header_Option(Main_t::_NONE_);
@@ -677,6 +741,11 @@ namespace doticu_npcl { namespace MCM {
             Relation_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
 
+        } else if (option == Vitality_Negate_Option()) {
+            Bool_t value = Vitality_Do_Negate();
+            Vitality_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
         } else {
             if (Toggle_Type() == Toggle_Type_e::EITHER) {
                 if (option == Male_Option()) {
@@ -748,6 +817,11 @@ namespace doticu_npcl { namespace MCM {
             mcm->Menu_Dialog_Values(Selectable_Relations());
             mcm->Menu_Dialog_Default(0);
 
+        } else if (option == Vitality_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Vitalities());
+            mcm->Menu_Dialog_Default(0);
+
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -762,9 +836,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> mods = Selectable_Mods();
-                    if (idx < mods.size()) {
-                        value = mods[idx];
+                    Vector_t<String_t> selectables = Selectable_Mods();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Mod_Argument(value);
@@ -775,9 +849,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> races = Selectable_Races();
-                    if (idx < races.size()) {
-                        value = races[idx];
+                    Vector_t<String_t> selectables = Selectable_Races();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Race_Argument(value);
@@ -788,9 +862,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> names = Selectable_Bases();
-                    if (idx < names.size()) {
-                        value = names[idx];
+                    Vector_t<String_t> selectables = Selectable_Bases();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Base_Argument(value);
@@ -801,9 +875,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Templates();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Templates();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Template_Argument(value);
@@ -814,9 +888,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Factions();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Factions();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Faction_Argument(value);
@@ -827,9 +901,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Keywords();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Keywords();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Keyword_Argument(value);
@@ -840,12 +914,25 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::ANY;
                 if (idx > 0) {
-                    Vector_t<String_t> relations = Selectable_Relations();
-                    if (idx < relations.size()) {
-                        value = relations[idx];
+                    Vector_t<String_t> selectables = Selectable_Relations();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Relation_Argument(value);
+                mcm->Menu_Option_Value(option, value, true);
+            }
+
+        } else if (option == Vitality_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::ANY;
+                if (idx > 0) {
+                    Vector_t<String_t> selectables = Selectable_Vitalities();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
+                    }
+                }
+                Vitality_Argument(mcm->From_Vitality_Key(value.data));
                 mcm->Menu_Option_Value(option, value, true);
             }
 

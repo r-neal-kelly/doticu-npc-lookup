@@ -37,47 +37,81 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   References_Filter_t<B, I>::Reference_Select_Option()    { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Reference_Negate_Option()    { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Worldspace_Search_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Worldspace_Select_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Worldspace_Negate_Option()   { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Location_Search_Option()     { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Location_Select_Option()     { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Location_Negate_Option()     { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Cell_Search_Option()         { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Cell_Select_Option()         { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Cell_Negate_Option()         { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Quest_Search_Option()        { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Quest_Select_Option()        { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Quest_Negate_Option()        { DEFINE_OPTION(); }
+
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Interior_Option()            { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   References_Filter_t<B, I>::Exterior_Option()            { DEFINE_OPTION(); }
 
     template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Alive_Option()               { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Dead_Option()                { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Is_Teammate_Option()         { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   References_Filter_t<B, I>::Isnt_Teammate_Option()       { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
     inline V::String_Variable_t*    References_Filter_t<B, I>::Reference_Argument_Variable()            { DEFINE_STRING("p_filter_reference_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      References_Filter_t<B, I>::Reference_Do_Negate_Variable()           { DEFINE_BOOL("p_filter_reference_do_negate"); }
+    
     template <typename B, typename I>
     inline V::String_Variable_t*    References_Filter_t<B, I>::Worldspace_Argument_Variable()           { DEFINE_STRING("p_filter_worldspace_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      References_Filter_t<B, I>::Worldspace_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_worldspace_do_negate"); }
+    
     template <typename B, typename I>
     inline V::String_Variable_t*    References_Filter_t<B, I>::Location_Argument_Variable()             { DEFINE_STRING("p_filter_location_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      References_Filter_t<B, I>::Location_Do_Negate_Variable()            { DEFINE_BOOL("p_filter_location_do_negate"); }
+    
     template <typename B, typename I>
     inline V::String_Variable_t*    References_Filter_t<B, I>::Cell_Argument_Variable()                 { DEFINE_STRING("p_filter_cell_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      References_Filter_t<B, I>::Cell_Do_Negate_Variable()                { DEFINE_BOOL("p_filter_cell_do_negate"); }
     template <typename B, typename I>
+    
+    inline V::String_Variable_t*    References_Filter_t<B, I>::Quest_Argument_Variable()                { DEFINE_STRING("p_filter_quest_argument"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Quest_Do_Negate_Variable()               { DEFINE_BOOL("p_filter_quest_do_negate"); }
+    
+    template <typename B, typename I>
     inline V::Int_Variable_t*       References_Filter_t<B, I>::Interior_Exterior_Argument_Variable()    { DEFINE_INT("p_filter_interior_exterior_argument"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       References_Filter_t<B, I>::Alive_Dead_Argument_Variable()           { DEFINE_INT("p_filter_alive_dead_argument"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       References_Filter_t<B, I>::Is_Teammate_Argument_Variable()          { DEFINE_INT("p_filter_is_teammate_argument"); }
 
     template <typename B, typename I>
     inline String_t References_Filter_t<B, I>::Reference_Argument()                         { return Reference_Argument_Variable()->Value(); }
@@ -87,6 +121,7 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   References_Filter_t<B, I>::Reference_Do_Negate()                        { return Reference_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Reference_Do_Negate(Bool_t value)            { Reference_Do_Negate_Variable()->Value(value); }
+    
     template <typename B, typename I>
     inline String_t References_Filter_t<B, I>::Worldspace_Argument()                        { return Worldspace_Argument_Variable()->Value(); }
     template <typename B, typename I>
@@ -95,6 +130,7 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   References_Filter_t<B, I>::Worldspace_Do_Negate()                       { return Worldspace_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Worldspace_Do_Negate(Bool_t value)           { Worldspace_Do_Negate_Variable()->Value(value); }
+    
     template <typename B, typename I>
     inline String_t References_Filter_t<B, I>::Location_Argument()                          { return Location_Argument_Variable()->Value(); }
     template <typename B, typename I>
@@ -103,6 +139,7 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   References_Filter_t<B, I>::Location_Do_Negate()                         { return Location_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Location_Do_Negate(Bool_t value)             { Location_Do_Negate_Variable()->Value(value); }
+    
     template <typename B, typename I>
     inline String_t References_Filter_t<B, I>::Cell_Argument()                              { return Cell_Argument_Variable()->Value(); }
     template <typename B, typename I>
@@ -111,10 +148,30 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   References_Filter_t<B, I>::Cell_Do_Negate()                             { return Cell_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Cell_Do_Negate(Bool_t value)                 { Cell_Do_Negate_Variable()->Value(value); }
+    
+    template <typename B, typename I>
+    inline String_t References_Filter_t<B, I>::Quest_Argument()                             { return Quest_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     References_Filter_t<B, I>::Quest_Argument(String_t value)               { Quest_Argument_Variable()->Value(value); }
+    template <typename B, typename I>
+    inline Bool_t   References_Filter_t<B, I>::Quest_Do_Negate()                            { return Quest_Do_Negate_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     References_Filter_t<B, I>::Quest_Do_Negate(Bool_t value)                { Quest_Do_Negate_Variable()->Value(value); }
+    
     template <typename B, typename I>
     inline Binary_e References_Filter_t<B, I>::Interior_Exterior_Argument()                 { return Interior_Exterior_Argument_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Filter_t<B, I>::Interior_Exterior_Argument(Binary_e value)   { Interior_Exterior_Argument_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Binary_e References_Filter_t<B, I>::Alive_Dead_Argument()                        { return Alive_Dead_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     References_Filter_t<B, I>::Alive_Dead_Argument(Binary_e value)          { Alive_Dead_Argument_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Binary_e References_Filter_t<B, I>::Is_Teammate_Argument()                       { return Is_Teammate_Argument_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     References_Filter_t<B, I>::Is_Teammate_Argument(Binary_e value)         { Is_Teammate_Argument_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::Clear()
@@ -133,7 +190,12 @@ namespace doticu_npcl { namespace MCM {
         Cell_Argument("");
         Cell_Do_Negate(false);
 
+        Quest_Argument("");
+        Quest_Do_Negate(false);
+
         Interior_Exterior_Argument(Binary_e::NONE);
+        Alive_Dead_Argument(Binary_e::NONE);
+        Is_Teammate_Argument(Binary_e::NONE);
     }
 
     template <typename Base_t, typename Item_t>
@@ -145,7 +207,10 @@ namespace doticu_npcl { namespace MCM {
         //Worldspace_Filter_t<Item_t>(filter_state, Worldspace_Argument(), Worldspace_Do_Negate());
         Location_Filter_t<Item_t>(filter_state, Location_Argument(), Location_Do_Negate());
         Cell_Filter_t<Item_t>(filter_state, Cell_Argument(), Cell_Do_Negate());
+        Quest_Filter_t<Item_t>(filter_state, Quest_Argument(), Quest_Do_Negate());
         Interior_Exterior_Filter_t<Item_t>(filter_state, Interior_Exterior_Argument());
+        Alive_Dead_Filter_t<Item_t>(filter_state, Alive_Dead_Argument());
+        Is_Teammate_Filter_t<Item_t>(filter_state, Is_Teammate_Argument());
 
         return std::move(filter_state);
     }
@@ -155,20 +220,29 @@ namespace doticu_npcl { namespace MCM {
     {
         return Selectable_References_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Worldspaces()
     {
         return Vector_t<String_t>();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Locations()
     {
         return Selectable_Locations_t<B, I>().Results();
     }
+
     template <typename B, typename I>
     inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Cells()
     {
         return Selectable_Cells_t<B, I>().Results();
+    }
+
+    template <typename B, typename I>
+    inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Quests()
+    {
+        return Selectable_Quests_t<B, I>().Results();
     }
 
     template <typename B, typename I>
@@ -242,10 +316,22 @@ namespace doticu_npcl { namespace MCM {
         Cell_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Cell_Do_Negate());
         mcm->Add_Empty_Option();
 
+        mcm->Add_Header_Option(Main_t::QUEST);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Quest_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Quest_Argument());
+        Quest_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Quest_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Quest_Do_Negate());
+        mcm->Add_Empty_Option();
+
         mcm->Add_Header_Option(Main_t::RELATION);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
         Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
+
+        mcm->Add_Header_Option(Main_t::VITALITY);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Vitality_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Vitality_Key(Vitality_Argument())());
+        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::OTHER);
         mcm->Add_Header_Option(Main_t::_NONE_);
@@ -258,6 +344,12 @@ namespace doticu_npcl { namespace MCM {
 
         Interior_Option() = mcm->Add_Toggle_Option(Main_t::IN_INTERIOR, Interior_Exterior_Argument() == Binary_e::A);
         Exterior_Option() = mcm->Add_Toggle_Option(Main_t::IN_EXTERIOR, Interior_Exterior_Argument() == Binary_e::B);
+
+        Alive_Option() = mcm->Add_Toggle_Option(Main_t::IS_ALIVE, Alive_Dead_Argument() == Binary_e::A);
+        Dead_Option() = mcm->Add_Toggle_Option(Main_t::IS_DEAD, Alive_Dead_Argument() == Binary_e::B);
+
+        Is_Teammate_Option() = mcm->Add_Toggle_Option(Main_t::IS_TEAMMATE, Is_Teammate_Argument() == Binary_e::A);
+        Isnt_Teammate_Option() = mcm->Add_Toggle_Option(Main_t::ISNT_TEAMMATE, Is_Teammate_Argument() == Binary_e::B);
     }
 
     template <typename B, typename I>
@@ -311,6 +403,11 @@ namespace doticu_npcl { namespace MCM {
             Relation_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
 
+        } else if (option == Vitality_Negate_Option()) {
+            Bool_t value = Vitality_Do_Negate();
+            Vitality_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
         } else if (option == Reference_Negate_Option()) {
             Bool_t value = Reference_Do_Negate();
             Reference_Do_Negate(!value);
@@ -324,6 +421,11 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Cell_Negate_Option()) {
             Bool_t value = Cell_Do_Negate();
             Cell_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
+        } else if (option == Quest_Negate_Option()) {
+            Bool_t value = Quest_Do_Negate();
+            Quest_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Male_Option()) {
@@ -340,6 +442,16 @@ namespace doticu_npcl { namespace MCM {
             mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option, option + 1, Binary_e::A);
         } else if (option == Exterior_Option()) {
             mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option - 1, option, Binary_e::B);
+
+        } else if (option == Alive_Option()) {
+            mcm->Toggle_Either(Alive_Dead_Argument_Variable(), option, option + 1, Binary_e::A);
+        } else if (option == Dead_Option()) {
+            mcm->Toggle_Either(Alive_Dead_Argument_Variable(), option - 1, option, Binary_e::B);
+
+        } else if (option == Is_Teammate_Option()) {
+            mcm->Toggle_Either(Is_Teammate_Argument_Variable(), option, option + 1, Binary_e::A);
+        } else if (option == Isnt_Teammate_Option()) {
+            mcm->Toggle_Either(Is_Teammate_Argument_Variable(), option - 1, option, Binary_e::B);
 
         }
 
@@ -386,6 +498,11 @@ namespace doticu_npcl { namespace MCM {
             mcm->Menu_Dialog_Values(Selectable_Relations());
             mcm->Menu_Dialog_Default(0);
 
+        } else if (option == Vitality_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Vitalities());
+            mcm->Menu_Dialog_Default(0);
+
         } else if (option == Reference_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_References());
@@ -399,6 +516,11 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Cell_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_Cells());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Quest_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Quests());
             mcm->Menu_Dialog_Default(0);
 
         }
@@ -415,9 +537,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> mods = Selectable_Mods();
-                    if (idx < mods.size()) {
-                        value = mods[idx];
+                    Vector_t<String_t> selectables = Selectable_Mods();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Mod_Argument(value);
@@ -428,9 +550,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> races = Selectable_Races();
-                    if (idx < races.size()) {
-                        value = races[idx];
+                    Vector_t<String_t> selectables = Selectable_Races();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Race_Argument(value);
@@ -441,9 +563,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> names = Selectable_Bases();
-                    if (idx < names.size()) {
-                        value = names[idx];
+                    Vector_t<String_t> selectables = Selectable_Bases();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Base_Argument(value);
@@ -454,9 +576,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Templates();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Templates();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Template_Argument(value);
@@ -467,9 +589,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Factions();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Factions();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Faction_Argument(value);
@@ -480,9 +602,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> values = Selectable_Keywords();
-                    if (idx < values.size()) {
-                        value = values[idx];
+                    Vector_t<String_t> selectables = Selectable_Keywords();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Keyword_Argument(value);
@@ -493,12 +615,25 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::ANY;
                 if (idx > 0) {
-                    Vector_t<String_t> relations = Selectable_Relations();
-                    if (idx < relations.size()) {
-                        value = relations[idx];
+                    Vector_t<String_t> selectables = Selectable_Relations();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Relation_Argument(value);
+                mcm->Menu_Option_Value(option, value, true);
+            }
+
+        } else if (option == Vitality_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::ANY;
+                if (idx > 0) {
+                    Vector_t<String_t> selectables = Selectable_Vitalities();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
+                    }
+                }
+                Vitality_Argument(mcm->From_Vitality_Key(value.data));
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -506,9 +641,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> names = Selectable_References();
-                    if (idx < names.size()) {
-                        value = names[idx];
+                    Vector_t<String_t> selectables = Selectable_References();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Reference_Argument(value);
@@ -519,9 +654,9 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> locations = Selectable_Locations();
-                    if (idx < locations.size()) {
-                        value = locations[idx];
+                    Vector_t<String_t> selectables = Selectable_Locations();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Location_Argument(value);
@@ -532,13 +667,26 @@ namespace doticu_npcl { namespace MCM {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
                 if (idx > 0) {
-                    Vector_t<String_t> cells = Selectable_Cells();
-                    if (idx < cells.size()) {
-                        value = cells[idx];
+                    Vector_t<String_t> selectables = Selectable_Cells();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
                     }
                 }
                 Cell_Argument(value);
                 mcm->Input_Option_Value(Cell_Search_Option(), value, true);
+            }
+
+        } else if (option == Quest_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> selectables = Selectable_Quests();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
+                    }
+                }
+                Quest_Argument(value);
+                mcm->Input_Option_Value(Quest_Search_Option(), value, true);
             }
 
         }
@@ -585,6 +733,10 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Cell_Search_Option()) {
             Cell_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
+        } else if (option == Quest_Search_Option()) {
+            Quest_Argument(value);
             mcm->Input_Option_Value(option, value, true);
 
         }
@@ -671,6 +823,27 @@ namespace doticu_npcl { namespace MCM {
                 if (skylib::Is_Odd(mcm->Cursor_Position())) {
                     mcm->Add_Empty_Option();
                 }
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Quests(Vector_t<Quest_t*> quests)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = quests.size();
+        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
+            mcm->Add_Header_Option(Main_t::QUESTS);
+            mcm->Add_Header_Option(Main_t::_NONE_);
+            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                Quest_t* quest = quests[idx];
+                if (quest && quest->Is_Valid()) {
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name().data, Main_t::_NONE_);
+                }
+            }
+            if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                mcm->Add_Empty_Option();
             }
         }
     }

@@ -102,6 +102,7 @@ namespace doticu_npcl { namespace MCM {
             if (reference && reference->Is_Valid()) {
                 skylib::Aliases_x* xaliases = reference->xlist.Get<skylib::Aliases_x>();
                 if (xaliases) {
+                    skylib::Read_Locker_t locker(xaliases->lock);
                     for (Index_t idx = 0, end = xaliases->instances.count; idx < end; idx += 1) {
                         skylib::Aliases_x::Instance_t* instance = xaliases->instances.entries[idx];
                         if (instance && instance->quest == this && instance->alias_base) {

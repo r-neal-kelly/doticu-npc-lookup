@@ -48,8 +48,18 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Cell_Select_Option();
         Int_t&  Cell_Negate_Option();
 
+        Int_t&  Quest_Search_Option();
+        Int_t&  Quest_Select_Option();
+        Int_t&  Quest_Negate_Option();
+
         Int_t&  Interior_Option();
         Int_t&  Exterior_Option();
+
+        Int_t&  Alive_Option();
+        Int_t&  Dead_Option();
+
+        Int_t&  Is_Teammate_Option();
+        Int_t&  Isnt_Teammate_Option();
 
     public:
         V::String_Variable_t*   Reference_Argument_Variable();
@@ -64,7 +74,12 @@ namespace doticu_npcl { namespace MCM {
         V::String_Variable_t*   Cell_Argument_Variable();
         V::Bool_Variable_t*     Cell_Do_Negate_Variable();
 
+        V::String_Variable_t*   Quest_Argument_Variable();
+        V::Bool_Variable_t*     Quest_Do_Negate_Variable();
+
         V::Int_Variable_t*      Interior_Exterior_Argument_Variable();
+        V::Int_Variable_t*      Alive_Dead_Argument_Variable();
+        V::Int_Variable_t*      Is_Teammate_Argument_Variable();
 
     public:
         String_t    Reference_Argument();
@@ -87,8 +102,19 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Cell_Do_Negate();
         void        Cell_Do_Negate(Bool_t value);
 
+        String_t    Quest_Argument();
+        void        Quest_Argument(String_t value);
+        Bool_t      Quest_Do_Negate();
+        void        Quest_Do_Negate(Bool_t value);
+
         Binary_e    Interior_Exterior_Argument();
         void        Interior_Exterior_Argument(Binary_e value);
+
+        Binary_e    Alive_Dead_Argument();
+        void        Alive_Dead_Argument(Binary_e value);
+
+        Binary_e    Is_Teammate_Argument();
+        void        Is_Teammate_Argument(Binary_e value);
 
     public:
         void                    Clear();
@@ -98,6 +124,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Worldspaces();
         Vector_t<String_t>      Selectable_Locations();
         Vector_t<String_t>      Selectable_Cells();
+        Vector_t<String_t>      Selectable_Quests();
 
     public:
         void Build_Filters(const char* type_name);
@@ -137,6 +164,7 @@ namespace doticu_npcl { namespace MCM {
         void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);
         void    Build_Cell(Cell_t* cell);
         void    Build_Locations(Cell_t* cell);
+        void    Build_Quests(Vector_t<Quest_t*> quests);
         void    Build_Reference(Actor_t* actor, const char* type_name);
     };
 

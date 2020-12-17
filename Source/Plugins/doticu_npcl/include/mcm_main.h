@@ -12,14 +12,15 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    using Actor_Value_e = skylib::Actor_Value_e;
-    using Binary_e      = skylib::Binary_e;
-    using Comparator_e  = skylib::Comparator_e;
-    using Cursor_e      = mcmlib::Cursor_e;
-    using Flag_e        = mcmlib::Flag_e;
-    using Relation_e    = skylib::Relation_e;
-    using Sex_e         = skylib::Sex_e;
-    using Rarity_e      = skylib::Rarity_e;
+    using Actor_Value_e         = skylib::Actor_Value_e;
+    using Binary_e              = skylib::Binary_e;
+    using Comparator_e          = skylib::Comparator_e;
+    using Cursor_e              = mcmlib::Cursor_e;
+    using Flag_e                = mcmlib::Flag_e;
+    using Relation_e            = skylib::Relation_e;
+    using Sex_e                 = skylib::Sex_e;
+    using Rarity_e              = skylib::Rarity_e;
+    using Vitality_e            = skylib::Vitality_e;
 
     using Actor_t               = skylib::Actor_t;
     using Actor_Base_t          = skylib::Actor_Base_t;
@@ -104,9 +105,12 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    KEYWORD                             = "$dnpcl_keyword";
         static constexpr const char*    KEYWORDS                            = "$dnpcl_keywords";
         static constexpr const char*    RELATION                            = "$dnpcl_relation";
+        static constexpr const char*    VITALITY                            = "$dnpcl_vitality";
         static constexpr const char*    LOCATION                            = "$dnpcl_location";
         static constexpr const char*    LOCATIONS                           = "$dnpcl_locations";
         static constexpr const char*    CELL                                = "$dnpcl_cell";
+        static constexpr const char*    QUEST                               = "$dnpcl_quest";
+        static constexpr const char*    QUESTS                              = "$dnpcl_quests";
         static constexpr const char*    OTHER                               = "$dnpcl_other";
         static constexpr const char*    IS_MALE                             = "$dnpcl_is_male";
         static constexpr const char*    IS_FEMALE                           = "$dnpcl_is_female";
@@ -114,6 +118,10 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    IS_GENERIC                          = "$dnpcl_is_generic";
         static constexpr const char*    IS_INTERIOR                         = "$dnpcl_is_interior";
         static constexpr const char*    IS_EXTERIOR                         = "$dnpcl_is_exterior";
+        static constexpr const char*    IS_ALIVE                            = "$dnpcl_is_alive";
+        static constexpr const char*    IS_DEAD                             = "$dnpcl_is_dead";
+        static constexpr const char*    IS_TEAMMATE                         = "$dnpcl_is_teammate";
+        static constexpr const char*    ISNT_TEAMMATE                       = "$dnpcl_isnt_teammate";
         static constexpr const char*    HAS_MALE                            = "$dnpcl_has_male";
         static constexpr const char*    HAS_FEMALE                          = "$dnpcl_has_female";
         static constexpr const char*    HAS_UNIQUE                          = "$dnpcl_has_unique";
@@ -125,6 +133,12 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    SELECT                              = "$dnpcl_select";
         static constexpr const char*    NEGATE                              = "$dnpcl_negate";
         static constexpr const char*    _DOTS_                              = "$dnpcl_...";
+
+        static constexpr const char*    NONE                                = "$dnpcl_none";
+        static constexpr const char*    MORTAL                              = "$dnpcl_mortal";
+        static constexpr const char*    PROTECTED                           = "$dnpcl_protected";
+        static constexpr const char*    ESSENTIAL                           = "$dnpcl_essential";
+        static constexpr const char*    INVULNERABLE                        = "$dnpcl_invulnerable";
 
         static constexpr const char*    SMART_SELECT                        = "$dnpcl_smart_select";
         static constexpr const char*    UNCOMBATIVE_SPAWNS                  = "$dnpcl_uncombative_spawns";
@@ -233,6 +247,9 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    PRIORITIZED_MOD_NAME                = " NPC Lookup ";
         static constexpr const char*    UNPRIORITIZED_MOD_NAME              = "NPC Lookup ";
         static constexpr const char*    DEFAULT_PAGE                        = STATIC_BASES;
+
+        static some<const char*>    To_Vitality_Key(Vitality_e vitality);
+        static Vitality_e           From_Vitality_Key(some<const char*> vitality_key);
 
     public:
         static std::mutex   mutex;

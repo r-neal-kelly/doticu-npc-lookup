@@ -25,9 +25,9 @@ namespace doticu_npcl {
         static PluginHandle                     SKSE_PLUGIN_HANDLE;
         static IDebugLog                        SKSE_LOG;
 
-        static Bool_t SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
-        static Bool_t SKSE_Load_Plugin(const SKSEInterface* skse);
-        static Bool_t SKSE_Register_Functions(skylib::Virtual::Machine_t* machine);
+        static Bool_t   SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
+        static Bool_t   SKSE_Load_Plugin(const SKSEInterface* skse);
+        static Bool_t   SKSE_Register_Functions(skylib::Virtual::Machine_t* machine);
 
     public:
         static Bool_t   Is_Active();

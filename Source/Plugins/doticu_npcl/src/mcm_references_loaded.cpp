@@ -402,6 +402,7 @@ namespace doticu_npcl { namespace MCM {
                 Build_Locations(item.actor->Cell());
                 Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
                 Build_Keywords(item.actor->Keywords());
+                Build_Quests(item.actor->Quests());
                 Build_Mod_Names(item.actor->Mod_Names());
             } else {
                 List()->do_update_items = true;

@@ -30,6 +30,9 @@ bool    p_filter_keyword_do_negate          =   false
 string  p_filter_relation_argument          =      ""
 bool    p_filter_relation_do_negate         =   false
 
+int     p_filter_vitality_argument          =      -1
+bool    p_filter_vitality_do_negate         =   false
+
 int     p_filter_male_female_argument       =       0
 int     p_filter_unique_generic_argument    =       0
 

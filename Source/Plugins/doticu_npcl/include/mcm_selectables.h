@@ -9,21 +9,25 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    /* Data */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Data_t
     {
     public:
-        using Filter_t          = std::remove_pointer_t<decltype(Base_t::Self()->Filter())>;
-        using Smart_Get_f       = String_t(Filter_t::*)();
-        using Smart_Set_f       = void(Filter_t::*)(String_t);
+        using Filter_t              = std::remove_pointer_t<decltype(Base_t::Self()->Filter())>;
+        using Smart_Get_f           = String_t(Filter_t::*)();
+        using Smart_Set_f           = void(Filter_t::*)(String_t);
+        using Smart_Get_Vitality_f  = Vitality_e(Filter_t::*)();
+        using Smart_Set_Vitality_f  = void(Filter_t::*)(Vitality_e);
 
         using Select_f          = void(*)(Item_t, Vector_t<String_t>&);
         using Select_Relation_f = void(*)(Item_t, Actor_Base_t*, Vector_t<String_t>&);
 
     public:
         Vector_t<Item_t>    items;
-        Vector_t<String_t>  results;
         Vector_t<String_t>  buffer;
+        Vector_t<String_t>  results;
 
         Selectable_Data_t(Smart_Get_f smart_get_f,
                           Smart_Set_f smart_set_f,
@@ -44,6 +48,15 @@ namespace doticu_npcl { namespace MCM {
             Sort();
         }
 
+        Selectable_Data_t(Smart_Get_Vitality_f smart_get_f,
+                          Smart_Set_Vitality_f smart_set_f,
+                          Select_f select_f)
+        {
+            Init(smart_get_f, smart_set_f);
+            Select(select_f);
+            Sort();
+        }
+
         inline void Init(Smart_Get_f smart_get_f, Smart_Set_f smart_set_f)
         {
             auto* self = Base_t::Self();
@@ -61,6 +74,31 @@ namespace doticu_npcl { namespace MCM {
                 items = list->Default_Items();
             }
 
+            Reserve();
+        }
+
+        inline void Init(Smart_Get_Vitality_f smart_get_f, Smart_Set_Vitality_f smart_set_f)
+        {
+            auto* self = Base_t::Self();
+            auto* list = self->List();
+            auto* filter = self->Filter();
+            auto* options = self->Options();
+
+            if (options->Do_Smart_Select()) {
+                Vitality_e current = (filter->*smart_get_f)();
+                (filter->*smart_set_f)(Vitality_e::NONE);
+                list->do_update_items = true;
+                items = list->Items();
+                (filter->*smart_set_f)(current);
+            } else {
+                items = list->Default_Items();
+            }
+
+            Reserve();
+        }
+
+        inline void Reserve()
+        {
             size_t item_count = items.size();
             if (item_count > 2048) {
                 results.reserve(2048);
@@ -124,6 +162,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Mods */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Mods_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -164,24 +204,6 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         using Item_t = Actor_Base_t*;
-
-    public:
-        Selectable_Mods_t() :
-            Selectable_Mods_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            Selectable_Mods_t<Base_t, Form_t*>::Select(item, output);
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Mods_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Mods_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
 
     public:
         Selectable_Mods_t() :
@@ -253,6 +275,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Races */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Races_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -288,24 +312,6 @@ namespace doticu_npcl { namespace MCM {
             } else {
                 output.push_back("");
             }
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Races_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Races_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Races_t() :
-            Selectable_Races_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            item->Race_Names(output);
         }
     };
 
@@ -367,6 +373,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Bases */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Bases_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -397,24 +405,6 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             output.push_back(item->Any_Name());
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Bases_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Bases_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Bases_t() :
-            Selectable_Bases_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            item->Actor_Base_Names(output);
         }
     };
 
@@ -476,6 +466,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Templates */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Templates_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -511,29 +503,6 @@ namespace doticu_npcl { namespace MCM {
                     if (name && !output.Has(name)) {
                         output.push_back(name);
                     }
-                }
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Templates_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Templates_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Templates_t() :
-            Selectable_Templates_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
                 }
             }
         }
@@ -602,6 +571,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Factions */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Factions_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -658,29 +629,6 @@ namespace doticu_npcl { namespace MCM {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
                     Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction, output);
-                }
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Factions_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Factions_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Factions_t() :
-            Selectable_Factions_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
                 }
             }
         }
@@ -752,6 +700,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Keywords */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Keywords_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -791,29 +741,6 @@ namespace doticu_npcl { namespace MCM {
                             output.push_back(name);
                         }
                     }
-                }
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Keywords_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Keywords_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Keywords_t() :
-            Selectable_Keywords_i<Base_t, Item_t>(&Select)
-        {
-        }
-
-        static void Select(Item_t item, Vector_t<String_t>& output)
-        {
-            if (item && item->Is_Valid()) {
-                Vector_t<Actor_Base_t*> bases = item->Actor_Bases();
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
                 }
             }
         }
@@ -882,6 +809,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* References */
+
     template <typename Base_t, typename Item_t>
     class Selectable_References_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -936,6 +865,8 @@ namespace doticu_npcl { namespace MCM {
             }
         }
     };
+
+    /* Locations */
 
     template <typename Base_t, typename Item_t>
     class Selectable_Locations_i : public Selectable_Data_t<Base_t, Item_t>
@@ -1012,6 +943,8 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Cells */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Cells_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -1087,6 +1020,91 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Quests */
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Quests_i : public Selectable_Data_t<Base_t, Item_t>
+    {
+    public:
+        Selectable_Quests_i(Select_f select_f) :
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Quest_Argument, &Filter_t::Quest_Argument, select_f)
+        {
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Quests_t : public Selectable_Quests_i<Base_t, Item_t>
+    {
+    };
+
+    template <typename Base_t>
+    class Selectable_Quests_t<Base_t, Quest_t*> : public Selectable_Quests_i<Base_t, Quest_t*>
+    {
+    public:
+        using Item_t = Quest_t*;
+
+    public:
+        Selectable_Quests_t() :
+            Selectable_Quests_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                String_t name = item->Any_Name();
+                if (!output.Has(name)) {
+                    output.push_back(name);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Quests_t<Base_t, Actor_t*> : public Selectable_Quests_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Quests_t() :
+            Selectable_Quests_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<Quest_t*> quests = item->Quests();
+                for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
+                    Selectable_Quests_t<Base_t, Quest_t*>::Select(quests[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Quests_t<Base_t, Loaded_Actor_t> : public Selectable_Quests_i<Base_t, Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Selectable_Quests_t() :
+            Selectable_Quests_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item.Is_Valid()) {
+                Selectable_Quests_t<Base_t, Actor_t*>::Select(item.actor, output);
+            }
+        }
+    };
+
+    /* Relations */
+
     template <typename Base_t, typename Item_t>
     class Selectable_Relations_i : public Selectable_Data_t<Base_t, Item_t>
     {
@@ -1119,36 +1137,6 @@ namespace doticu_npcl { namespace MCM {
             Relation_e relation = Relation_e::Between(item, base_to_compare);
             if (relation != Relation_e::NONE) {
                 output.push_back(std::string(" ") + Relation_e::To_String(relation) + " ");
-            }
-        }
-    };
-
-    template <typename Base_t>
-    class Selectable_Relations_t<Base_t, Leveled_Actor_Base_t*> : public Selectable_Relations_i<Base_t, Leveled_Actor_Base_t*>
-    {
-    public:
-        using Item_t = Leveled_Actor_Base_t*;
-
-    public:
-        Selectable_Relations_t(Actor_Base_t* base_to_compare) :
-            Selectable_Relations_i<Base_t, Item_t>(&Select, base_to_compare)
-        {
-        }
-
-        static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
-        {
-            Vector_t<Actor_Base_t*> actor_bases = item->Actor_Bases();
-            for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                Actor_Base_t* actor_base = actor_bases[idx];
-                if (actor_base) {
-                    Relation_e relation = Relation_e::Between(actor_base, base_to_compare);
-                    if (relation != Relation_e::NONE) {
-                        String_t relation_name = std::string(" ") + Relation_e::To_String(relation) + " ";
-                        if (!output.Has(relation_name)) {
-                            output.push_back(relation_name);
-                        }
-                    }
-                }
             }
         }
     };
@@ -1216,6 +1204,109 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item.Is_Valid()) {
                 Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(item.actor->Actor_Base(), base_to_compare, output);
+            }
+        }
+    };
+
+    /* Vitalities */
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Vitalities_i : public Selectable_Data_t<Base_t, Item_t>
+    {
+    public:
+        Selectable_Vitalities_i(Select_f select_f) :
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Vitality_Argument, &Filter_t::Vitality_Argument, select_f)
+        {
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Vitalities_t : public Selectable_Vitalities_i<Base_t, Item_t>
+    {
+    };
+
+    template <typename Base_t>
+    class Selectable_Vitalities_t<Base_t, Actor_Base_t*> : public Selectable_Vitalities_i<Base_t, Actor_Base_t*>
+    {
+    public:
+        using Item_t = Actor_Base_t*;
+
+    public:
+        Selectable_Vitalities_t() :
+            Selectable_Vitalities_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vitality_e vitality = item->Vitality();
+                if (vitality != Vitality_e::NONE) {
+                    output.push_back(Main_t::To_Vitality_Key(vitality)());
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Vitalities_t<Base_t, Cached_Leveled_t*> : public Selectable_Vitalities_i<Base_t, Cached_Leveled_t*>
+    {
+    public:
+        using Item_t = Cached_Leveled_t*;
+
+    public:
+        Selectable_Vitalities_t() :
+            Selectable_Vitalities_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item->leveled && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Vitalities_t<Base_t, Actor_t*> : public Selectable_Vitalities_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Vitalities_t() :
+            Selectable_Vitalities_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Vitalities_t<Base_t, Loaded_Actor_t> : public Selectable_Vitalities_i<Base_t, Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Selectable_Vitalities_t() :
+            Selectable_Vitalities_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item.Is_Valid()) {
+                Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(item.actor->Actor_Base(), output);
             }
         }
     };
