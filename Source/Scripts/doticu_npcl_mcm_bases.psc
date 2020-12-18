@@ -46,3 +46,11 @@ bool    p_options_do_static_spawns          =    true
 string  p_item_nested_view                  =      ""
 int     p_item_nested_index                 =      -1
 int     p_item_nested_form                  =      -1
+
+bool    p_item_do_show_bases                =   false
+bool    p_item_do_show_commands             =   false
+bool    p_item_do_show_factions             =   false
+bool    p_item_do_show_keywords             =   false
+bool    p_item_do_show_mods                 =   false
+bool    p_item_do_show_races                =   false
+bool    p_item_do_show_templates            =   false

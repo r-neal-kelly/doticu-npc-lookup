@@ -164,11 +164,13 @@ namespace doticu_npcl { namespace MCM {
 
     void Leveled_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
         if (!is_refresh) {
             do_update_items = true;
         }
+
+        Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -316,6 +318,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LEVELED_BASES, Main_t::COMPONENT_FILTER));
         } else {
@@ -337,6 +341,8 @@ namespace doticu_npcl { namespace MCM {
     void Leveled_Bases_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LEVELED_BASES, Main_t::COMPONENT_OPTIONS));
@@ -418,6 +424,16 @@ namespace doticu_npcl { namespace MCM {
             }
         } else {
             return none<Item_t>();
+        }
+    }
+
+    Bool_t Leveled_Bases_Item_t::Current_Item(Item_t item)
+    {
+        if (item && item->leveled && item->leveled->Is_Valid()) {
+            Leveled_Form_ID(item->leveled->form_id);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -542,6 +558,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         maybe<Leveled_Actor_Base_t*> leveled = static_cast<maybe<Leveled_Actor_Base_t*>>(Game_t::Form(Leveled_Form_ID()));
         if (leveled && leveled->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
@@ -581,6 +599,8 @@ namespace doticu_npcl { namespace MCM {
     void Leveled_Bases_Item_t::On_Page_Open_Bases(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         Item_t item = Current_Item();
         if (item && item->leveled && item->leveled->Is_Valid()) {
@@ -654,6 +674,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         Item_t current_item = Current_Item();
         if (current_item && current_item->leveled && current_item->leveled->Is_Valid()) {
             maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
@@ -716,43 +738,25 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Primary_Option()) {
+        if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
-            Spawn(Current_Item()->leveled);
-        } else if (option == Previous_Option()) {
-            mcm->Disable_Option(option);
-            Item_t item = Previous_Item();
-            if (item) {
-                Leveled_Form_ID(item->leveled->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-        } else if (option == Next_Option()) {
-            mcm->Disable_Option(option);
-            Item_t item = Next_Item();
-            if (item) {
-                Leveled_Form_ID(item->leveled->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
+            Spawn(Item()->Current_Item());
+            mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == View_Bases_Option()) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::BASES);
             Nested_Index(0);
             mcm->Reset_Page();
-        }
+            mcm->Destroy_Latent_Callback(lcallback);
 
-        mcm->Destroy_Latent_Callback(lcallback);
+        } else if (Try_On_Option_Select(option, lcallback)) {
+            return;
+
+        } else {
+            mcm->Destroy_Latent_Callback(lcallback);
+
+        }
     }
 
     void Leveled_Bases_Item_t::On_Option_Select_Bases(Int_t option, Latent_Callback_i* lcallback)
@@ -843,10 +847,12 @@ namespace doticu_npcl { namespace MCM {
             Nested_View(Bases_Item_View_e::BASES);
             Nested_Form(0);
             mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
             Spawn(Current_Nested_Item());
+            mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Previous_Option()) {
             mcm->Disable_Option(option);
@@ -858,6 +864,7 @@ namespace doticu_npcl { namespace MCM {
                 Nested_Form(0);
             }
             mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Next_Option()) {
             mcm->Disable_Option(option);
@@ -869,10 +876,15 @@ namespace doticu_npcl { namespace MCM {
                 Nested_Form(0);
             }
             mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
+
+        } else if (Try_On_Option_Select(option, lcallback)) {
+            return;
+
+        } else {
+            mcm->Destroy_Latent_Callback(lcallback);
 
         }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void Leveled_Bases_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)

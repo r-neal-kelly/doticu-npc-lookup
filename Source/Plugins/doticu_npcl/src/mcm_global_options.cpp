@@ -23,6 +23,13 @@ namespace doticu_npcl { namespace MCM {
     Int_t&              Global_Options_t::Prioritize_MCM_Menu_Option()          { DEFINE_OPTION(); }
     Int_t&              Global_Options_t::Translate_Page_Titles_Option()        { DEFINE_OPTION(); }
 
+    void Global_Options_t::Reset_Option_Ints()
+    {
+        Reset_Option()                  = -1;
+        Prioritize_MCM_Menu_Option()    = -1;
+        Translate_Page_Titles_Option()  = -1;
+    }
+
     V::Bool_Variable_t* Global_Options_t::Prioritize_MCM_Menu_Variable()        { DEFINE_BOOL_VARIABLE("p_prioritize_mcm_menu"); }
     V::Bool_Variable_t* Global_Options_t::Translate_Page_Titles_Variable()      { DEFINE_BOOL_VARIABLE("p_translate_page_titles"); }
 
@@ -79,6 +86,8 @@ namespace doticu_npcl { namespace MCM {
     void Global_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);

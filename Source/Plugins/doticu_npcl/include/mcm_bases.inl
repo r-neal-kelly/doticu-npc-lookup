@@ -219,6 +219,15 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_List_t<B, I>::Next_Page_Option()      { DEFINE_OPTION(); }
 
     template <typename B, typename I>
+    inline void Bases_List_t<B, I>::Reset_Option_Ints()
+    {
+        Filter_Option()         = -1;
+        Options_Option()        = -1;
+        Previous_Page_Option()  = -1;
+        Next_Page_Option()      = -1;
+    }
+
+    template <typename B, typename I>
     inline V::Int_Variable_t*   Bases_List_t<B, I>::Page_Index_Variable()   { DEFINE_INT("p_list_page_index"); }
 
     template <typename B, typename I>
@@ -355,6 +364,49 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Filter_t<B, I>::Unique_Option()           { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Filter_t<B, I>::Generic_Option()          { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline void Bases_Filter_t<B, I>::Reset_Option_Ints()
+    {
+        Back_Option()               = -1;
+        Clear_Option()              = -1;
+
+        Mod_Search_Option()         = -1;
+        Mod_Select_Option()         = -1;
+        Mod_Negate_Option()         = -1;
+
+        Race_Search_Option()        = -1;
+        Race_Select_Option()        = -1;
+        Race_Negate_Option()        = -1;
+
+        Base_Search_Option()        = -1;
+        Base_Select_Option()        = -1;
+        Base_Negate_Option()        = -1;
+
+        Template_Search_Option()    = -1;
+        Template_Select_Option()    = -1;
+        Template_Negate_Option()    = -1;
+
+        Faction_Search_Option()     = -1;
+        Faction_Select_Option()     = -1;
+        Faction_Negate_Option()     = -1;
+
+        Keyword_Search_Option()     = -1;
+        Keyword_Select_Option()     = -1;
+        Keyword_Negate_Option()     = -1;
+
+        Relation_Select_Option()    = -1;
+        Relation_Negate_Option()    = -1;
+
+        Vitality_Select_Option()    = -1;
+        Vitality_Negate_Option()    = -1;
+
+        Male_Option()               = -1;
+        Female_Option()             = -1;
+
+        Unique_Option()             = -1;
+        Generic_Option()            = -1;
+    }
 
     template <typename B, typename I>
     inline V::String_Variable_t*    Bases_Filter_t<B, I>::Mod_Argument_Variable()               { DEFINE_STRING("p_filter_mod_argument"); }
@@ -1023,6 +1075,18 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option()       { DEFINE_OPTION(); }
 
     template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::Reset_Option_Ints()
+    {
+        Back_Option()               = -1;
+        Reset_Option()              = -1;
+
+        Smart_Select_Option()       = -1;
+        Uncombative_Spawns_Option() = -1;
+        Persistent_Spawns_Option()  = -1;
+        Static_Spawns_Option()      = -1;
+    }
+
+    template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Smart_Select_Variable()       { DEFINE_BOOL("p_options_do_smart_select"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*  Bases_Options_t<B, I>::Do_Uncombative_Spawns_Variable() { DEFINE_BOOL("p_options_do_uncombative_spawns"); }
@@ -1035,14 +1099,17 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Select()                    { return Do_Smart_Select_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Smart_Select(Bool_t value)        { Do_Smart_Select_Variable()->Value(value); }
+
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Uncombative_Spawns()              { return Do_Uncombative_Spawns_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Uncombative_Spawns(Bool_t value)  { Do_Uncombative_Spawns_Variable()->Value(value); }
+
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Persistent_Spawns()               { return Do_Persistent_Spawns_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Persistent_Spawns(Bool_t value)   { Do_Persistent_Spawns_Variable()->Value(value); }
+
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Static_Spawns()                   { return Do_Static_Spawns_Variable()->Value(); }
     template <typename B, typename I>
@@ -1129,28 +1196,81 @@ namespace doticu_npcl { namespace MCM {
 namespace doticu_npcl { namespace MCM {
 
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Back_Option()       { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::Back_Option()                   { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()    { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()                { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Previous_Option()   { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::Previous_Option()               { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Next_Option()       { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::Next_Option()                   { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::View_Item_Option()  { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::View_Item_Option()              { DEFINE_OPTION(); }
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option() { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Race_Name_Option()  { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Cell_Name_Option()  { DEFINE_OPTION(); }
+    inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option()             { DEFINE_OPTION(); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Item_t<B, I>::Nested_View_Variable()    { DEFINE_STRING("p_item_nested_view"); }
+    Int_t Bases_Item_t<B, I>::show_bases_option     = -1;
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Index_Variable()   { DEFINE_INT("p_item_nested_index"); }
+    Int_t Bases_Item_t<B, I>::show_commands_option  = -1;
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Form_Variable()   { DEFINE_INT("p_item_nested_form"); }
+    Int_t Bases_Item_t<B, I>::show_factions_option  = -1;
+    template <typename B, typename I>
+    Int_t Bases_Item_t<B, I>::show_keywords_option  = -1;
+    template <typename B, typename I>
+    Int_t Bases_Item_t<B, I>::show_mods_option      = -1;
+    template <typename B, typename I>
+    Int_t Bases_Item_t<B, I>::show_races_option     = -1;
+    template <typename B, typename I>
+    Int_t Bases_Item_t<B, I>::show_templates_option = -1;
+
+    template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::Race_Name_Option()              { DEFINE_OPTION(); }
+    template <typename B, typename I>
+    inline Int_t&   Bases_Item_t<B, I>::Cell_Name_Option()              { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Reset_Option_Ints()
+    {
+        Back_Option()                   = -1;
+        Primary_Option()                = -1;
+        Previous_Option()               = -1;
+        Next_Option()                   = -1;
+        View_Item_Option()              = -1;
+        View_Bases_Option()             = -1;
+
+        show_bases_option               = -1;
+        show_commands_option            = -1;
+        show_factions_option            = -1;
+        show_keywords_option            = -1;
+        show_mods_option                = -1;
+        show_races_option               = -1;
+        show_templates_option           = -1;
+
+        Race_Name_Option()              = -1;
+        Cell_Name_Option()              = -1;
+    }
+
+    template <typename B, typename I>
+    inline V::String_Variable_t*    Bases_Item_t<B, I>::Nested_View_Variable()          { DEFINE_STRING("p_item_nested_view"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Index_Variable()         { DEFINE_INT("p_item_nested_index"); }
+    template <typename B, typename I>
+    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Form_Variable()          { DEFINE_INT("p_item_nested_form"); }
+
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Bases_Variable()        { DEFINE_BOOL("p_item_do_show_bases"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Commands_Variable()     { DEFINE_BOOL("p_item_do_show_commands"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Factions_Variable()     { DEFINE_BOOL("p_item_do_show_factions"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Keywords_Variable()     { DEFINE_BOOL("p_item_do_show_keywords"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Mods_Variable()         { DEFINE_BOOL("p_item_do_show_mods"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Races_Variable()        { DEFINE_BOOL("p_item_do_show_races"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Templates_Variable()    { DEFINE_BOOL("p_item_do_show_templates"); }
 
     template <typename B, typename I>
     inline Bases_Item_View_e Bases_Item_t<B, I>::Nested_View()
@@ -1192,6 +1312,41 @@ namespace doticu_npcl { namespace MCM {
     inline void         Bases_Item_t<B, I>::Nested_Form(Form_ID_t value)    { Nested_Form_Variable()->Value(value); }
 
     template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Bases()                 { return Do_Show_Bases_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Bases(Bool_t value)     { Do_Show_Bases_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Commands()              { return Do_Show_Commands_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Commands(Bool_t value)  { Do_Show_Commands_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Factions()              { return Do_Show_Factions_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Factions(Bool_t value)  { Do_Show_Factions_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Keywords()              { return Do_Show_Keywords_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Keywords(Bool_t value)  { Do_Show_Keywords_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Mods()                  { return Do_Show_Mods_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Mods(Bool_t value)      { Do_Show_Mods_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Races()                 { return Do_Show_Races_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Races(Bool_t value)     { Do_Show_Races_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Templates()             { return Do_Show_Templates_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void         Bases_Item_t<B, I>::Do_Show_Templates(Bool_t value) { Do_Show_Templates_Variable()->Value(value); }
+
+    template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Spawn(Actor_Base_t* base)
     {
         auto* options = Options();
@@ -1213,6 +1368,13 @@ namespace doticu_npcl { namespace MCM {
             options->Do_Static_Spawns()
         );
     }
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Spawn(Cached_Leveled_t* cached_leveled)
+    {
+        if (cached_leveled) {
+            Spawn(cached_leveled->leveled);
+        }
+    }
 
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Base(Actor_Base_t* base, const char* type_name)
@@ -1220,22 +1382,35 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (base && base->Is_Valid()) {
-            mcm->Add_Header_Option(type_name);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            {
-                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_);
-                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_);
+            if (Do_Show_Bases()) {
+                if (mcm->Can_Add_Options(2 + 4)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, type_name);
+                    show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                if (base->Is_Male()) {
-                    mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
-                } else {
-                    mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_);
+
+                    if (base->Is_Male()) {
+                        mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                    }
+                    if (base->Is_Unique()) {
+                        mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                    }
                 }
-                if (base->Is_Unique()) {
-                    mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
-                } else {
-                    mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, type_name);
+                    show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
                 }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, type_name, Flag_e::DISABLE);
+                show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Bases(), Flag_e::DISABLE);
             }
         }
     }
@@ -1246,22 +1421,41 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         size_t count = factions_and_ranks.size();
-        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
-            mcm->Add_Header_Option(Main_t::FACTIONS);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
-                Faction_t* faction = faction_and_rank.faction;
-                skylib::Faction_Rank_t rank = faction_and_rank.rank;
-                if (faction && faction->Is_Valid()) {
-                    mcm->Add_Text_Option(
-                        std::string(Main_t::_SPACE_) + faction->Editor_ID() + ": " + std::to_string(rank),
-                        Main_t::_NONE_
-                    );
+        if (count > 0) {
+            if (Do_Show_Factions()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::FACTIONS);
+                    show_factions_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    factions_and_ranks.Sort(Faction_And_Rank_t::Compare_Editor_Or_Form_IDs);
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                        Faction_t* faction = faction_and_rank.faction;
+                        skylib::Faction_Rank_t rank = faction_and_rank.rank;
+                        if (faction && faction->Is_Valid()) {
+                            std::string label =
+                                std::string(Main_t::_SPACE_) +
+                                faction->Editor_Or_Form_ID().data +
+                                Main_t::_COLON_SPACE_ +
+                                std::to_string(rank);
+                            mcm->Add_Text_Option(label, Main_t::_NONE_);
+                        }
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::FACTIONS);
+                    show_factions_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
                 }
             }
-            if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                mcm->Add_Empty_Option();
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::FACTIONS, Flag_e::DISABLE);
+                show_factions_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Factions(), Flag_e::DISABLE);
             }
         }
     }
@@ -1280,6 +1474,8 @@ namespace doticu_npcl { namespace MCM {
             Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
             Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
         }
+        mcm->Add_Header_Option("");
+        mcm->Add_Header_Option("");
     }
 
     template <typename B, typename I>
@@ -1288,17 +1484,34 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         size_t count = keywords.size();
-        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
-            mcm->Add_Header_Option(Main_t::KEYWORDS);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                Keyword_t* keyword = keywords[idx];
-                if (keyword && keyword->Is_Valid()) {
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name().data, Main_t::_NONE_);
+        if (count > 0) {
+            if (Do_Show_Keywords()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::KEYWORDS);
+                    show_keywords_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    keywords.Sort(Keyword_t::Compare_Any_Names);
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Keyword_t* keyword = keywords[idx];
+                        if (keyword && keyword->Is_Valid()) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name().data, Main_t::_NONE_);
+                        }
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::KEYWORDS);
+                    show_keywords_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
                 }
             }
-            if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                mcm->Add_Empty_Option();
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::KEYWORDS, Flag_e::DISABLE);
+                show_keywords_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Keywords(), Flag_e::DISABLE);
             }
         }
     }
@@ -1309,13 +1522,27 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (leveled_base && leveled_base->Is_Valid()) {
-            mcm->Add_Header_Option(Main_t::LEVELED_BASE);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            {
-                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_);
-                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_);
-                View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_);
-                mcm->Add_Empty_Option();
+            if (Do_Show_Bases()) {
+                if (mcm->Can_Add_Options(2 + 4)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LEVELED_BASE);
+                    show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_);
+
+                    View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_);
+                    mcm->Add_Empty_Option();
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LEVELED_BASE);
+                    show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LEVELED_BASE, Flag_e::DISABLE);
+                show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Bases(), Flag_e::DISABLE);
             }
         }
     }
@@ -1326,14 +1553,30 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         size_t count = mod_names.size();
-        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
-            mcm->Add_Header_Option(Main_t::MODS);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
+        if (count > 0) {
+            if (Do_Show_Mods()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::MODS);
+                    show_mods_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::MODS);
+                    show_mods_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
             }
-            if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                mcm->Add_Empty_Option();
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::MODS, Flag_e::DISABLE);
+                show_mods_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Mods(), Flag_e::DISABLE);
             }
         }
     }
@@ -1344,10 +1587,25 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (race && race->Is_Valid()) {
-            mcm->Add_Header_Option(Main_t::RACE);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
-            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
+            if (Do_Show_Races()) {
+                if (mcm->Can_Add_Options(2 + 2)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::RACE);
+                    show_races_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::RACE);
+                    show_races_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::RACE, Flag_e::DISABLE);
+                show_races_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Races(), Flag_e::DISABLE);
+            }
         }
     }
 
@@ -1357,21 +1615,103 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         size_t count = templates.size();
-        if (count > 0 && mcm->Can_Add_Options(2 + count)) {
-            mcm->Add_Header_Option(Main_t::TEMPLATES);
-            mcm->Add_Header_Option(Main_t::_NONE_);
-            for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                Actor_Base_t* base_template = templates[idx];
-                const char* name = base_template->Name();
-                const char* form_id = base_template->Form_ID_String().data;
-                mcm->Add_Text_Option(
-                    std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
-                    Main_t::_NONE_
-                );
+        if (count > 0) {
+            if (Do_Show_Templates()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::TEMPLATES);
+                    show_templates_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Actor_Base_t* base_template = templates[idx];
+                        const char* name = base_template->Name();
+                        const char* form_id = base_template->Form_ID_String().data;
+                        mcm->Add_Text_Option(
+                            std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
+                            Main_t::_NONE_
+                        );
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::TEMPLATES);
+                    show_templates_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
             }
-            if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                mcm->Add_Empty_Option();
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::TEMPLATES, Flag_e::DISABLE);
+                show_templates_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Templates(), Flag_e::DISABLE);
             }
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (option == Back_Option()) {
+            mcm->Disable_Option(option);
+            List()->do_update_items = true;
+            Current_View(Bases_View_e::LIST);
+            mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
+            return true;
+
+        } else if (option == Previous_Option()) {
+            mcm->Disable_Option(option);
+            if (!Item()->Current_Item(Item()->Previous_Item())) {
+                List()->do_update_items = true;
+                Current_View(Bases_View_e::LIST);
+            }
+            mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
+            return true;
+
+        } else if (option == Next_Option()) {
+            mcm->Disable_Option(option);
+            if (!Item()->Current_Item(Item()->Next_Item())) {
+                List()->do_update_items = true;
+                Current_View(Bases_View_e::LIST);
+            }
+            mcm->Reset_Page();
+            mcm->Destroy_Latent_Callback(lcallback);
+            return true;
+
+        } else if (option == show_bases_option || option == show_bases_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Bases_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_commands_option || option == show_commands_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Commands_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_factions_option || option == show_factions_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Factions_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_keywords_option || option == show_keywords_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Keywords_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_mods_option || option == show_mods_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Mods_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_races_option || option == show_races_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Races_Variable(), lcallback);
+            return true;
+
+        } else if (option == show_templates_option || option == show_templates_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Templates_Variable(), lcallback);
+            return true;
+
+        } else {
+            return false;
         }
     }
 

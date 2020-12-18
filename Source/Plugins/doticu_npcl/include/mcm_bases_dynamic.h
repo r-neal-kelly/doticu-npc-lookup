@@ -94,6 +94,7 @@ namespace doticu_npcl { namespace MCM {
 
     public:
         Item_t  Current_Item();
+        Bool_t  Current_Item(Item_t item);
         Item_t  Previous_Item();
         Item_t  Next_Item();
 

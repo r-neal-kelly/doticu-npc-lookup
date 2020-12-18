@@ -163,11 +163,13 @@ namespace doticu_npcl { namespace MCM {
 
     void Spawned_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
         if (!is_refresh) {
             do_update_items = true;
         }
+
+        Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -315,6 +317,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_SPAWNED_REFERENCES, Main_t::COMPONENT_FILTER));
         } else {
@@ -333,7 +337,14 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    Int_t&              Spawned_References_Options_t::Do_Verify_Unspawns_Option()       { DEFINE_OPTION(); }
+    Int_t& Spawned_References_Options_t::Do_Verify_Unspawns_Option() { DEFINE_OPTION(); }
+
+    void Spawned_References_Options_t::Reset_Option_Ints()
+    {
+        References_Options_t<Spawned_References_Base_t, Item_t>::Reset_Option_Ints();
+
+        Do_Verify_Unspawns_Option() = -1;
+    }
 
     V::Bool_Variable_t* Spawned_References_Options_t::Do_Verify_Unspawns_Variable()     { DEFINE_BOOL_VARIABLE("p_options_do_verify_unspawns"); }
 
@@ -350,6 +361,8 @@ namespace doticu_npcl { namespace MCM {
     void Spawned_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_SPAWNED_REFERENCES, Main_t::COMPONENT_OPTIONS));
@@ -430,6 +443,16 @@ namespace doticu_npcl { namespace MCM {
             return item;
         } else {
             return nullptr;
+        }
+    }
+
+    Bool_t Spawned_References_Item_t::Current_Item(Item_t item)
+    {
+        if (item && item->Is_Valid()) {
+            Actor_Form_ID(item->form_id);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -552,6 +575,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
@@ -575,7 +600,7 @@ namespace doticu_npcl { namespace MCM {
                 Build_Race(item->Race());
                 Build_Bases(item->Actor_Bases());
                 Build_Cell(item->Cell());
-                Build_Locations(item->Cell());
+                Build_Locations(item->Locations());
                 Build_Factions_And_Ranks(item->Factions_And_Ranks());
                 Build_Keywords(item->Keywords());
                 Build_Quests(item->Quests());
@@ -598,39 +623,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-            mcm->Destroy_Latent_Callback(lcallback);
-
-        } else if (option == Primary_Option()) {
+        if (option == Primary_Option()) {
             Select_Unspawn(mcm, option, lcallback);
-
-        } else if (option == Previous_Option()) {
-            mcm->Disable_Option(option);
-            Item_t item = Previous_Item();
-            if (item && item->Is_Valid()) {
-                Actor_Form_ID(item->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-            mcm->Destroy_Latent_Callback(lcallback);
-
-        } else if (option == Next_Option()) {
-            mcm->Disable_Option(option);
-            Item_t item = Next_Item();
-            if (item && item->Is_Valid()) {
-                Actor_Form_ID(item->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-            mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Mark_On_Map_Option()) {
             mcm->Flicker_Option(option);
@@ -699,8 +693,12 @@ namespace doticu_npcl { namespace MCM {
             }
             mcm->Destroy_Latent_Callback(lcallback);
 
+        } else if (Try_On_Option_Select(option, lcallback)) {
+            return;
+
         } else {
             mcm->Destroy_Latent_Callback(lcallback);
+
         }
     }
 

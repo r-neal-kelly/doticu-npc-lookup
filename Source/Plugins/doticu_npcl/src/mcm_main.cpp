@@ -25,6 +25,9 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    const String_t Main_t::_TEXT_DIVIDER_   = Main_t::Add_Font("_______________________",   "", "#80",  "27");
+    const String_t Main_t::_TOGGLE_DIVIDER_ = Main_t::Add_Font("_____________________",     "", "#80",  "27");
+
     some<const char*> Main_t::To_Vitality_Key(Vitality_e vitality)
     {
         if (vitality == Vitality_e::MORTAL) {
@@ -180,6 +183,21 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
+    void Main_t::Toggle_And_Reset(V::Variable_t* variable, Latent_Callback_i* lcallback)
+    {
+        variable->Bool(!variable->Bool());
+        Reset_Page();
+        Destroy_Latent_Callback(lcallback);
+    }
+
+    void Main_t::Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback)
+    {
+        Bool_t value = variable->Bool();
+        variable->Bool(!value);
+        Toggle_Option_Value(option, !value);
+        Destroy_Latent_Callback(lcallback);
+    }
+
     Bool_t Main_t::Should_Translate_Page_Titles()
     {
         return Global_Options_t::Self()->Translate_Page_Titles(); // maybe add a non english check here.
@@ -261,17 +279,17 @@ namespace doticu_npcl { namespace MCM {
 
     std::string Main_t::Singular_Title(const char* singular_name, const char* sub_title)
     {
-        return std::string(singular_name) + ": " + sub_title;
+        return std::string(singular_name) + _COLON_SPACE_ + sub_title;
     }
 
     std::string Main_t::Singular_Title(const char* singular_name, const char* item_name, Int_t item_index, Int_t item_count)
     {
         std::string name =
-            std::string(singular_name) + ": " +
+            std::string(singular_name) + _COLON_SPACE_ +
             item_name;
 
         std::string items =
-            std::string(SAFE_COMPONENT_ITEM) + ": " +
+            std::string(SAFE_COMPONENT_ITEM) + _COLON_SPACE_ +
             std::to_string(item_index + 1) + "/" +
             std::to_string(item_count);
 
@@ -280,13 +298,13 @@ namespace doticu_npcl { namespace MCM {
 
     std::string Main_t::Plural_Title(const char* plural_name, const char* sub_title)
     {
-        return std::string(plural_name) + ": " + sub_title;
+        return std::string(plural_name) + _COLON_SPACE_ + sub_title;
     }
 
     std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count)
     {
         std::string items =
-            std::string(plural_name) + ": " +
+            std::string(plural_name) + _COLON_SPACE_ +
             std::to_string(item_count);
 
         return items;
@@ -295,7 +313,7 @@ namespace doticu_npcl { namespace MCM {
     std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count, Int_t item_max)
     {
         std::string items =
-            std::string(plural_name) + ": " +
+            std::string(plural_name) + _COLON_SPACE_ +
             std::to_string(item_count) + "/" +
             std::to_string(item_max);
 
@@ -305,11 +323,11 @@ namespace doticu_npcl { namespace MCM {
     std::string Main_t::Plural_Title(const char* plural_name, Int_t item_count, Int_t page_index, Int_t page_count)
     {
         std::string items =
-            std::string(plural_name) + ": " +
+            std::string(plural_name) + _COLON_SPACE_ +
             std::to_string(item_count);
 
         std::string pages =
-            std::string(SAFE_COMPONENT_PAGE) + ": " +
+            std::string(SAFE_COMPONENT_PAGE) + _COLON_SPACE_ +
             std::to_string(page_index + 1) + "/" +
             std::to_string(page_count);
 

@@ -149,8 +149,7 @@ namespace doticu_npcl {
 
     Bool_t Main_t::Is_Active()
     {
-        Mod_t* npcl_mod = Consts_t::NPCL_Mod();
-        return npcl_mod && npcl_mod->Is_Active();
+        return Consts_t::NPCL_Mod() != nullptr;
     }
 
     Bool_t Main_t::Is_Installed()

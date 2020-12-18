@@ -100,6 +100,8 @@ namespace doticu_npcl { namespace MCM {
     public:
         Int_t&              Do_Verify_Unspawns_Option();
 
+        void                Reset_Option_Ints();
+
     public:
         V::Bool_Variable_t* Do_Verify_Unspawns_Variable();
 
@@ -131,6 +133,7 @@ namespace doticu_npcl { namespace MCM {
 
     public:
         Item_t  Current_Item();
+        Bool_t  Current_Item(Item_t item);
         Item_t  Previous_Item();
         Item_t  Next_Item();
 

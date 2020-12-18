@@ -62,11 +62,16 @@ namespace doticu_npcl { namespace MCM {
 
     using Latent_Callback_i = Callback_i<>;
 
-    class Main_t : public mcmlib::Config_Base_t {
+    class Main_t : public mcmlib::Config_Base_t
+    {
     public:
         static constexpr const char*    _NONE_                              = "";
         static constexpr const char*    _SPACE_                             = " ";
         static constexpr const char*    _SPACED_DASH_                       = " - ";
+        static constexpr const char*    _COLON_SPACE_                       = ": ";
+
+        static const String_t   _TEXT_DIVIDER_;
+        static const String_t   _TOGGLE_DIVIDER_;
 
         static constexpr const char*    STATIC_BASE                         = "$dnpcl_static_base";
         static constexpr const char*    DYNAMIC_BASE                        = "$dnpcl_dynamic_base";
@@ -274,6 +279,9 @@ namespace doticu_npcl { namespace MCM {
 
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
+
+        void                Toggle_And_Reset(V::Variable_t* variable, Latent_Callback_i* lcallback);
+        void                Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
 
         Bool_t              Should_Translate_Page_Titles();
         std::wstring        Translation(const wchar_t* key);

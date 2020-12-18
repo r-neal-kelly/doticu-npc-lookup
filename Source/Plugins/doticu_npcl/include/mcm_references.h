@@ -61,6 +61,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Is_Teammate_Option();
         Int_t&  Isnt_Teammate_Option();
 
+        void    Reset_Option_Ints();
+
     public:
         V::String_Variable_t*   Reference_Argument_Variable();
         V::Bool_Variable_t*     Reference_Do_Negate_Variable();
@@ -154,18 +156,43 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_t : public Bases_Item_t<Base_t, Item_t>
     {
     public:
+        static Int_t show_cells_option;
+        static Int_t show_locations_option;
+        static Int_t show_quests_option;
+        static Int_t show_references_option;
+
         Int_t&  Select_In_Console_Option();
         Int_t&  Mark_On_Map_Option();
         Int_t&  Move_To_Player_Option();
         Int_t&  Go_To_Reference_Option();
         Int_t&  Enable_Disable_Option();
 
+        void    Reset_Option_Ints();
+
+    public:
+        V::Bool_Variable_t* Do_Show_Cells_Variable();
+        V::Bool_Variable_t* Do_Show_Locations_Variable();
+        V::Bool_Variable_t* Do_Show_Quests_Variable();
+        V::Bool_Variable_t* Do_Show_References_Variable();
+
+    public:
+        Bool_t  Do_Show_Cells();
+        void    Do_Show_Cells(Bool_t value);
+        Bool_t  Do_Show_Locations();
+        void    Do_Show_Locations(Bool_t value);
+        Bool_t  Do_Show_Quests();
+        void    Do_Show_Quests(Bool_t value);
+        Bool_t  Do_Show_References();
+        void    Do_Show_References(Bool_t value);
+
     public:
         void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);
         void    Build_Cell(Cell_t* cell);
-        void    Build_Locations(Cell_t* cell);
+        void    Build_Locations(Vector_t<Location_t*> locations);
         void    Build_Quests(Vector_t<Quest_t*> quests);
         void    Build_Reference(Actor_t* actor, const char* type_name);
+
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

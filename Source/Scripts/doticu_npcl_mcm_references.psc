@@ -21,3 +21,9 @@ bool    p_filter_quest_do_negate            =   false
 int     p_filter_interior_exterior_argument =       0
 int     p_filter_alive_dead_argument        =       0
 int     p_filter_is_teammate_argument       =       0
+
+; Item
+bool    p_item_do_show_cells                =   false
+bool    p_item_do_show_locations            =   false
+bool    p_item_do_show_quests               =   false
+bool    p_item_do_show_references           =   false

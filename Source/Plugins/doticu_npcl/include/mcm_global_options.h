@@ -21,6 +21,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Prioritize_MCM_Menu_Option();
         Int_t&  Translate_Page_Titles_Option();
 
+        void    Reset_Option_Ints();
+
     public:
         V::Bool_Variable_t* Prioritize_MCM_Menu_Variable();
         V::Bool_Variable_t* Translate_Page_Titles_Variable();

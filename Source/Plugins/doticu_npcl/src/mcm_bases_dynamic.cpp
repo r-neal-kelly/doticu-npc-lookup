@@ -96,11 +96,13 @@ namespace doticu_npcl { namespace MCM {
 
     void Dynamic_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
         if (!is_refresh) {
             do_update_items = true;
         }
+
+        Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -248,6 +250,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_FILTER));
         } else {
@@ -269,6 +273,8 @@ namespace doticu_npcl { namespace MCM {
     void Dynamic_Bases_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_DYNAMIC_BASES, Main_t::COMPONENT_OPTIONS));
@@ -346,6 +352,16 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    Bool_t Dynamic_Bases_Item_t::Current_Item(Item_t item)
+    {
+        if (item && item->Is_Valid()) {
+            Dynamic_Form_ID(item->form_id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     Item_t Dynamic_Bases_Item_t::Previous_Item()
     {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Dynamic_Form_ID()));
@@ -392,6 +408,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Dynamic_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
@@ -435,37 +453,18 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Primary_Option()) {
+        if (option == Primary_Option()) {
             mcm->Flicker_Option(option);
-            Spawn(Current_Item());
-        } else if (option == Previous_Option()) {
-            mcm->Disable_Option(option);
-            Actor_Base_t* actor_base = Previous_Item();
-            if (actor_base) {
-                Dynamic_Form_ID(actor_base->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-        } else if (option == Next_Option()) {
-            mcm->Disable_Option(option);
-            Actor_Base_t* actor_base = Next_Item();
-            if (actor_base) {
-                Dynamic_Form_ID(actor_base->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-        }
+            Spawn(Item()->Current_Item());
+            mcm->Destroy_Latent_Callback(lcallback);
 
-        mcm->Destroy_Latent_Callback(lcallback);
+        } else if (Try_On_Option_Select(option, lcallback)) {
+            return;
+
+        } else {
+            mcm->Destroy_Latent_Callback(lcallback);
+
+        }
     }
 
     void Dynamic_Bases_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)

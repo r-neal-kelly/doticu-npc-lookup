@@ -91,11 +91,13 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
         if (!is_refresh) {
             do_update_items = true;
         }
+
+        Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -244,6 +246,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_FILTER));
         } else {
@@ -265,6 +269,8 @@ namespace doticu_npcl { namespace MCM {
     void Loaded_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
+
+        Reset_Option_Ints();
 
         if (mcm->Should_Translate_Page_Titles()) {
             mcm->Translated_Title_Text(mcm->Plural_Title(Main_t::COMPONENT_LOADED_REFERENCES, Main_t::COMPONENT_OPTIONS));
@@ -330,6 +336,17 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    Bool_t Loaded_References_Item_t::Current_Item(Item_t item)
+    {
+        if (item.Is_Valid()) {
+            Actor_Form_ID(item.actor->form_id);
+            Cell_Form_ID(item.cell->form_id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     Item_t Loaded_References_Item_t::Previous_Item()
     {
         Item_t item(Actor_Form_ID(), Cell_Form_ID());
@@ -376,6 +393,8 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
+        Reset_Option_Ints();
+
         Item_t item(Actor_Form_ID(), Cell_Form_ID());
         if (item.Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
@@ -398,8 +417,8 @@ namespace doticu_npcl { namespace MCM {
                 Build_Reference(item.actor, Main_t::LOADED_REFERENCE);
                 Build_Race(item.actor->Race());
                 Build_Bases(item.actor->Actor_Bases());
-                Build_Cell(item.actor->Cell());
-                Build_Locations(item.actor->Cell());
+                Build_Cell(item.cell);
+                Build_Locations(item.cell->Locations());
                 Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
                 Build_Keywords(item.actor->Keywords());
                 Build_Quests(item.actor->Quests());
@@ -422,35 +441,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Previous_Option()) {
-            mcm->Disable_Option(option);
-            Loaded_Actor_t loaded_actor = Previous_Item();
-            if (loaded_actor.Is_Valid()) {
-                Actor_Form_ID(loaded_actor.actor->form_id);
-                Cell_Form_ID(loaded_actor.cell->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-        } else if (option == Next_Option()) {
-            mcm->Disable_Option(option);
-            Loaded_Actor_t loaded_actor = Next_Item();
-            if (loaded_actor.Is_Valid()) {
-                Actor_Form_ID(loaded_actor.actor->form_id);
-                Cell_Form_ID(loaded_actor.cell->form_id);
-            } else {
-                List()->do_update_items = true;
-                Current_View(Bases_View_e::LIST);
-            }
-            mcm->Reset_Page();
-
-        } else if (option == Mark_On_Map_Option()) {
+        if (option == Mark_On_Map_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
             if (loaded_actor.Is_Valid()) {
@@ -462,12 +453,16 @@ namespace doticu_npcl { namespace MCM {
                 }
                 mcm->Reset_Page();
             }
+            mcm->Destroy_Latent_Callback(lcallback);
+
         } else if (option == Move_To_Player_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
             if (loaded_actor.Is_Valid()) {
                 loaded_actor.actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
             }
+            mcm->Destroy_Latent_Callback(lcallback);
+
         } else if (option == Go_To_Reference_Option()) {
             mcm->Disable_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
@@ -490,6 +485,8 @@ namespace doticu_npcl { namespace MCM {
             } else {
                 mcm->Enable_Option(option);
             }
+            mcm->Destroy_Latent_Callback(lcallback);
+
         } else if (option == Enable_Disable_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
@@ -501,16 +498,23 @@ namespace doticu_npcl { namespace MCM {
                 }
                 mcm->Reset_Page();
             }
+            mcm->Destroy_Latent_Callback(lcallback);
+
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
             Loaded_Actor_t loaded_actor = Current_Item();
             if (loaded_actor.Is_Valid()) {
                 loaded_actor.actor->Select_In_Console();
             }
+            mcm->Destroy_Latent_Callback(lcallback);
+
+        } else if (Try_On_Option_Select(option, lcallback)) {
+            return;
+
+        } else {
+            mcm->Destroy_Latent_Callback(lcallback);
 
         }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void Loaded_References_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)

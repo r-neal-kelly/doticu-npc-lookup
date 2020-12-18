@@ -94,6 +94,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Previous_Page_Option();
         Int_t&  Next_Page_Option();
 
+        void    Reset_Option_Ints();
+
     public:
         V::Int_Variable_t* Page_Index_Variable();
 
@@ -163,6 +165,8 @@ namespace doticu_npcl { namespace MCM {
 
         Int_t&  Unique_Option();
         Int_t&  Generic_Option();
+
+        void    Reset_Option_Ints();
 
     public:
         V::String_Variable_t*   Mod_Argument_Variable();
@@ -286,6 +290,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Persistent_Spawns_Option();
         Int_t&  Static_Spawns_Option();
 
+        void    Reset_Option_Ints();
+
     public:
         V::Bool_Variable_t* Do_Smart_Select_Variable();
         V::Bool_Variable_t* Do_Uncombative_Spawns_Variable();
@@ -355,13 +361,31 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  View_Item_Option();
         Int_t&  View_Bases_Option();
 
+        static Int_t show_bases_option;
+        static Int_t show_commands_option;
+        static Int_t show_factions_option;
+        static Int_t show_keywords_option;
+        static Int_t show_mods_option;
+        static Int_t show_races_option;
+        static Int_t show_templates_option;
+
         Int_t&  Race_Name_Option();
         Int_t&  Cell_Name_Option();
+
+        void    Reset_Option_Ints();
 
     public:
         V::String_Variable_t*   Nested_View_Variable();
         V::Int_Variable_t*      Nested_Index_Variable();
         V::Int_Variable_t*      Nested_Form_Variable();
+
+        V::Bool_Variable_t*     Do_Show_Bases_Variable();
+        V::Bool_Variable_t*     Do_Show_Commands_Variable();
+        V::Bool_Variable_t*     Do_Show_Factions_Variable();
+        V::Bool_Variable_t*     Do_Show_Keywords_Variable();
+        V::Bool_Variable_t*     Do_Show_Mods_Variable();
+        V::Bool_Variable_t*     Do_Show_Races_Variable();
+        V::Bool_Variable_t*     Do_Show_Templates_Variable();
 
     public:
         Bases_Item_View_e   Nested_View();
@@ -371,9 +395,25 @@ namespace doticu_npcl { namespace MCM {
         Form_ID_t           Nested_Form();
         void                Nested_Form(Form_ID_t value);
 
+        Bool_t              Do_Show_Bases();
+        void                Do_Show_Bases(Bool_t value);
+        Bool_t              Do_Show_Commands();
+        void                Do_Show_Commands(Bool_t value);
+        Bool_t              Do_Show_Factions();
+        void                Do_Show_Factions(Bool_t value);
+        Bool_t              Do_Show_Keywords();
+        void                Do_Show_Keywords(Bool_t value);
+        Bool_t              Do_Show_Mods();
+        void                Do_Show_Mods(Bool_t value);
+        Bool_t              Do_Show_Races();
+        void                Do_Show_Races(Bool_t value);
+        Bool_t              Do_Show_Templates();
+        void                Do_Show_Templates(Bool_t value);
+
     public:
         void        Spawn(Actor_Base_t* base);
         void        Spawn(Leveled_Actor_Base_t* leveled_base);
+        void        Spawn(Cached_Leveled_t* cached_leveled);
 
     public:
         void        Build_Base(Actor_Base_t* base, const char* type_name);
@@ -384,6 +424,8 @@ namespace doticu_npcl { namespace MCM {
         void        Build_Mod_Names(Vector_t<String_t> mod_names);
         void        Build_Race(Race_t* race);
         void        Build_Templates(Vector_t<Actor_Base_t*> templates);
+
+        Bool_t      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
 
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
