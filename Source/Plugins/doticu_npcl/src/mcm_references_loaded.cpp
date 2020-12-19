@@ -419,6 +419,7 @@ namespace doticu_npcl { namespace MCM {
                 Build_Bases(item.actor->Actor_Bases());
                 Build_Cell(item.cell);
                 Build_Locations(item.cell->Locations());
+                Build_Worldspaces(item.cell->Worldspaces());
                 Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
                 Build_Keywords(item.actor->Keywords());
                 Build_Quests(item.actor->Quests());

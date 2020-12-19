@@ -1683,31 +1683,31 @@ namespace doticu_npcl { namespace MCM {
             return true;
 
         } else if (option == show_bases_option || option == show_bases_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Bases_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Bases_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_commands_option || option == show_commands_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Commands_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Commands_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_factions_option || option == show_factions_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Factions_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Factions_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_keywords_option || option == show_keywords_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Keywords_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Keywords_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_mods_option || option == show_mods_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Mods_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Mods_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_races_option || option == show_races_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Races_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Races_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_templates_option || option == show_templates_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Templates_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Templates_Variable(), option, lcallback);
             return true;
 
         } else {

@@ -183,8 +183,9 @@ namespace doticu_npcl { namespace MCM {
         Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
     }
 
-    void Main_t::Toggle_And_Reset(V::Variable_t* variable, Latent_Callback_i* lcallback)
+    void Main_t::Toggle_And_Reset(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback)
     {
+        Disable_Option(option);
         variable->Bool(!variable->Bool());
         Reset_Page();
         Destroy_Latent_Callback(lcallback);

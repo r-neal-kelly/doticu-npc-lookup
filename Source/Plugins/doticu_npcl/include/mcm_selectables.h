@@ -866,6 +866,89 @@ namespace doticu_npcl { namespace MCM {
         }
     };
 
+    /* Worldspaces */
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Worldspaces_i : public Selectable_Data_t<Base_t, Item_t>
+    {
+    public:
+        Selectable_Worldspaces_i(Select_f select_f) :
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Worldspace_Argument, &Filter_t::Worldspace_Argument, select_f)
+        {
+        }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Selectable_Worldspaces_t : public Selectable_Worldspaces_i<Base_t, Item_t>
+    {
+    };
+
+    template <typename Base_t>
+    class Selectable_Worldspaces_t<Base_t, Worldspace_t*> : public Selectable_Worldspaces_i<Base_t, Worldspace_t*>
+    {
+    public:
+        using Item_t = Worldspace_t*;
+
+    public:
+        Selectable_Worldspaces_t() :
+            Selectable_Worldspaces_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                output.push_back(item->Any_Name());
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Worldspaces_t<Base_t, Actor_t*> : public Selectable_Worldspaces_i<Base_t, Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Selectable_Worldspaces_t() :
+            Selectable_Worldspaces_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<some<Worldspace_t*>> worldspaces = item->Worldspaces();
+                for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
+                    Selectable_Worldspaces_t<Base_t, Worldspace_t*>::Select(worldspaces[idx], output);
+                }
+            }
+        }
+    };
+
+    template <typename Base_t>
+    class Selectable_Worldspaces_t<Base_t, Loaded_Actor_t> : public Selectable_Worldspaces_i<Base_t, Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Selectable_Worldspaces_t() :
+            Selectable_Worldspaces_i<Base_t, Item_t>(&Select)
+        {
+        }
+
+        static void Select(Item_t item, Vector_t<String_t>& output)
+        {
+            if (item.Is_Valid()) {
+                Vector_t<some<Worldspace_t*>> worldspaces = item.cell->Worldspaces();
+                for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
+                    Selectable_Worldspaces_t<Base_t, Worldspace_t*>::Select(worldspaces[idx], output);
+                }
+            }
+        }
+    };
+
     /* Locations */
 
     template <typename Base_t, typename Item_t>

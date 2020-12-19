@@ -27,3 +27,4 @@ bool    p_item_do_show_cells                =   false
 bool    p_item_do_show_locations            =   false
 bool    p_item_do_show_quests               =   false
 bool    p_item_do_show_references           =   false
+bool    p_item_do_show_worldspaces          =   false

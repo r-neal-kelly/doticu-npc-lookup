@@ -93,22 +93,10 @@ namespace doticu_npcl {
         return byte_count;
     }
 
-    Bool_t operator==(Cached_Leveled_t& cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled)
+    Bool_t operator==(const some<Cached_Leveled_t*>& a, const maybe<Leveled_Actor_Base_t*>& b)
     {
-        if (leveled) {
-            return cached_leveled.leveled() == leveled();
-        } else {
-            return false;
-        }
-    }
-
-    Bool_t operator==(Cached_Leveled_t* cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled)
-    {
-        if (leveled) {
-            return cached_leveled->leveled() == leveled();
-        } else {
-            return false;
-        }
+        SKYLIB_ASSERT_SOME(a);
+        return a->leveled() == b();
     }
 
 }

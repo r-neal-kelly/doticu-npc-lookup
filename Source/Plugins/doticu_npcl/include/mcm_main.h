@@ -111,6 +111,8 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    KEYWORDS                            = "$dnpcl_keywords";
         static constexpr const char*    RELATION                            = "$dnpcl_relation";
         static constexpr const char*    VITALITY                            = "$dnpcl_vitality";
+        static constexpr const char*    WORLDSPACE                          = "$dnpcl_worldspace";
+        static constexpr const char*    WORLDSPACES                         = "$dnpcl_worldspaces";
         static constexpr const char*    LOCATION                            = "$dnpcl_location";
         static constexpr const char*    LOCATIONS                           = "$dnpcl_locations";
         static constexpr const char*    CELL                                = "$dnpcl_cell";
@@ -280,7 +282,7 @@ namespace doticu_npcl { namespace MCM {
         void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
         void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
-        void                Toggle_And_Reset(V::Variable_t* variable, Latent_Callback_i* lcallback);
+        void                Toggle_And_Reset(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
         void                Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
 
         Bool_t              Should_Translate_Page_Titles();

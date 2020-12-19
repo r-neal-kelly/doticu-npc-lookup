@@ -239,7 +239,7 @@ namespace doticu_npcl { namespace MCM {
         Filter_State_t<Item_t> filter_state = Bases_Filter_t<Base_t, Item_t>::Execute(read, write);
 
         Reference_Filter_t<Item_t>(filter_state, Reference_Argument(), Reference_Do_Negate());
-        //Worldspace_Filter_t<Item_t>(filter_state, Worldspace_Argument(), Worldspace_Do_Negate());
+        Worldspace_Filter_t<Item_t>(filter_state, Worldspace_Argument(), Worldspace_Do_Negate());
         Location_Filter_t<Item_t>(filter_state, Location_Argument(), Location_Do_Negate());
         Cell_Filter_t<Item_t>(filter_state, Cell_Argument(), Cell_Do_Negate());
         Quest_Filter_t<Item_t>(filter_state, Quest_Argument(), Quest_Do_Negate());
@@ -259,7 +259,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Vector_t<String_t> References_Filter_t<B, I>::Selectable_Worldspaces()
     {
-        return Vector_t<String_t>();
+        return Selectable_Worldspaces_t<B, I>().Results();
     }
 
     template <typename B, typename I>
@@ -335,6 +335,13 @@ namespace doticu_npcl { namespace MCM {
         Keyword_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Keyword_Argument());
         Keyword_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
         Keyword_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Keyword_Do_Negate());
+        mcm->Add_Empty_Option();
+
+        mcm->Add_Header_Option(Main_t::WORLDSPACE);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+        Worldspace_Search_Option() = mcm->Add_Input_Option(Main_t::SEARCH, Worldspace_Argument());
+        Worldspace_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Main_t::_DOTS_);
+        Worldspace_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Worldspace_Do_Negate());
         mcm->Add_Empty_Option();
 
         mcm->Add_Header_Option(Main_t::LOCATION);
@@ -448,6 +455,11 @@ namespace doticu_npcl { namespace MCM {
             Reference_Do_Negate(!value);
             mcm->Toggle_Option_Value(option, !value);
 
+        } else if (option == Worldspace_Negate_Option()) {
+            Bool_t value = Worldspace_Do_Negate();
+            Worldspace_Do_Negate(!value);
+            mcm->Toggle_Option_Value(option, !value);
+
         } else if (option == Location_Negate_Option()) {
             Bool_t value = Location_Do_Negate();
             Location_Do_Negate(!value);
@@ -541,6 +553,11 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Reference_Select_Option()) {
             mcm->Flicker_Option(option);
             mcm->Menu_Dialog_Values(Selectable_References());
+            mcm->Menu_Dialog_Default(0);
+
+        } else if (option == Worldspace_Select_Option()) {
+            mcm->Flicker_Option(option);
+            mcm->Menu_Dialog_Values(Selectable_Worldspaces());
             mcm->Menu_Dialog_Default(0);
 
         } else if (option == Location_Select_Option()) {
@@ -685,6 +702,19 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Input_Option_Value(Reference_Search_Option(), value, true);
             }
 
+        } else if (option == Worldspace_Select_Option()) {
+            if (idx > -1) {
+                String_t value = Main_t::_NONE_;
+                if (idx > 0) {
+                    Vector_t<String_t> selectables = Selectable_Worldspaces();
+                    if (idx < selectables.size()) {
+                        value = selectables[idx];
+                    }
+                }
+                Worldspace_Argument(value);
+                mcm->Input_Option_Value(Worldspace_Search_Option(), value, true);
+            }
+
         } else if (option == Location_Select_Option()) {
             if (idx > -1) {
                 String_t value = Main_t::_NONE_;
@@ -762,6 +792,10 @@ namespace doticu_npcl { namespace MCM {
             Reference_Argument(value);
             mcm->Input_Option_Value(option, value, true);
 
+        } else if (option == Worldspace_Search_Option()) {
+            Worldspace_Argument(value);
+            mcm->Input_Option_Value(option, value, true);
+
         } else if (option == Location_Search_Option()) {
             Location_Argument(value);
             mcm->Input_Option_Value(option, value, true);
@@ -797,6 +831,8 @@ namespace doticu_npcl { namespace MCM {
     Int_t References_Item_t<B, I>::show_quests_option       = -1;
     template <typename B, typename I>
     Int_t References_Item_t<B, I>::show_references_option   = -1;
+    template <typename B, typename I>
+    Int_t References_Item_t<B, I>::show_worldspaces_option  = -1;
 
     template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Select_In_Console_Option()       { DEFINE_OPTION(); }
@@ -818,6 +854,7 @@ namespace doticu_npcl { namespace MCM {
         show_locations_option           = -1;
         show_quests_option              = -1;
         show_references_option          = -1;
+        show_worldspaces_option         = -1;
 
         Select_In_Console_Option()      = -1;
         Mark_On_Map_Option()            = -1;
@@ -834,6 +871,8 @@ namespace doticu_npcl { namespace MCM {
     inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Quests_Variable()      { DEFINE_BOOL("p_item_do_show_quests"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_References_Variable()  { DEFINE_BOOL("p_item_do_show_references"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Worldspaces_Variable() { DEFINE_BOOL("p_item_do_show_worldspaces"); }
 
     template <typename B, typename I>
     inline Bool_t   References_Item_t<B, I>::Do_Show_Cells()                    { return Do_Show_Cells_Variable()->Value(); }
@@ -854,6 +893,11 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   References_Item_t<B, I>::Do_Show_References()               { return Do_Show_References_Variable()->Value(); }
     template <typename B, typename I>
     inline void     References_Item_t<B, I>::Do_Show_References(Bool_t value)   { Do_Show_References_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t   References_Item_t<B, I>::Do_Show_Worldspaces()              { return Do_Show_Worldspaces_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     References_Item_t<B, I>::Do_Show_Worldspaces(Bool_t value)  { Do_Show_Worldspaces_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Bases(Vector_t<Actor_Base_t*> actor_bases)
@@ -1087,24 +1131,65 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Worldspaces(Vector_t<some<Worldspace_t*>> worldspaces)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = worldspaces.size();
+        if (count > 0) {
+            if (Do_Show_Worldspaces()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::WORLDSPACES);
+                    show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Worldspace_t* worldspace = worldspaces[idx];
+                        if (worldspace->Is_Valid()) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + worldspace->Any_Name().data, Main_t::_NONE_);
+                        }
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::WORLDSPACES);
+                    show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::WORLDSPACES, Flag_e::DISABLE);
+                show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Worldspaces(), Flag_e::DISABLE);
+            }
+        }
+    }
+
+    template <typename B, typename I>
     inline Bool_t References_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
         if (option == show_cells_option || option == show_cells_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Cells_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Cells_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_locations_option || option == show_locations_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Locations_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Locations_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_quests_option || option == show_quests_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Quests_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Quests_Variable(), option, lcallback);
             return true;
 
         } else if (option == show_references_option || option == show_references_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_References_Variable(), lcallback);
+            mcm->Toggle_And_Reset(Do_Show_References_Variable(), option, lcallback);
+            return true;
+
+        } else if (option == show_worldspaces_option || option == show_worldspaces_option - 1) {
+            mcm->Toggle_And_Reset(Do_Show_Worldspaces_Variable(), option, lcallback);
             return true;
 
         } else if (Bases_Item_t<B, I>::Try_On_Option_Select(option, lcallback)) {

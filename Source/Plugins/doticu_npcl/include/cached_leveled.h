@@ -30,8 +30,7 @@ namespace doticu_npcl {
 
         size_t Byte_Count();
 
-        friend Bool_t operator==(Cached_Leveled_t& cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled);
-        friend Bool_t operator==(Cached_Leveled_t* cached_leveled, maybe<Leveled_Actor_Base_t*>& leveled);
+        friend Bool_t operator==(const some<Cached_Leveled_t*>& a, const maybe<Leveled_Actor_Base_t*>& b);
     };
 
 }

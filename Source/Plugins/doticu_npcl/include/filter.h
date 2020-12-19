@@ -17,6 +17,7 @@
 #include "doticu_skylib/race.h"
 #include "doticu_skylib/relation.h"
 #include "doticu_skylib/vitality.h"
+#include "doticu_skylib/worldspace.h"
 
 #include "intrinsic.h"
 #include "cached_leveled.h"
@@ -42,6 +43,7 @@ namespace doticu_npcl {
     using Mod_t                 = skylib::Mod_t;
     using Quest_t               = skylib::Quest_t;
     using Race_t                = skylib::Race_t;
+    using Worldspace_t          = skylib::Worldspace_t;
 
     class Filter_e : public Binary_e
     {
@@ -1066,6 +1068,107 @@ namespace doticu_npcl {
         {
             if (item.Is_Valid()) {
                 return Reference_Filter_t<Actor_t*>::Compare(item.actor, string);
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    /* Worldspace */
+
+    template <typename Item_t>
+    class Worldspace_Filter_t : public String_Filter_i<Item_t>
+    {
+    };
+
+    template <>
+    class Worldspace_Filter_t<Worldspace_t*> : public String_Filter_i<Worldspace_t*>
+    {
+    public:
+        using Item_t = Worldspace_t*;
+
+    public:
+        Worldspace_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                if (CString_t::Is_Length_Greater_Than(string, 1)) {
+                    if (CString_t::Contains(item->Name(), string, true) ||
+                        CString_t::Contains(item->Get_Editor_ID(), string, true) ||
+                        CString_t::Contains(item->Form_ID_String(), string, true)) {
+                        return Filter_e::IS_MATCH;
+                    } else {
+                        return Filter_e::ISNT_MATCH;
+                    }
+                } else {
+                    if (CString_t::Starts_With(item->Name(), string, true) ||
+                        CString_t::Starts_With(item->Get_Editor_ID(), string, true) ||
+                        CString_t::Starts_With(item->Form_ID_String(), string, true)) {
+                        return Filter_e::IS_MATCH;
+                    } else {
+                        return Filter_e::ISNT_MATCH;
+                    }
+                }
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Worldspace_Filter_t<Actor_t*> : public String_Filter_i<Actor_t*>
+    {
+    public:
+        using Item_t = Actor_t*;
+
+    public:
+        Worldspace_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item && item->Is_Valid()) {
+                Vector_t<some<Worldspace_t*>> worldspaces = item->Worldspaces();
+                for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
+                    if (Worldspace_Filter_t<Worldspace_t*>::Compare(worldspaces[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
+            } else {
+                return Filter_e::INVALID;
+            }
+        }
+    };
+
+    template <>
+    class Worldspace_Filter_t<Loaded_Actor_t> : public String_Filter_i<Loaded_Actor_t>
+    {
+    public:
+        using Item_t = Loaded_Actor_t;
+
+    public:
+        Worldspace_Filter_t(Filter_State_t<Item_t>& state, String_t string, Bool_t do_negate) :
+            String_Filter_i<Item_t>(state, string, do_negate, &Compare)
+        {
+        }
+
+        static Filter_e Compare(Item_t item, String_t string)
+        {
+            if (item.Is_Valid()) {
+                Vector_t<some<Worldspace_t*>> worldspaces = item.cell->Worldspaces();
+                for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
+                    if (Worldspace_Filter_t<Worldspace_t*>::Compare(worldspaces[idx], string) == Filter_e::IS_MATCH) {
+                        return Filter_e::IS_MATCH;
+                    }
+                }
+                return Filter_e::ISNT_MATCH;
             } else {
                 return Filter_e::INVALID;
             }

@@ -160,6 +160,7 @@ namespace doticu_npcl { namespace MCM {
         static Int_t show_locations_option;
         static Int_t show_quests_option;
         static Int_t show_references_option;
+        static Int_t show_worldspaces_option;
 
         Int_t&  Select_In_Console_Option();
         Int_t&  Mark_On_Map_Option();
@@ -174,6 +175,7 @@ namespace doticu_npcl { namespace MCM {
         V::Bool_Variable_t* Do_Show_Locations_Variable();
         V::Bool_Variable_t* Do_Show_Quests_Variable();
         V::Bool_Variable_t* Do_Show_References_Variable();
+        V::Bool_Variable_t* Do_Show_Worldspaces_Variable();
 
     public:
         Bool_t  Do_Show_Cells();
@@ -184,6 +186,8 @@ namespace doticu_npcl { namespace MCM {
         void    Do_Show_Quests(Bool_t value);
         Bool_t  Do_Show_References();
         void    Do_Show_References(Bool_t value);
+        Bool_t  Do_Show_Worldspaces();
+        void    Do_Show_Worldspaces(Bool_t value);
 
     public:
         void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);
@@ -191,6 +195,7 @@ namespace doticu_npcl { namespace MCM {
         void    Build_Locations(Vector_t<Location_t*> locations);
         void    Build_Quests(Vector_t<Quest_t*> quests);
         void    Build_Reference(Actor_t* actor, const char* type_name);
+        void    Build_Worldspaces(Vector_t<some<Worldspace_t*>> worldspaces);
 
         Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
