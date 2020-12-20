@@ -483,7 +483,7 @@ namespace doticu_npcl { namespace MCM {
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Keyword_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_keyword_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_STRING("p_filter_relation_argument"); }
+    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_INT("p_filter_relation_argument"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Relation_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_relation_do_negate"); }
 
@@ -552,9 +552,9 @@ namespace doticu_npcl { namespace MCM {
     inline void         Bases_Filter_t<B, I>::Keyword_Do_Negate(Bool_t value)           { Keyword_Do_Negate_Variable()->Value(value); }
 
     template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
+    inline Relation_e   Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
     template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Relation_Argument(String_t value)         { Relation_Argument_Variable()->Value(value); }
+    inline void         Bases_Filter_t<B, I>::Relation_Argument(Relation_e value)       { Relation_Argument_Variable()->Value(value); }
     template <typename B, typename I>
     inline Bool_t       Bases_Filter_t<B, I>::Relation_Do_Negate()                      { return Relation_Do_Negate_Variable()->Value(); }
     template <typename B, typename I>
@@ -600,7 +600,7 @@ namespace doticu_npcl { namespace MCM {
         Keyword_Argument("");
         Keyword_Do_Negate(false);
 
-        Relation_Argument("");
+        Relation_Argument(Relation_e::NONE);
         Relation_Do_Negate(false);
 
         Vitality_Argument(Vitality_e::NONE);
@@ -614,9 +614,6 @@ namespace doticu_npcl { namespace MCM {
     template <typename Type_t>
     inline Filter_State_t<Type_t> Bases_Filter_t<B, I>::Execute(Vector_t<Type_t>* read, Vector_t<Type_t>* write)
     {
-        Actor_Base_t* relatable_base = Consts_t::Skyrim_Player_Actor_Base();
-        Relation_e relation_argument = Relation_e::From_String(Relation_Argument());
-
         Filter_State_t<Type_t> filter_state(read, write);
 
         Mod_Filter_t<Type_t>(filter_state, Mod_Argument(), Mod_Do_Negate());
@@ -625,7 +622,7 @@ namespace doticu_npcl { namespace MCM {
         Template_Filter_t<Type_t>(filter_state, Template_Argument(), Template_Do_Negate());
         Faction_Filter_t<Type_t>(filter_state, Faction_Argument(), Faction_Do_Negate());
         Keyword_Filter_t<Type_t>(filter_state, Keyword_Argument(), Keyword_Do_Negate());
-        Relation_Filter_t<Type_t>(filter_state, relatable_base, relation_argument, Relation_Do_Negate());
+        Relation_Filter_t<Type_t>(filter_state, Consts_t::Skyrim_Player_Actor_Base(), Relation_Argument(), Relation_Do_Negate());
         Vitality_Filter_t<Type_t>(filter_state, Vitality_Argument(), Vitality_Do_Negate());
         Male_Female_Filter_t<Type_t>(filter_state, Male_Female_Argument());
         Unique_Generic_Filter_t<Type_t>(filter_state, Unique_Generic_Argument());
@@ -733,13 +730,13 @@ namespace doticu_npcl { namespace MCM {
 
         mcm->Add_Header_Option(Main_t::RELATION);
         mcm->Add_Header_Option(Main_t::_NONE_);
-        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
+        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Relation_Key(Relation_Argument())());
         Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::VITALITY);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Vitality_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Vitality_Key(Vitality_Argument())());
-        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
+        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Vitality_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::OTHER);
         mcm->Add_Header_Option(Main_t::_NONE_);
@@ -1040,7 +1037,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument(value);
+                Relation_Argument(mcm->From_Relation_Key(value.data));
                 mcm->Menu_Option_Value(option, value, true);
             }
 

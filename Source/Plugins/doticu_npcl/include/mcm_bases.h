@@ -217,7 +217,7 @@ namespace doticu_npcl { namespace MCM {
         V::String_Variable_t*   Keyword_Argument_Variable();
         V::Bool_Variable_t*     Keyword_Do_Negate_Variable();
 
-        V::String_Variable_t*   Relation_Argument_Variable();
+        V::Int_Variable_t*      Relation_Argument_Variable();
         V::Bool_Variable_t*     Relation_Do_Negate_Variable();
 
         V::Int_Variable_t*      Vitality_Argument_Variable();
@@ -257,8 +257,8 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Keyword_Do_Negate();
         void        Keyword_Do_Negate(Bool_t value);
 
-        String_t    Relation_Argument();
-        void        Relation_Argument(String_t value);
+        Relation_e  Relation_Argument();
+        void        Relation_Argument(Relation_e value);
         Bool_t      Relation_Do_Negate();
         void        Relation_Do_Negate(Bool_t value);
 

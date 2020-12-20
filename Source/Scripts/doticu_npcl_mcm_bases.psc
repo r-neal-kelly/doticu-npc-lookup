@@ -27,7 +27,7 @@ bool        p_filter_faction_do_negate          =   false
 string      p_filter_keyword_argument           =      ""
 bool        p_filter_keyword_do_negate          =   false
 
-string      p_filter_relation_argument          =      ""
+int         p_filter_relation_argument          =      -1
 bool        p_filter_relation_do_negate         =   false
 
 int         p_filter_vitality_argument          =      -1

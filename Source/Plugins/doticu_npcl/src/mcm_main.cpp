@@ -28,6 +28,58 @@ namespace doticu_npcl { namespace MCM {
     const String_t Main_t::_TEXT_DIVIDER_   = Main_t::Add_Font("_______________________",   "", "#80",  "27");
     const String_t Main_t::_TOGGLE_DIVIDER_ = Main_t::Add_Font("_____________________",     "", "#80",  "27");
 
+    some<const char*> Main_t::To_Relation_Key(Relation_e relation)
+    {
+        if (relation == Relation_e::LOVER) {
+            return LOVER;
+        } else if (relation == Relation_e::ALLY) {
+            return ALLY;
+        } else if (relation == Relation_e::CONFIDANT) {
+            return CONFIDANT;
+        } else if (relation == Relation_e::FRIEND) {
+            return FRIEND;
+        } else if (relation == Relation_e::ACQUAINTANCE) {
+            return ACQUAINTANCE;
+        } else if (relation == Relation_e::RIVAL) {
+            return RIVAL;
+        } else if (relation == Relation_e::FOE) {
+            return FOE;
+        } else if (relation == Relation_e::ENEMY) {
+            return ENEMY;
+        } else if (relation == Relation_e::ARCHNEMESIS) {
+            return ARCHNEMESIS;
+        } else {
+            return ANY;
+        }
+    }
+
+    Relation_e Main_t::From_Relation_Key(some<const char*> relation_key)
+    {
+        SKYLIB_ASSERT_SOME(relation_key);
+
+        if (CString_t::Is_Same(LOVER, relation_key, false)) {
+            return Relation_e::LOVER;
+        } else if (CString_t::Is_Same(ALLY, relation_key, false)) {
+            return Relation_e::ALLY;
+        } else if (CString_t::Is_Same(CONFIDANT, relation_key, false)) {
+            return Relation_e::CONFIDANT;
+        } else if (CString_t::Is_Same(FRIEND, relation_key, false)) {
+            return Relation_e::FRIEND;
+        } else if (CString_t::Is_Same(ACQUAINTANCE, relation_key, false)) {
+            return Relation_e::ACQUAINTANCE;
+        } else if (CString_t::Is_Same(RIVAL, relation_key, false)) {
+            return Relation_e::RIVAL;
+        } else if (CString_t::Is_Same(FOE, relation_key, false)) {
+            return Relation_e::FOE;
+        } else if (CString_t::Is_Same(ENEMY, relation_key, false)) {
+            return Relation_e::ENEMY;
+        } else if (CString_t::Is_Same(ARCHNEMESIS, relation_key, false)) {
+            return Relation_e::ARCHNEMESIS;
+        } else {
+            return Relation_e::NONE;
+        }
+    }
+
     some<const char*> Main_t::To_Vitality_Key(Vitality_e vitality)
     {
         if (vitality == Vitality_e::MORTAL) {

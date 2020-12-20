@@ -16,8 +16,11 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         using Filter_t              = std::remove_pointer_t<decltype(Base_t::Self()->Filter())>;
+
         using Smart_Get_f           = String_t(Filter_t::*)();
         using Smart_Set_f           = void(Filter_t::*)(String_t);
+        using Smart_Get_Relation_f  = Relation_e(Filter_t::*)();
+        using Smart_Set_Relation_f  = void(Filter_t::*)(Relation_e);
         using Smart_Get_Vitality_f  = Vitality_e(Filter_t::*)();
         using Smart_Set_Vitality_f  = void(Filter_t::*)(Vitality_e);
 
@@ -38,8 +41,8 @@ namespace doticu_npcl { namespace MCM {
             Sort();
         }
 
-        Selectable_Data_t(Smart_Get_f smart_get_f,
-                          Smart_Set_f smart_set_f,
+        Selectable_Data_t(Smart_Get_Relation_f smart_get_f,
+                          Smart_Set_Relation_f smart_set_f,
                           Select_Relation_f select_f,
                           Actor_Base_t* base_to_compare)
         {
@@ -67,6 +70,26 @@ namespace doticu_npcl { namespace MCM {
             if (options->Do_Smart_Select()) {
                 String_t current = (filter->*smart_get_f)();
                 (filter->*smart_set_f)("");
+                list->do_update_items = true;
+                items = list->Items();
+                (filter->*smart_set_f)(current);
+            } else {
+                items = list->Default_Items();
+            }
+
+            Reserve();
+        }
+
+        inline void Init(Smart_Get_Relation_f smart_get_f, Smart_Set_Relation_f smart_set_f)
+        {
+            auto* self = Base_t::Self();
+            auto* list = self->List();
+            auto* filter = self->Filter();
+            auto* options = self->Options();
+
+            if (options->Do_Smart_Select()) {
+                Relation_e current = (filter->*smart_get_f)();
+                (filter->*smart_set_f)(Relation_e::NONE);
                 list->do_update_items = true;
                 items = list->Items();
                 (filter->*smart_set_f)(current);
@@ -1219,7 +1242,7 @@ namespace doticu_npcl { namespace MCM {
         {
             Relation_e relation = Relation_e::Between(item, base_to_compare);
             if (relation != Relation_e::NONE) {
-                output.push_back(std::string(" ") + Relation_e::To_String(relation) + " ");
+                output.push_back(Main_t::To_Relation_Key(relation)());
             }
         }
     };
@@ -1238,14 +1261,10 @@ namespace doticu_npcl { namespace MCM {
 
         static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
         {
-            Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
-            for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                Relation_e relation = Relation_e::Between(actor_bases[idx], base_to_compare);
-                if (relation != Relation_e::NONE) {
-                    String_t relation_name = std::string(" ") + Relation_e::To_String(relation) + " ";
-                    if (!output.Has(relation_name)) {
-                        output.push_back(relation_name);
-                    }
+            if (item && item->leveled && item->leveled->Is_Valid()) {
+                Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
+                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                    Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx], base_to_compare, output);
                 }
             }
         }
@@ -1345,7 +1364,7 @@ namespace doticu_npcl { namespace MCM {
 
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
-            if (item->leveled && item->leveled->Is_Valid()) {
+            if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
                     Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx], output);

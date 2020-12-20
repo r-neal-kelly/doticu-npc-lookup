@@ -145,7 +145,16 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    NEGATE                              = "$dnpcl_negate";
         static constexpr const char*    _DOTS_                              = "$dnpcl_...";
 
-        static constexpr const char*    NONE                                = "$dnpcl_none";
+        static constexpr const char*    LOVER                               = "$dnpcl_lover";
+        static constexpr const char*    ALLY                                = "$dnpcl_ally";
+        static constexpr const char*    CONFIDANT                           = "$dnpcl_confidant";
+        static constexpr const char*    FRIEND                              = "$dnpcl_friend";
+        static constexpr const char*    ACQUAINTANCE                        = "$dnpcl_acquaintance";
+        static constexpr const char*    RIVAL                               = "$dnpcl_rival";
+        static constexpr const char*    FOE                                 = "$dnpcl_foe";
+        static constexpr const char*    ENEMY                               = "$dnpcl_enemy";
+        static constexpr const char*    ARCHNEMESIS                         = "$dnpcl_archnemesis";
+
         static constexpr const char*    MORTAL                              = "$dnpcl_mortal";
         static constexpr const char*    PROTECTED                           = "$dnpcl_protected";
         static constexpr const char*    ESSENTIAL                           = "$dnpcl_essential";
@@ -266,6 +275,8 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    UNPRIORITIZED_MOD_NAME              = "NPC Lookup ";
         static constexpr const char*    DEFAULT_PAGE                        = STATIC_BASES;
 
+        static some<const char*>    To_Relation_Key(Relation_e relation);
+        static Relation_e           From_Relation_Key(some<const char*> relation_key);
         static some<const char*>    To_Vitality_Key(Vitality_e vitality);
         static Vitality_e           From_Vitality_Key(some<const char*> vitality_key);
 

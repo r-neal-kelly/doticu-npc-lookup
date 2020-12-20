@@ -367,13 +367,13 @@ namespace doticu_npcl { namespace MCM {
 
         mcm->Add_Header_Option(Main_t::RELATION);
         mcm->Add_Header_Option(Main_t::_NONE_);
-        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, Relation_Argument());
+        Relation_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Relation_Key(Relation_Argument())());
         Relation_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::VITALITY);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Vitality_Select_Option() = mcm->Add_Menu_Option(Main_t::SELECT, mcm->To_Vitality_Key(Vitality_Argument())());
-        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Relation_Do_Negate());
+        Vitality_Negate_Option() = mcm->Add_Toggle_Option(Main_t::NEGATE, Vitality_Do_Negate());
 
         mcm->Add_Header_Option(Main_t::OTHER);
         mcm->Add_Header_Option(Main_t::_NONE_);
@@ -672,7 +672,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument(value);
+                Relation_Argument(mcm->From_Relation_Key(value.data));
                 mcm->Menu_Option_Value(option, value, true);
             }
 
