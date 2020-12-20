@@ -20,6 +20,31 @@ namespace doticu_npcl { namespace MCM {
         using Enum_t::Enum_t;
     };
 
+    using Item_Section_t = s64;
+
+    class Bases_Item_Section_e : public Enum_t<Item_Section_t>
+    {
+    public:
+        enum : _TYPE_
+        {
+            NONE = -1,
+
+            BASES,
+            COMMANDS,
+            FACTIONS,
+            KEYWORDS,
+            MODS,
+            RACES,
+            TEMPLATES,
+
+            _END_,
+        };
+        using Enum_t::Enum_t;
+
+        static some<const char*>    To_String(Bases_Item_Section_e section_e);
+        static Bases_Item_Section_e From_String(some<const char*> section_str);
+    };
+
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -104,9 +129,14 @@ namespace doticu_npcl { namespace MCM {
         void    Page_Index(Int_t value);
 
     public:
-        void        Clear();
+        void    Clear();
 
     public:
+        void On_Init();
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
+        void On_Config_Close();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
@@ -262,6 +292,11 @@ namespace doticu_npcl { namespace MCM {
         void Build_Filters(const char* type_name);
 
     public:
+        void On_Init();
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
+        void On_Config_Close();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
@@ -282,6 +317,9 @@ namespace doticu_npcl { namespace MCM {
     class Bases_Options_t : public Bases_t<Base_t, Item_t>
     {
     public:
+        static Vector_t<Item_Section_t> item_sections;
+
+    public:
         Int_t&  Back_Option();
         Int_t&  Reset_Option();
 
@@ -290,13 +328,29 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Persistent_Spawns_Option();
         Int_t&  Static_Spawns_Option();
 
+        static Int_t bases_section_option;
+        static Int_t commands_section_option;
+        static Int_t factions_section_option;
+        static Int_t keywords_section_option;
+        static Int_t mods_section_option;
+        static Int_t races_section_option;
+        static Int_t templates_section_option;
+
         void    Reset_Option_Ints();
 
+        static Int_t disable_section_menu_option;
+        static Int_t move_section_higher_menu_option;
+        static Int_t move_section_lower_menu_option;
+
+        void    Reset_Menu_Option_Ints();
+
     public:
-        V::Bool_Variable_t* Do_Smart_Select_Variable();
-        V::Bool_Variable_t* Do_Uncombative_Spawns_Variable();
-        V::Bool_Variable_t* Do_Persistent_Spawns_Variable();
-        V::Bool_Variable_t* Do_Static_Spawns_Variable();
+        V::Bool_Variable_t*             Do_Smart_Select_Variable();
+        V::Bool_Variable_t*             Do_Uncombative_Spawns_Variable();
+        V::Bool_Variable_t*             Do_Persistent_Spawns_Variable();
+        V::Bool_Variable_t*             Do_Static_Spawns_Variable();
+
+        V::Array_Variable_t<String_t>*  Item_Sections_Variable();
 
     public:
         Bool_t  Do_Smart_Select();
@@ -315,6 +369,36 @@ namespace doticu_npcl { namespace MCM {
         void    Reset();
 
     public:
+        void                        Reset_Item_Sections();
+        void                        Serialize_Item_Sections();
+        void                        Deserialize_Item_Sections();
+
+        Vector_t<Item_Section_t>    Item_Sections();
+        Bool_t                      Is_Item_Section_Enabled(Item_Section_t section);
+        void                        Enable_Item_Section(Item_Section_t section);
+        void                        Disable_Item_Section(Item_Section_t section);
+        Bool_t                      May_Move_Item_Section_Higher(Item_Section_t section);
+        Bool_t                      May_Move_Item_Section_Lower(Item_Section_t section);
+        void                        Move_Item_Section_Higher(Item_Section_t section);
+        void                        Move_Item_Section_Lower(Item_Section_t section);
+
+        void                        Build_Section_Options(Vector_t<Item_Section_t>& allowed_sections);
+        void                        Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections);
+
+        void                        Select_Section_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
+        void                        Open_Section_Menu_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
+        void                        Accept_Section_Menu_Option(Item_Section_t item_section, Int_t idx, Latent_Callback_i* lcallback);
+
+        Bool_t                      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t                      Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t                      Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+
+    public:
+        void On_Init();
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
+        void On_Config_Close();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
@@ -331,10 +415,10 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    class Bases_Item_View_e : public skylib::Enum_t<skylib::Word_t>
+    class Bases_Item_View_e : public Enum_t<Word_t>
     {
     public:
-        enum : skylib::Word_t
+        enum : Word_t
         {
             ITEM,
             BASES,
@@ -428,6 +512,11 @@ namespace doticu_npcl { namespace MCM {
         Bool_t      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
 
     public:
+        void On_Init();
+        void On_Load();
+        void On_Save();
+        void On_Config_Open();
+        void On_Config_Close();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);

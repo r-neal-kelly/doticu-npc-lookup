@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cached_leveled.cpp" />
+    <ClCompile Include="src\mcm_bases.cpp" />
     <ClCompile Include="src\mcm_global_options.cpp" />
     <ClCompile Include="src\mcm_markers.cpp" />
     <ClCompile Include="src\consts.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="src\mcm_bases_leveled.cpp" />
     <ClCompile Include="src\mcm_bases_static.cpp" />
     <ClCompile Include="src\mcm_main.cpp" />
+    <ClCompile Include="src\mcm_references.cpp" />
     <ClCompile Include="src\mcm_references_loaded.cpp" />
     <ClCompile Include="src\mcm_references_spawned.cpp" />
     <ClCompile Include="src\spawned_actors.cpp" />

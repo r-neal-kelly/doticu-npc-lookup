@@ -817,7 +817,238 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
+    template <typename B, typename I>
+    Int_t   References_Options_t<B, I>::cells_section_option = -1;
+    template <typename B, typename I>
+    Int_t   References_Options_t<B, I>::locations_section_option = -1;
+    template <typename B, typename I>
+    Int_t   References_Options_t<B, I>::quests_section_option = -1;
+    template <typename B, typename I>
+    Int_t   References_Options_t<B, I>::references_section_option = -1;
+    template <typename B, typename I>
+    Int_t   References_Options_t<B, I>::worldspaces_section_option = -1;
 
+    template <typename B, typename I>
+    inline void References_Options_t<B, I>::Reset_Option_Ints()
+    {
+        cells_section_option        = -1;
+        locations_section_option    = -1;
+        quests_section_option       = -1;
+        references_section_option   = -1;
+        worldspaces_section_option  = -1;
+
+        Bases_Options_t<B, I>::Reset_Option_Ints();
+    }
+
+    template <typename B, typename I>
+    inline void References_Options_t<B, I>::Reset_Item_Sections()
+    {
+        item_sections.clear();
+        item_sections.reserve(References_Item_Section_e::_END_);
+
+        item_sections.push_back(References_Item_Section_e::REFERENCES);
+        item_sections.push_back(References_Item_Section_e::COMMANDS);
+        item_sections.push_back(References_Item_Section_e::RACES);
+        item_sections.push_back(References_Item_Section_e::BASES);
+        item_sections.push_back(References_Item_Section_e::CELLS);
+        item_sections.push_back(References_Item_Section_e::LOCATIONS);
+        item_sections.push_back(References_Item_Section_e::WORLDSPACES);
+        item_sections.push_back(References_Item_Section_e::FACTIONS);
+        item_sections.push_back(References_Item_Section_e::KEYWORDS);
+        item_sections.push_back(References_Item_Section_e::QUESTS);
+        item_sections.push_back(References_Item_Section_e::MODS);
+    }
+
+    template <typename B, typename I>
+    inline void References_Options_t<B, I>::Serialize_Item_Sections()
+    {
+        Vector_t<String_t> strs;
+        strs.reserve(References_Item_Section_e::_END_);
+
+        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+            String_t str = References_Item_Section_e::To_String(item_sections[idx]);
+            if (str) {
+                strs.push_back(str);
+            }
+        }
+
+        Item_Sections_Variable()->Values(strs);
+    }
+
+    template <typename B, typename I>
+    inline void References_Options_t<B, I>::Deserialize_Item_Sections()
+    {
+        V::Array_t* arr = Item_Sections_Variable()->Value();
+        if (arr) {
+            item_sections.clear();
+            item_sections.reserve(References_Item_Section_e::_END_);
+
+            for (Index_t idx = 0, end = arr->count; idx < end; idx += 1) {
+                V::Variable_t* var = arr->Point(idx);
+                if (var && var->Is_String()) {
+                    String_t str = var->String();
+                    if (str) {
+                        References_Item_Section_e section_e = References_Item_Section_e::From_String(str.data);
+                        if (section_e != References_Item_Section_e::NONE) {
+                            item_sections.push_back(section_e);
+                        }
+                    }
+                }
+            }
+        } else {
+            Options()->Reset_Item_Sections();
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Options_t<B, I>::Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections)
+    {
+        using Section_e = References_Item_Section_e;
+
+        Main_t* mcm = Main_t::Self();
+
+        auto Enabled = [&mcm](const char* label)->Int_t
+        {
+            return mcm->Add_Menu_Option(label, Main_t::_DOTS_);
+        };
+        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+            Section_e section_e = item_sections[idx];
+            if (allowed_sections.Has(section_e)) {
+                     if (section_e == Section_e::BASES)         bases_section_option        = Enabled(Main_t::BASES);
+                else if (section_e == Section_e::COMMANDS)      commands_section_option     = Enabled(Main_t::COMMANDS);
+                else if (section_e == Section_e::FACTIONS)      factions_section_option     = Enabled(Main_t::FACTIONS);
+                else if (section_e == Section_e::KEYWORDS)      keywords_section_option     = Enabled(Main_t::KEYWORDS);
+                else if (section_e == Section_e::MODS)          mods_section_option         = Enabled(Main_t::MODS);
+                else if (section_e == Section_e::RACES)         races_section_option        = Enabled(Main_t::RACES);
+                else if (section_e == Section_e::TEMPLATES)     templates_section_option    = Enabled(Main_t::TEMPLATES);
+
+                else if (section_e == Section_e::CELLS)         cells_section_option        = Enabled(Main_t::CELLS);
+                else if (section_e == Section_e::LOCATIONS)     locations_section_option    = Enabled(Main_t::LOCATIONS);
+                else if (section_e == Section_e::QUESTS)        quests_section_option       = Enabled(Main_t::QUESTS);
+                else if (section_e == Section_e::REFERENCES)    references_section_option   = Enabled(Main_t::REFERENCES);
+                else if (section_e == Section_e::WORLDSPACES)   worldspaces_section_option  = Enabled(Main_t::WORLDSPACES);
+            }
+        }
+
+        auto Disabled = [&mcm](const char* label)->Int_t
+        {
+            return mcm->Add_Toggle_Option(mcm->Add_Font(label, "", "#80", ""), false);
+        };
+        for (Index_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
+            Section_e section_e = allowed_sections[idx];
+            if (!Is_Item_Section_Enabled(section_e)) {
+                     if (section_e == Section_e::BASES)         bases_section_option        = Disabled(Main_t::BASES);
+                else if (section_e == Section_e::COMMANDS)      commands_section_option     = Disabled(Main_t::COMMANDS);
+                else if (section_e == Section_e::FACTIONS)      factions_section_option     = Disabled(Main_t::FACTIONS);
+                else if (section_e == Section_e::KEYWORDS)      keywords_section_option     = Disabled(Main_t::KEYWORDS);
+                else if (section_e == Section_e::MODS)          mods_section_option         = Disabled(Main_t::MODS);
+                else if (section_e == Section_e::RACES)         races_section_option        = Disabled(Main_t::RACES);
+                else if (section_e == Section_e::TEMPLATES)     templates_section_option    = Disabled(Main_t::TEMPLATES);
+
+                else if (section_e == Section_e::CELLS)         cells_section_option        = Disabled(Main_t::CELLS);
+                else if (section_e == Section_e::LOCATIONS)     locations_section_option    = Disabled(Main_t::LOCATIONS);
+                else if (section_e == Section_e::QUESTS)        quests_section_option       = Disabled(Main_t::QUESTS);
+                else if (section_e == Section_e::REFERENCES)    references_section_option   = Disabled(Main_t::REFERENCES);
+                else if (section_e == Section_e::WORLDSPACES)   worldspaces_section_option  = Disabled(Main_t::WORLDSPACES);
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == cells_section_option) {
+            Select_Section_Option(References_Item_Section_e::CELLS, option, lcallback);
+            return true;
+
+        } else if (option == locations_section_option) {
+            Select_Section_Option(References_Item_Section_e::LOCATIONS, option, lcallback);
+            return true;
+
+        } else if (option == quests_section_option) {
+            Select_Section_Option(References_Item_Section_e::QUESTS, option, lcallback);
+            return true;
+
+        } else if (option == references_section_option) {
+            Select_Section_Option(References_Item_Section_e::REFERENCES, option, lcallback);
+            return true;
+
+        } else if (option == worldspaces_section_option) {
+            Select_Section_Option(References_Item_Section_e::WORLDSPACES, option, lcallback);
+            return true;
+
+        } else if (Bases_Options_t<B, I>::Try_On_Option_Select(option, lcallback)) {
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == cells_section_option) {
+            Open_Section_Menu_Option(References_Item_Section_e::CELLS, option, lcallback);
+            return true;
+
+        } else if (option == locations_section_option) {
+            Open_Section_Menu_Option(References_Item_Section_e::LOCATIONS, option, lcallback);
+            return true;
+
+        } else if (option == quests_section_option) {
+            Open_Section_Menu_Option(References_Item_Section_e::QUESTS, option, lcallback);
+            return true;
+
+        } else if (option == references_section_option) {
+            Open_Section_Menu_Option(References_Item_Section_e::REFERENCES, option, lcallback);
+            return true;
+
+        } else if (option == worldspaces_section_option) {
+            Open_Section_Menu_Option(References_Item_Section_e::WORLDSPACES, option, lcallback);
+            return true;
+
+        } else if (Bases_Options_t<B, I>::Try_On_Option_Menu_Open(option, lcallback)) {
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
+    {
+        if (option == cells_section_option) {
+            Accept_Section_Menu_Option(References_Item_Section_e::CELLS, idx, lcallback);
+            return true;
+
+        } else if (option == locations_section_option) {
+            Accept_Section_Menu_Option(References_Item_Section_e::LOCATIONS, idx, lcallback);
+            return true;
+
+        } else if (option == quests_section_option) {
+            Accept_Section_Menu_Option(References_Item_Section_e::QUESTS, idx, lcallback);
+            return true;
+
+        } else if (option == references_section_option) {
+            Accept_Section_Menu_Option(References_Item_Section_e::REFERENCES, idx, lcallback);
+            return true;
+
+        } else if (option == worldspaces_section_option) {
+            Accept_Section_Menu_Option(References_Item_Section_e::WORLDSPACES, idx, lcallback);
+            return true;
+
+        } else if (Bases_Options_t<B, I>::Try_On_Option_Menu_Accept(option, idx, lcallback)) {
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
 
 }}
 
@@ -934,7 +1165,7 @@ namespace doticu_npcl { namespace MCM {
         } else {
             if (mcm->Can_Add_Options(2)) {
                 mcm->Add_Text_Option(Main_t::_NONE_, Main_t::BASES, Flag_e::DISABLE);
-                show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Bases(), Flag_e::DISABLE);
+                show_bases_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Bases());
             }
         }
     }
@@ -966,121 +1197,17 @@ namespace doticu_npcl { namespace MCM {
         } else {
             if (mcm->Can_Add_Options(2)) {
                 mcm->Add_Text_Option(Main_t::_NONE_, Main_t::CELL, Flag_e::DISABLE);
-                show_cells_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Cells(), Flag_e::DISABLE);
+                show_cells_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Cells());
             }
         }
     }
 
     template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Locations(Vector_t<Location_t*> locations)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        size_t count = locations.size();
-        if (count > 0) {
-            if (Do_Show_Locations()) {
-                if (mcm->Can_Add_Options(2 + count)) {
-                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LOCATIONS);
-                    show_locations_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
-
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        Location_t* location = locations[idx];
-                        if (location && location->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name().data, Main_t::_NONE_);
-                        }
-                    }
-
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                        mcm->Add_Empty_Option();
-                    }
-                }
-            } else {
-                if (mcm->Can_Add_Options(2)) {
-                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LOCATIONS);
-                    show_locations_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
-                }
-            }
-        } else {
-            if (mcm->Can_Add_Options(2)) {
-                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LOCATIONS, Flag_e::DISABLE);
-                show_locations_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Locations(), Flag_e::DISABLE);
-            }
-        }
-    }
-
-    template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Quests(Vector_t<Quest_t*> quests)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        size_t count = quests.size();
-        if (count > 0) {
-            if (Do_Show_Quests()) {
-                if (mcm->Can_Add_Options(2 + count)) {
-                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::QUESTS);
-                    show_quests_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
-
-                    quests.Sort(Quest_t::Compare_Any_Names);
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        Quest_t* quest = quests[idx];
-                        if (quest && quest->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name().data, Main_t::_NONE_);
-                        }
-                    }
-
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
-                        mcm->Add_Empty_Option();
-                    }
-                }
-            } else {
-                if (mcm->Can_Add_Options(2)) {
-                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::QUESTS);
-                    show_quests_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
-                }
-            }
-        } else {
-            if (mcm->Can_Add_Options(2)) {
-                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::QUESTS, Flag_e::DISABLE);
-                show_quests_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Quests(), Flag_e::DISABLE);
-            }
-        }
-    }
-
-    template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Reference(Actor_t* actor, const char* type_name)
+    inline void References_Item_t<B, I>::Build_Commands(some<Actor_t*> actor)
     {
         Main_t* mcm = Main_t::Self();
 
         if (actor && actor->Is_Valid()) {
-            if (Do_Show_References()) {
-                if (mcm->Can_Add_Options(2 + 4)) {
-                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, type_name);
-                    show_references_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
-
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_);
-
-                    Actor_Base_t* actor_base = actor->Actor_Base();
-                    if (actor_base && actor_base->Is_Valid()) {
-                        if (actor_base->Is_Male()) {
-                            mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
-                        } else {
-                            mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
-                        }
-                        if (actor_base->Is_Unique()) {
-                            mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
-                        } else {
-                            mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
-                        }
-                    }
-                }
-            } else {
-                if (mcm->Can_Add_Options(2)) {
-                    mcm->Add_Text_Option(Main_t::_NONE_, type_name);
-                    show_references_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
-                }
-            }
-
             if (Do_Show_Commands()) {
                 if (mcm->Can_Add_Options(2 + 6)) {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::COMMANDS);
@@ -1119,13 +1246,125 @@ namespace doticu_npcl { namespace MCM {
             }
         } else {
             if (mcm->Can_Add_Options(2)) {
-                mcm->Add_Text_Option(Main_t::_NONE_, type_name, Flag_e::DISABLE);
-                show_references_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_References(), Flag_e::DISABLE);
-            }
-
-            if (mcm->Can_Add_Options(2)) {
                 mcm->Add_Text_Option(Main_t::_NONE_, Main_t::COMMANDS, Flag_e::DISABLE);
-                show_commands_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Commands(), Flag_e::DISABLE);
+                show_commands_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Commands());
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Locations(Vector_t<Location_t*> locations)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = locations.size();
+        if (count > 0) {
+            if (Do_Show_Locations()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LOCATIONS);
+                    show_locations_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Location_t* location = locations[idx];
+                        if (location && location->Is_Valid()) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name().data, Main_t::_NONE_);
+                        }
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LOCATIONS);
+                    show_locations_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::LOCATIONS, Flag_e::DISABLE);
+                show_locations_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Locations());
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Quests(Vector_t<Quest_t*> quests)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        size_t count = quests.size();
+        if (count > 0) {
+            if (Do_Show_Quests()) {
+                if (mcm->Can_Add_Options(2 + count)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::QUESTS);
+                    show_quests_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    quests.Sort(Quest_t::Compare_Any_Names);
+                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                        Quest_t* quest = quests[idx];
+                        if (quest && quest->Is_Valid()) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name().data, Main_t::_NONE_);
+                        }
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, Main_t::QUESTS);
+                    show_quests_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::QUESTS, Flag_e::DISABLE);
+                show_quests_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Quests());
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    inline void References_Item_t<B, I>::Build_Reference(Actor_t* actor, const char* type_name)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (actor && actor->Is_Valid()) {
+            if (Do_Show_References()) {
+                if (mcm->Can_Add_Options(2 + 4)) {
+                    mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, type_name);
+                    show_references_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
+
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_);
+
+                    Actor_Base_t* actor_base = actor->Actor_Base();
+                    if (actor_base && actor_base->Is_Valid()) {
+                        if (actor_base->Is_Male()) {
+                            mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
+                        } else {
+                            mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
+                        }
+                        if (actor_base->Is_Unique()) {
+                            mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
+                        } else {
+                            mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                        }
+                    }
+                }
+            } else {
+                if (mcm->Can_Add_Options(2)) {
+                    mcm->Add_Text_Option(Main_t::_NONE_, type_name);
+                    show_references_option = mcm->Add_Toggle_Option(Main_t::_NONE_, false);
+                }
+            }
+        } else {
+            if (mcm->Can_Add_Options(2)) {
+                mcm->Add_Text_Option(Main_t::_NONE_, type_name, Flag_e::DISABLE);
+                show_references_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_References());
             }
         }
     }
@@ -1162,7 +1401,7 @@ namespace doticu_npcl { namespace MCM {
         } else {
             if (mcm->Can_Add_Options(2)) {
                 mcm->Add_Text_Option(Main_t::_NONE_, Main_t::WORLDSPACES, Flag_e::DISABLE);
-                show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Worldspaces(), Flag_e::DISABLE);
+                show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Worldspaces());
             }
         }
     }

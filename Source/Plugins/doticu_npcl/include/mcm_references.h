@@ -8,6 +8,29 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    class References_Item_Section_e : public Bases_Item_Section_e
+    {
+    public:
+        enum : _TYPE_
+        {
+            CELLS = Bases_Item_Section_e::_END_,
+            LOCATIONS,
+            QUESTS,
+            REFERENCES,
+            WORLDSPACES,
+
+            _END_,
+        };
+        using Bases_Item_Section_e::Bases_Item_Section_e;
+
+        static some<const char*>            To_String(References_Item_Section_e section_e);
+        static References_Item_Section_e    From_String(some<const char*> section_str);
+    };
+
+}}
+
+namespace doticu_npcl { namespace MCM {
+
     template <typename Base_t, typename Item_t>
     class References_t : public Bases_t<Base_t, Item_t>
     {
@@ -146,6 +169,24 @@ namespace doticu_npcl { namespace MCM {
     class References_Options_t : public Bases_Options_t<Base_t, Item_t>
     {
     public:
+        static Int_t cells_section_option;
+        static Int_t locations_section_option;
+        static Int_t quests_section_option;
+        static Int_t references_section_option;
+        static Int_t worldspaces_section_option;
+
+        void    Reset_Option_Ints();
+
+    public:
+        void    Reset_Item_Sections();
+        void    Serialize_Item_Sections();
+        void    Deserialize_Item_Sections();
+
+        void    Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections);
+
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -192,6 +233,7 @@ namespace doticu_npcl { namespace MCM {
     public:
         void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);
         void    Build_Cell(Cell_t* cell);
+        void    Build_Commands(some<Actor_t*> actor);
         void    Build_Locations(Vector_t<Location_t*> locations);
         void    Build_Quests(Vector_t<Quest_t*> quests);
         void    Build_Reference(Actor_t* actor, const char* type_name);

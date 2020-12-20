@@ -101,6 +101,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    MOD                                 = "$dnpcl_mod";
         static constexpr const char*    MODS                                = "$dnpcl_mods";
         static constexpr const char*    RACE                                = "$dnpcl_race";
+        static constexpr const char*    RACES                               = "$dnpcl_races";
         static constexpr const char*    BASE                                = "$dnpcl_base";
         static constexpr const char*    BASES                               = "$dnpcl_bases";
         static constexpr const char*    TEMPLATE                            = "$dnpcl_template";
@@ -111,11 +112,14 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    KEYWORDS                            = "$dnpcl_keywords";
         static constexpr const char*    RELATION                            = "$dnpcl_relation";
         static constexpr const char*    VITALITY                            = "$dnpcl_vitality";
+        static constexpr const char*    REFERENCE                           = "$dnpcl_reference";
+        static constexpr const char*    REFERENCES                          = "$dnpcl_references";
         static constexpr const char*    WORLDSPACE                          = "$dnpcl_worldspace";
         static constexpr const char*    WORLDSPACES                         = "$dnpcl_worldspaces";
         static constexpr const char*    LOCATION                            = "$dnpcl_location";
         static constexpr const char*    LOCATIONS                           = "$dnpcl_locations";
         static constexpr const char*    CELL                                = "$dnpcl_cell";
+        static constexpr const char*    CELLS                               = "$dnpcl_cells";
         static constexpr const char*    QUEST                               = "$dnpcl_quest";
         static constexpr const char*    QUESTS                              = "$dnpcl_quests";
         static constexpr const char*    OTHER                               = "$dnpcl_other";
@@ -147,11 +151,18 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    ESSENTIAL                           = "$dnpcl_essential";
         static constexpr const char*    INVULNERABLE                        = "$dnpcl_invulnerable";
 
+        static constexpr const char*    GENERAL                             = "$dnpcl_general";
         static constexpr const char*    SMART_SELECT                        = "$dnpcl_smart_select";
         static constexpr const char*    UNCOMBATIVE_SPAWNS                  = "$dnpcl_uncombative_spawns";
         static constexpr const char*    PERSISTENT_SPAWNS                   = "$dnpcl_persistent_spawns";
         static constexpr const char*    STATIC_SPAWNS                       = "$dnpcl_static_spawns";
         static constexpr const char*    VERIFY_UNSPAWNS                     = "$dnpcl_verify_unspawns";
+
+        static constexpr const char*    ITEM_SECTIONS                       = "$dnpcl_item_sections";
+        static constexpr const char*    ENABLE_SECTION                      = "$dnpcl_enable_section";
+        static constexpr const char*    DISABLE_SECTION                     = "$dnpcl_disable_section";
+        static constexpr const char*    MOVE_SECTION_HIGHER                 = "$dnpcl_move_section_higher";
+        static constexpr const char*    MOVE_SECTION_LOWER                  = "$dnpcl_move_section_lower";
 
         static constexpr const char*    COMMANDS                            = "$dnpcl_commands";
         static constexpr const char*    VIEW_INTERNAL_BASES                 = "$dnpcl_view_internal_bases";

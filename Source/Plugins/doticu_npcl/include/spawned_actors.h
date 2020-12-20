@@ -18,7 +18,8 @@ namespace doticu_npcl {
     using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
     using Mod_t                 = skylib::Mod_t;
 
-    class Spawned_Actors_t {
+    class Spawned_Actors_t
+    {
     public:
         static std::mutex global_mutex;
 

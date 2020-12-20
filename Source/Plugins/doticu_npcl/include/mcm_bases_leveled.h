@@ -44,9 +44,6 @@ namespace doticu_npcl { namespace MCM {
     class Leveled_Bases_t : public Bases_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
     public:
-        void On_Load();
-        void On_Save();
-        void On_Config_Open();
     };
 
 }}
@@ -60,11 +57,6 @@ namespace doticu_npcl { namespace MCM {
         static std::mutex                   cached_leveleds_mutex;
 
     public:
-        void On_Load();
-        void On_Save();
-        void On_Config_Open();
-
-    public:
         void                Refresh_Cache();
 
         Vector_t<Item_t>&   Items();
@@ -72,6 +64,7 @@ namespace doticu_npcl { namespace MCM {
         Item_t              Null_Item();
 
     public:
+        void On_Config_Open();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
@@ -94,7 +87,6 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

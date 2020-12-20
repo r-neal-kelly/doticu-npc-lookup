@@ -38,8 +38,6 @@ namespace doticu_npcl { namespace MCM {
     class Spawned_References_t : public References_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
     public:
-        void On_Load();
-        void On_Save();
     };
 
 }}
@@ -77,6 +75,8 @@ namespace doticu_npcl { namespace MCM {
         Item_t              Null_Item();
 
     public:
+        void On_Load();
+        void On_Save();
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };

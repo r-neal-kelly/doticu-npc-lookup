@@ -38,52 +38,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Spawned_References_t::On_Load()
-    {
-        References_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>::On_Load();
 
-        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
-        spawned.Clear();
-
-        Spawned_References_List_t* list = List();
-        V::Array_t* actor_ids = list->Actor_IDs_Array();
-        V::Array_t* actor_mod_names = list->Actor_Mod_Names_Array();
-        V::Array_t* actor_base_ids = list->Actor_Base_IDs_Array();
-        V::Array_t* actor_base_mod_names = list->Actor_Base_Mod_Names_Array();
-        if (actor_ids && actor_mod_names && actor_base_ids && actor_base_mod_names) {
-            if (actor_mod_names->count == actor_ids->count &&
-                actor_base_ids->count == actor_ids->count &&
-                actor_base_mod_names->count == actor_ids->count) {
-                for (Index_t idx = 0, end = actor_ids->count; idx < end; idx += 1) {
-                    V::Variable_t* actor_id = actor_ids->Point(idx);
-                    V::Variable_t* actor_mod_name = actor_mod_names->Point(idx);
-                    V::Variable_t* actor_base_id = actor_base_ids->Point(idx);
-                    V::Variable_t* actor_base_mod_name = actor_base_mod_names->Point(idx);
-                    if (actor_id && actor_mod_name && actor_base_id && actor_base_mod_name) {
-                        spawned.Add(
-                            actor_id->Int(),
-                            actor_mod_name->String(),
-                            actor_base_id->Int(),
-                            actor_base_mod_name->String()
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    void Spawned_References_t::On_Save()
-    {
-        References_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>::On_Save();
-
-        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
-
-        Spawned_References_List_t* list = List();
-        list->Actor_IDs(spawned.actor_ids);
-        list->Actor_Mod_Names(spawned.actor_mod_names);
-        list->Actor_Base_IDs(spawned.actor_base_ids);
-        list->Actor_Base_Mod_Names(spawned.actor_base_mod_names);
-    }
 
 }}
 
@@ -159,6 +114,51 @@ namespace doticu_npcl { namespace MCM {
     Item_t Spawned_References_List_t::Null_Item()
     {
         return nullptr;
+    }
+
+    void Spawned_References_List_t::On_Load()
+    {
+        References_List_t<Spawned_References_Base_t, Item_t>::On_Load();
+
+        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
+        spawned.Clear();
+
+        V::Array_t* actor_ids = Actor_IDs_Array();
+        V::Array_t* actor_mod_names = Actor_Mod_Names_Array();
+        V::Array_t* actor_base_ids = Actor_Base_IDs_Array();
+        V::Array_t* actor_base_mod_names = Actor_Base_Mod_Names_Array();
+        if (actor_ids && actor_mod_names && actor_base_ids && actor_base_mod_names) {
+            if (actor_mod_names->count == actor_ids->count &&
+                actor_base_ids->count == actor_ids->count &&
+                actor_base_mod_names->count == actor_ids->count) {
+                for (Index_t idx = 0, end = actor_ids->count; idx < end; idx += 1) {
+                    V::Variable_t* actor_id = actor_ids->Point(idx);
+                    V::Variable_t* actor_mod_name = actor_mod_names->Point(idx);
+                    V::Variable_t* actor_base_id = actor_base_ids->Point(idx);
+                    V::Variable_t* actor_base_mod_name = actor_base_mod_names->Point(idx);
+                    if (actor_id && actor_mod_name && actor_base_id && actor_base_mod_name) {
+                        spawned.Add(
+                            actor_id->Int(),
+                            actor_mod_name->String(),
+                            actor_base_id->Int(),
+                            actor_base_mod_name->String()
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    void Spawned_References_List_t::On_Save()
+    {
+        References_List_t<Spawned_References_Base_t, Item_t>::On_Save();
+
+        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
+
+        Actor_IDs(spawned.actor_ids);
+        Actor_Mod_Names(spawned.actor_mod_names);
+        Actor_Base_IDs(spawned.actor_base_ids);
+        Actor_Base_Mod_Names(spawned.actor_base_mod_names);
     }
 
     void Spawned_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
@@ -376,39 +376,45 @@ namespace doticu_npcl { namespace MCM {
         Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
 
-        mcm->Add_Header_Option(Main_t::_NONE_);
+        mcm->Add_Header_Option(Main_t::GENERAL);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
         Do_Verify_Unspawns_Option() = mcm->Add_Toggle_Option(Main_t::VERIFY_UNSPAWNS, Do_Verify_Unspawns());
+
+        Vector_t<Item_Section_t> sections;
+        sections.reserve(11);
+        sections.push_back(References_Item_Section_e::BASES);
+        sections.push_back(References_Item_Section_e::COMMANDS);
+        sections.push_back(References_Item_Section_e::FACTIONS);
+        sections.push_back(References_Item_Section_e::KEYWORDS);
+        sections.push_back(References_Item_Section_e::MODS);
+        sections.push_back(References_Item_Section_e::RACES);
+        sections.push_back(References_Item_Section_e::CELLS);
+        sections.push_back(References_Item_Section_e::LOCATIONS);
+        sections.push_back(References_Item_Section_e::QUESTS);
+        sections.push_back(References_Item_Section_e::REFERENCES);
+        sections.push_back(References_Item_Section_e::WORLDSPACES);
+        Build_Section_Options(sections);
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void Spawned_References_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Reset_Option()) {
-            mcm->Disable_Option(option);
-            Reset();
-            mcm->Reset_Page();
-
-        } else if (option == Smart_Select_Option()) {
-            Bool_t value = Do_Smart_Select();
-            Do_Smart_Select(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Do_Verify_Unspawns_Option()) {
+        if (option == Do_Verify_Unspawns_Option()) {
+            Main_t* mcm = Main_t::Self();
             Bool_t value = Do_Verify_Unspawns();
             Do_Verify_Unspawns(!value);
             mcm->Toggle_Option_Value(option, !value);
-        }
+            mcm->Destroy_Latent_Callback(lcallback);
 
-        mcm->Destroy_Latent_Callback(lcallback);
+        } else if (References_Options_t<Spawned_References_Base_t, Item_t>::Try_On_Option_Select(option, lcallback)) {
+            return;
+
+        } else {
+            Main_t::Self()->Destroy_Latent_Callback(lcallback);
+
+        }
     }
 
     void Spawned_References_Options_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
@@ -596,16 +602,24 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                 Build_Header(Main_t::CENTER_UNSPAWN, List()->Items().size());
-                Build_Reference(item, Main_t::SPAWNED_REFERENCE);
-                Build_Race(item->Race());
-                Build_Bases(item->Actor_Bases());
-                Build_Cell(item->Cell());
-                Build_Locations(item->Locations());
-                Build_Worldspaces(item->Worldspaces());
-                Build_Factions_And_Ranks(item->Factions_And_Ranks());
-                Build_Keywords(item->Keywords());
-                Build_Quests(item->Quests());
-                Build_Mod_Names(item->Mod_Names());
+
+                Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
+                for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+                    Item_Section_t item_section = item_sections[idx];
+                         if (item_section == References_Item_Section_e::BASES)          Build_Bases(item->Actor_Bases());
+                    else if (item_section == References_Item_Section_e::COMMANDS)       Build_Commands(item);
+                    else if (item_section == References_Item_Section_e::FACTIONS)       Build_Factions_And_Ranks(item->Factions_And_Ranks());
+                    else if (item_section == References_Item_Section_e::KEYWORDS)       Build_Keywords(item->Keywords());
+                    else if (item_section == References_Item_Section_e::MODS)           Build_Mod_Names(item->Mod_Names());
+                    else if (item_section == References_Item_Section_e::RACES)          Build_Race(item->Race());
+                    else if (item_section == References_Item_Section_e::TEMPLATES)      continue;
+
+                    else if (item_section == References_Item_Section_e::CELLS)          Build_Cell(item->Cell());
+                    else if (item_section == References_Item_Section_e::LOCATIONS)      Build_Locations(item->Locations());
+                    else if (item_section == References_Item_Section_e::QUESTS)         Build_Quests(item->Quests());
+                    else if (item_section == References_Item_Section_e::REFERENCES)     Build_Reference(item, Main_t::SPAWNED_REFERENCE);
+                    else if (item_section == References_Item_Section_e::WORLDSPACES)    Build_Worldspaces(item->Worldspaces());
+                }
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

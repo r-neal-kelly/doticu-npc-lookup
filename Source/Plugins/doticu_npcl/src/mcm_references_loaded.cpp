@@ -284,32 +284,24 @@ namespace doticu_npcl { namespace MCM {
         Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
 
-        mcm->Add_Header_Option(Main_t::_NONE_);
+        mcm->Add_Header_Option(Main_t::GENERAL);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
 
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Loaded_References_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Reset_Option()) {
-            mcm->Disable_Option(option);
-            Reset();
-            mcm->Reset_Page();
-
-        } else if (option == Smart_Select_Option()) {
-            Bool_t value = Do_Smart_Select();
-            Do_Smart_Select(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        }
+        Vector_t<Item_Section_t> sections;
+        sections.reserve(11);
+        sections.push_back(References_Item_Section_e::BASES);
+        sections.push_back(References_Item_Section_e::COMMANDS);
+        sections.push_back(References_Item_Section_e::FACTIONS);
+        sections.push_back(References_Item_Section_e::KEYWORDS);
+        sections.push_back(References_Item_Section_e::MODS);
+        sections.push_back(References_Item_Section_e::RACES);
+        sections.push_back(References_Item_Section_e::CELLS);
+        sections.push_back(References_Item_Section_e::LOCATIONS);
+        sections.push_back(References_Item_Section_e::QUESTS);
+        sections.push_back(References_Item_Section_e::REFERENCES);
+        sections.push_back(References_Item_Section_e::WORLDSPACES);
+        Build_Section_Options(sections);
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -414,16 +406,24 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                 Build_Header(Main_t::_NONE_, List()->Items().size());
-                Build_Reference(item.actor, Main_t::LOADED_REFERENCE);
-                Build_Race(item.actor->Race());
-                Build_Bases(item.actor->Actor_Bases());
-                Build_Cell(item.cell);
-                Build_Locations(item.cell->Locations());
-                Build_Worldspaces(item.cell->Worldspaces());
-                Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
-                Build_Keywords(item.actor->Keywords());
-                Build_Quests(item.actor->Quests());
-                Build_Mod_Names(item.actor->Mod_Names());
+
+                Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
+                for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+                    Item_Section_t item_section = item_sections[idx];
+                         if (item_section == References_Item_Section_e::BASES)          Build_Bases(item.actor->Actor_Bases());
+                    else if (item_section == References_Item_Section_e::COMMANDS)       Build_Commands(item.actor);
+                    else if (item_section == References_Item_Section_e::FACTIONS)       Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
+                    else if (item_section == References_Item_Section_e::KEYWORDS)       Build_Keywords(item.actor->Keywords());
+                    else if (item_section == References_Item_Section_e::MODS)           Build_Mod_Names(item.actor->Mod_Names());
+                    else if (item_section == References_Item_Section_e::RACES)          Build_Race(item.actor->Race());
+                    else if (item_section == References_Item_Section_e::TEMPLATES)      continue;
+
+                    else if (item_section == References_Item_Section_e::CELLS)          Build_Cell(item.cell);
+                    else if (item_section == References_Item_Section_e::LOCATIONS)      Build_Locations(item.cell->Locations());
+                    else if (item_section == References_Item_Section_e::QUESTS)         Build_Quests(item.actor->Quests());
+                    else if (item_section == References_Item_Section_e::REFERENCES)     Build_Reference(item.actor, Main_t::LOADED_REFERENCE);
+                    else if (item_section == References_Item_Section_e::WORLDSPACES)    Build_Worldspaces(item.cell->Worldspaces());
+                }
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);

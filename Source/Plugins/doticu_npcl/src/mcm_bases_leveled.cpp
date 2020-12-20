@@ -40,26 +40,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    void Leveled_Bases_t::On_Load()
-    {
-        Bases_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>::On_Load();
 
-        List()->On_Load();
-    }
-
-    void Leveled_Bases_t::On_Save()
-    {
-        Bases_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>::On_Save();
-
-        List()->On_Save();
-    }
-
-    void Leveled_Bases_t::On_Config_Open()
-    {
-        Bases_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>::On_Config_Open();
-
-        List()->On_Config_Open();
-    }
 
 }}
 
@@ -67,21 +48,6 @@ namespace doticu_npcl { namespace MCM {
 
     Vector_t<Cached_Leveled_t>  Leveled_Bases_List_t::cached_leveleds = Vector_t<Cached_Leveled_t>();
     std::mutex                  Leveled_Bases_List_t::cached_leveleds_mutex;
-
-    void Leveled_Bases_List_t::On_Load()
-    {
-        
-    }
-
-    void Leveled_Bases_List_t::On_Save()
-    {
-
-    }
-
-    void Leveled_Bases_List_t::On_Config_Open()
-    {
-        Refresh_Cache();
-    }
 
     void Leveled_Bases_List_t::Refresh_Cache()
     {
@@ -160,6 +126,13 @@ namespace doticu_npcl { namespace MCM {
     Item_t Leveled_Bases_List_t::Null_Item()
     {
         return nullptr;
+    }
+
+    void Leveled_Bases_List_t::On_Config_Open()
+    {
+        Bases_List_t<Leveled_Bases_Base_t, Item_t>::On_Config_Open();
+
+        Refresh_Cache();
     }
 
     void Leveled_Bases_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
@@ -356,47 +329,22 @@ namespace doticu_npcl { namespace MCM {
         Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
 
-        mcm->Add_Header_Option(Main_t::_NONE_);
+        mcm->Add_Header_Option(Main_t::GENERAL);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
         Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::UNCOMBATIVE_SPAWNS, Do_Uncombative_Spawns());
         Persistent_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::PERSISTENT_SPAWNS, Do_Persistent_Spawns());
         Static_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::STATIC_SPAWNS, Do_Static_Spawns());
 
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Leveled_Bases_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Back_Option()) {
-            mcm->Disable_Option(option);
-            List()->do_update_items = true;
-            Current_View(Bases_View_e::LIST);
-            mcm->Reset_Page();
-        } else if (option == Reset_Option()) {
-            mcm->Disable_Option(option);
-            Reset();
-            mcm->Reset_Page();
-
-        } else if (option == Smart_Select_Option()) {
-            Bool_t value = Do_Smart_Select();
-            Do_Smart_Select(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Uncombative_Spawns_Option()) {
-            Bool_t value = Do_Uncombative_Spawns();
-            Do_Uncombative_Spawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Persistent_Spawns_Option()) {
-            Bool_t value = Do_Persistent_Spawns();
-            Do_Persistent_Spawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        } else if (option == Static_Spawns_Option()) {
-            Bool_t value = Do_Static_Spawns();
-            Do_Static_Spawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
-        }
+        Vector_t<Item_Section_t> sections;
+        sections.reserve(6);
+        sections.push_back(Bases_Item_Section_e::BASES);
+        sections.push_back(Bases_Item_Section_e::FACTIONS);
+        sections.push_back(Bases_Item_Section_e::KEYWORDS);
+        sections.push_back(Bases_Item_Section_e::MODS);
+        sections.push_back(Bases_Item_Section_e::RACES);
+        sections.push_back(Bases_Item_Section_e::TEMPLATES);
+        Build_Section_Options(sections);
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -580,8 +528,18 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                 Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
-                Build_Leveled_Base(item->leveled);
-                Build_Mod_Names(item->leveled->Mod_Names());
+
+                Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
+                for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+                    Item_Section_t item_section = item_sections[idx];
+                         if (item_section == Bases_Item_Section_e::BASES)       Build_Leveled_Base(item->leveled);
+                    else if (item_section == Bases_Item_Section_e::COMMANDS)    continue;
+                    else if (item_section == Bases_Item_Section_e::FACTIONS)    continue;
+                    else if (item_section == Bases_Item_Section_e::KEYWORDS)    continue;
+                    else if (item_section == Bases_Item_Section_e::MODS)        Build_Mod_Names(item->leveled->Mod_Names());
+                    else if (item_section == Bases_Item_Section_e::RACES)       continue;
+                    else if (item_section == Bases_Item_Section_e::TEMPLATES)   continue;
+                }
             } else {
                 List()->do_update_items = true;
                 Current_View(Bases_View_e::LIST);
@@ -697,12 +655,18 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                     Build_Header(Main_t::CENTER_SPAWN, nested_items.size());
-                    Build_Base(nested_item, Main_t::INTERNAL_BASE);
-                    Build_Race(nested_item->Race());
-                    Build_Templates(nested_item->Templates());
-                    Build_Factions_And_Ranks(nested_item->Factions_And_Ranks());
-                    Build_Keywords(nested_item->Keywords());
-                    Build_Mod_Names(nested_item->Mod_Names());
+
+                    Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
+                    for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
+                        Item_Section_t item_section = item_sections[idx];
+                             if (item_section == Bases_Item_Section_e::BASES)       Build_Base(nested_item, Main_t::INTERNAL_BASE);
+                        else if (item_section == Bases_Item_Section_e::COMMANDS)    continue;
+                        else if (item_section == Bases_Item_Section_e::FACTIONS)    Build_Factions_And_Ranks(nested_item->Factions_And_Ranks());
+                        else if (item_section == Bases_Item_Section_e::KEYWORDS)    Build_Keywords(nested_item->Keywords());
+                        else if (item_section == Bases_Item_Section_e::MODS)        Build_Mod_Names(nested_item->Mod_Names());
+                        else if (item_section == Bases_Item_Section_e::RACES)       Build_Race(nested_item->Race());
+                        else if (item_section == Bases_Item_Section_e::TEMPLATES)   Build_Templates(nested_item->Templates());
+                    }
                 } else {
                     Nested_View(Bases_Item_View_e::BASES);
                     Nested_Form(0);

@@ -24,6 +24,7 @@ namespace doticu_npcl {
     using String_t      = skylib::String_t;
 
     using u8            = skylib::u8;
+    using s64           = skylib::s64;
 
     template <typename Type>
     using none          = skylib::none<Type>;
