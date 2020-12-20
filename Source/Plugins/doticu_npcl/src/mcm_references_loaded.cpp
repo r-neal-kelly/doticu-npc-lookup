@@ -5,6 +5,7 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/cell.h"
 #include "doticu_skylib/faction.h"
+#include "doticu_skylib/game.h"
 #include "doticu_skylib/worldspace.h"
 
 #include "doticu_skylib/virtual_utils.h"
@@ -57,17 +58,17 @@ namespace doticu_npcl { namespace MCM {
             items->Sort(
                 [](Item_t* item_a, Item_t* item_b)->Int_t
                 {
-                    if (!item_a || !item_a->Is_Valid()) {
+                    if (!item_a || !*item_a) {
                         return Comparator_e::IS_UNORDERED;
-                    } else if (!item_b || !item_b->Is_Valid()) {
+                    } else if (!item_b || !*item_b) {
                         return Comparator_e::IS_ORDERED;
                     } else {
                         Comparator_e result = Main_t::String_Comparator(
-                            item_a->actor->Any_Name(),
-                            item_b->actor->Any_Name()
+                            (*item_a)->Any_Name(),
+                            (*item_b)->Any_Name()
                         );
                         if (result == Comparator_e::IS_EQUAL) {
-                            return item_a->actor->form_id - item_b->actor->form_id;
+                            return (*item_a)->form_id - (*item_b)->form_id;
                         } else {
                             return result;
                         }
@@ -102,7 +103,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Vector_t<Loaded_Actor_t>& loaded_actors = Items();
+        Vector_t<Item_t>& loaded_actors = Items();
         size_t loaded_actor_count = loaded_actors.size();
         if (loaded_actor_count) {
             Int_t page_count = static_cast<Int_t>(ceilf(
@@ -143,8 +144,8 @@ namespace doticu_npcl { namespace MCM {
                 end = loaded_actor_count;
             }
             for (; begin < end; begin += 1) {
-                Loaded_Actor_t loaded_actor = loaded_actors[begin];
-                mcm->Add_Text_Option(loaded_actor.actor->Any_Name(), Main_t::_DOTS_);
+                Item_t loaded_actor = loaded_actors[begin];
+                mcm->Add_Text_Option(loaded_actor->Any_Name(), Main_t::_DOTS_);
             }
         } else {
             if (mcm->Should_Translate_Page_Titles()) {
@@ -180,7 +181,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Previous_Page_Option()) {
             mcm->Disable_Option(option);
 
-            Vector_t<Loaded_Actor_t>& loaded_actors = Items();
+            Vector_t<Item_t>& loaded_actors = Items();
             size_t loaded_actor_count = loaded_actors.size();
             if (loaded_actor_count > 0) {
                 Int_t page_count = static_cast<Int_t>(ceilf(
@@ -200,7 +201,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (option == Next_Page_Option()) {
             mcm->Disable_Option(option);
 
-            Vector_t<Loaded_Actor_t>& loaded_actors = Items();
+            Vector_t<Item_t>& loaded_actors = Items();
             size_t loaded_actor_count = loaded_actors.size();
             if (loaded_actor_count > 0) {
                 Int_t page_count = static_cast<Int_t>(ceilf(
@@ -225,10 +226,9 @@ namespace doticu_npcl { namespace MCM {
             );
             if (item_index > -1) {
                 Item_t item = items[item_index];
-                if (item.Is_Valid()) {
+                if (item && item->Is_Valid()) {
                     mcm->Disable_Option(option);
-                    Item()->Actor_Form_ID(item.actor->form_id);
-                    Item()->Cell_Form_ID(item.cell->form_id);
+                    Item()->Actor_Form_ID(item->form_id);
                     Current_View(Bases_View_e::ITEM);
                     mcm->Reset_Page();
                 }
@@ -311,28 +311,24 @@ namespace doticu_npcl { namespace MCM {
 namespace doticu_npcl { namespace MCM {
 
     V::Int_Variable_t*  Loaded_References_Item_t::Actor_Form_ID_Variable()          { DEFINE_INT_VARIABLE("p_item_actor_form_id"); }
-    V::Int_Variable_t*  Loaded_References_Item_t::Cell_Form_ID_Variable()           { DEFINE_INT_VARIABLE("p_item_cell_form_id"); }
 
     Form_ID_t           Loaded_References_Item_t::Actor_Form_ID()                   { return Actor_Form_ID_Variable()->Value(); }
     void                Loaded_References_Item_t::Actor_Form_ID(Form_ID_t value)    { Actor_Form_ID_Variable()->Value(value); }
-    Form_ID_t           Loaded_References_Item_t::Cell_Form_ID()                    { return Cell_Form_ID_Variable()->Value(); }
-    void                Loaded_References_Item_t::Cell_Form_ID(Form_ID_t value)     { Cell_Form_ID_Variable()->Value(value); }
 
     Item_t Loaded_References_Item_t::Current_Item()
     {
-        Item_t item(Actor_Form_ID(), Cell_Form_ID());
-        if (item.Is_Valid() && List()->Items().Has(item)) {
-            return std::move(item);
+        maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid() && List()->Items().Has(item)) {
+            return item;
         } else {
-            return std::move(Item_t());
+            return nullptr;
         }
     }
 
     Bool_t Loaded_References_Item_t::Current_Item(Item_t item)
     {
-        if (item.Is_Valid()) {
-            Actor_Form_ID(item.actor->form_id);
-            Cell_Form_ID(item.cell->form_id);
+        if (item && item->Is_Valid()) {
+            Actor_Form_ID(item->form_id);
             return true;
         } else {
             return false;
@@ -341,8 +337,8 @@ namespace doticu_npcl { namespace MCM {
 
     Item_t Loaded_References_Item_t::Previous_Item()
     {
-        Item_t item(Actor_Form_ID(), Cell_Form_ID());
-        if (item.Is_Valid()) {
+        maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
             if (idx > -1) {
@@ -353,17 +349,17 @@ namespace doticu_npcl { namespace MCM {
                 }
                 return items[idx];
             } else {
-                return std::move(Item_t());
+                return nullptr;
             }
         } else {
-            return std::move(Item_t());
+            return nullptr;
         }
     }
 
     Item_t Loaded_References_Item_t::Next_Item()
     {
-        Item_t item(Actor_Form_ID(), Cell_Form_ID());
-        if (item.Is_Valid()) {
+        maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t idx = items.Index_Of(item);
             if (idx > -1) {
@@ -374,10 +370,10 @@ namespace doticu_npcl { namespace MCM {
                 }
                 return items[idx];
             } else {
-                return std::move(Item_t());
+                return nullptr;
             }
         } else {
-            return std::move(Item_t());
+            return nullptr;
         }
     }
 
@@ -387,18 +383,18 @@ namespace doticu_npcl { namespace MCM {
 
         Reset_Option_Ints();
 
-        Item_t item(Actor_Form_ID(), Cell_Form_ID());
-        if (item.Is_Valid()) {
+        maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
+        if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
             Index_t item_index = items.Index_Of(item);
             if (item_index > -1) {
                 if (mcm->Should_Translate_Page_Titles()) {
                     mcm->Translated_Title_Text(
-                        mcm->Singular_Title(Main_t::COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
+                        mcm->Singular_Title(Main_t::COMPONENT_LOADED_REFERENCE, item->Any_Name(), item_index, items.size())
                     );
                 } else {
                     mcm->Title_Text(
-                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCE, item.actor->Any_Name(), item_index, items.size())
+                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCE, item->Any_Name(), item_index, items.size())
                     );
                 }
 
@@ -410,19 +406,19 @@ namespace doticu_npcl { namespace MCM {
                 Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
                 for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
                     Item_Section_t item_section = item_sections[idx];
-                         if (item_section == References_Item_Section_e::BASES)          Build_Bases(item.actor->Actor_Bases());
-                    else if (item_section == References_Item_Section_e::COMMANDS)       Build_Commands(item.actor);
-                    else if (item_section == References_Item_Section_e::FACTIONS)       Build_Factions_And_Ranks(item.actor->Factions_And_Ranks());
-                    else if (item_section == References_Item_Section_e::KEYWORDS)       Build_Keywords(item.actor->Keywords());
-                    else if (item_section == References_Item_Section_e::MODS)           Build_Mod_Names(item.actor->Mod_Names());
-                    else if (item_section == References_Item_Section_e::RACES)          Build_Race(item.actor->Race());
+                         if (item_section == References_Item_Section_e::BASES)          Build_Bases(item->Actor_Bases());
+                    else if (item_section == References_Item_Section_e::COMMANDS)       Build_Commands(item);
+                    else if (item_section == References_Item_Section_e::FACTIONS)       Build_Factions_And_Ranks(item->Factions_And_Ranks());
+                    else if (item_section == References_Item_Section_e::KEYWORDS)       Build_Keywords(item->Keywords());
+                    else if (item_section == References_Item_Section_e::MODS)           Build_Mod_Names(item->Mod_Names());
+                    else if (item_section == References_Item_Section_e::RACES)          Build_Race(item->Race());
                     else if (item_section == References_Item_Section_e::TEMPLATES)      continue;
 
-                    else if (item_section == References_Item_Section_e::CELLS)          Build_Cell(item.cell);
-                    else if (item_section == References_Item_Section_e::LOCATIONS)      Build_Locations(item.cell->Locations());
-                    else if (item_section == References_Item_Section_e::QUESTS)         Build_Quests(item.actor->Quests());
-                    else if (item_section == References_Item_Section_e::REFERENCES)     Build_Reference(item.actor, Main_t::LOADED_REFERENCE);
-                    else if (item_section == References_Item_Section_e::WORLDSPACES)    Build_Worldspaces(item.cell->Worldspaces());
+                    else if (item_section == References_Item_Section_e::CELLS)          Build_Cell(item->Cell());
+                    else if (item_section == References_Item_Section_e::LOCATIONS)      Build_Locations(item->Locations());
+                    else if (item_section == References_Item_Section_e::QUESTS)         Build_Quests(item->Quests());
+                    else if (item_section == References_Item_Section_e::REFERENCES)     Build_Reference(item, Main_t::LOADED_REFERENCE);
+                    else if (item_section == References_Item_Section_e::WORLDSPACES)    Build_Worldspaces(item->Worldspaces());
                 }
             } else {
                 List()->do_update_items = true;
@@ -444,13 +440,13 @@ namespace doticu_npcl { namespace MCM {
 
         if (option == Mark_On_Map_Option()) {
             mcm->Flicker_Option(option);
-            Loaded_Actor_t loaded_actor = Current_Item();
-            if (loaded_actor.Is_Valid()) {
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
                 Markers_t* markers = Markers_t::Self();
-                if (markers->Has_Marked(loaded_actor.actor)) {
-                    Markers_t::Self()->Unmark(loaded_actor.actor);
+                if (markers->Has_Marked(item)) {
+                    Markers_t::Self()->Unmark(item);
                 } else {
-                    Markers_t::Self()->Mark(loaded_actor.actor);
+                    Markers_t::Self()->Mark(item);
                 }
                 mcm->Reset_Page();
             }
@@ -458,16 +454,16 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Move_To_Player_Option()) {
             mcm->Flicker_Option(option);
-            Loaded_Actor_t loaded_actor = Current_Item();
-            if (loaded_actor.Is_Valid()) {
-                loaded_actor.actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
+                item->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
             }
             mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Go_To_Reference_Option()) {
             mcm->Disable_Option(option);
-            Loaded_Actor_t loaded_actor = Current_Item();
-            if (loaded_actor.Is_Valid()) {
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
                 struct Callback_t : public skylib::Callback_i<Bool_t>
                 {
                     Actor_t* actor;
@@ -482,7 +478,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
                 };
-                skylib::Virtual::Utils_t::Close_Menus(new Callback_t(loaded_actor.actor));
+                skylib::Virtual::Utils_t::Close_Menus(new Callback_t(item));
             } else {
                 mcm->Enable_Option(option);
             }
@@ -490,12 +486,12 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Enable_Disable_Option()) {
             mcm->Flicker_Option(option);
-            Loaded_Actor_t loaded_actor = Current_Item();
-            if (loaded_actor.Is_Valid()) {
-                if (loaded_actor.actor->Is_Disabled()) {
-                    loaded_actor.actor->Enable();
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
+                if (item->Is_Disabled()) {
+                    item->Enable();
                 } else {
-                    loaded_actor.actor->Disable();
+                    item->Disable();
                 }
                 mcm->Reset_Page();
             }
@@ -503,9 +499,9 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Select_In_Console_Option()) {
             mcm->Flicker_Option(option);
-            Loaded_Actor_t loaded_actor = Current_Item();
-            if (loaded_actor.Is_Valid()) {
-                loaded_actor.actor->Select_In_Console();
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
+                item->Select_In_Console();
             }
             mcm->Destroy_Latent_Callback(lcallback);
 
@@ -523,7 +519,7 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         Item_t item = Current_Item();
-        if (item.Is_Valid()) {
+        if (item && item->Is_Valid()) {
             if (option == Mark_On_Map_Option()) {
                 mcm->Info_Text(Main_t::HIGHLIGHT_ADD_REMOVE_MAP_MARKER);
             } else if (option == Move_To_Player_Option()) {
@@ -536,7 +532,7 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Info_Text(Main_t::HIGHLIGHT_SELECT_IN_CONSOLE);
 
             } else if (option == Race_Name_Option()) {
-                Race_t* race = item.actor->Race();
+                Race_t* race = item->Race();
                 if (race) {
                     const char* name = race->Name();
                     const char* editor_id = race->Get_Editor_ID();
@@ -544,7 +540,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
                 }
             } else if (option == Cell_Name_Option()) {
-                Cell_t* cell = item.actor->Cell();
+                Cell_t* cell = item->Cell();
                 if (cell) {
                     const char* name = cell->Name();
                     const char* editor_id = cell->Get_Editor_ID();

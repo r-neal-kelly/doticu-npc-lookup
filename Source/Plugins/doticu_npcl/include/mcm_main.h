@@ -33,7 +33,6 @@ namespace doticu_npcl { namespace MCM {
     using Game_t                = skylib::Game_t;
     using Keyword_t             = skylib::Keyword_t;
     using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
-    using Loaded_Actor_t        = skylib::Loaded_Actor_t;
     using Location_t            = skylib::Location_t;
     using Mod_t                 = skylib::Mod_t;
     using Quest_t               = skylib::Quest_t;

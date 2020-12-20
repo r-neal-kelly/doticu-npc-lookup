@@ -4,4 +4,3 @@ Scriptname doticu_npcl_mcm_references_loaded extends doticu_npcl_mcm_references
 
 ; Item
 int     p_item_actor_form_id    =       0
-int     p_item_cell_form_id     =       0

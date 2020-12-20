@@ -17,7 +17,7 @@ namespace doticu_npcl { namespace MCM {
     class Loaded_References_Base_t : public Quest_t
     {
     public:
-        using Item_t = Loaded_Actor_t;
+        using Item_t = Actor_t*;
 
     public:
         static String_t                 Class_Name();
@@ -84,13 +84,10 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         V::Int_Variable_t*  Actor_Form_ID_Variable();
-        V::Int_Variable_t*  Cell_Form_ID_Variable();
 
     public:
         Form_ID_t   Actor_Form_ID();
         void        Actor_Form_ID(Form_ID_t value);
-        Form_ID_t   Cell_Form_ID();
-        void        Cell_Form_ID(Form_ID_t value);
 
     public:
         Item_t  Current_Item();
