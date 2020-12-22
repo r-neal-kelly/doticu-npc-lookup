@@ -53,6 +53,31 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    some<const char*> Main_t::To_Is_Relation_Key(Relation_e relation)
+    {
+        if (relation == Relation_e::LOVER) {
+            return IS_LOVER;
+        } else if (relation == Relation_e::ALLY) {
+            return IS_ALLY;
+        } else if (relation == Relation_e::CONFIDANT) {
+            return IS_CONFIDANT;
+        } else if (relation == Relation_e::FRIEND) {
+            return IS_FRIEND;
+        } else if (relation == Relation_e::ACQUAINTANCE) {
+            return IS_ACQUAINTANCE;
+        } else if (relation == Relation_e::RIVAL) {
+            return IS_RIVAL;
+        } else if (relation == Relation_e::FOE) {
+            return IS_FOE;
+        } else if (relation == Relation_e::ENEMY) {
+            return IS_ENEMY;
+        } else if (relation == Relation_e::ARCHNEMESIS) {
+            return IS_ARCHNEMESIS;
+        } else {
+            return _NONE_;
+        }
+    }
+
     Relation_e Main_t::From_Relation_Key(some<const char*> relation_key)
     {
         SKYLIB_ASSERT_SOME(relation_key);
@@ -92,6 +117,21 @@ namespace doticu_npcl { namespace MCM {
             return INVULNERABLE;
         } else {
             return ANY;
+        }
+    }
+
+    some<const char*> Main_t::To_Is_Vitality_Key(Vitality_e vitality)
+    {
+        if (vitality == Vitality_e::MORTAL) {
+            return IS_MORTAL;
+        } else if (vitality == Vitality_e::PROTECTED) {
+            return IS_PROTECTED;
+        } else if (vitality == Vitality_e::ESSENTIAL) {
+            return IS_ESSENTIAL;
+        } else if (vitality == Vitality_e::INVULNERABLE) {
+            return IS_INVULNERABLE;
+        } else {
+            return _NONE_;
         }
     }
 

@@ -22,6 +22,7 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    using Base_t = Spawned_References_Base_t;
     using Item_t = Spawned_References_Base_t::Item_t;
 
     String_t                        Spawned_References_Base_t::Class_Name()         { DEFINE_CLASS_NAME("doticu_npcl_mcm_references_spawned"); }
@@ -379,22 +380,10 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option(Main_t::GENERAL);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
+        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
         Do_Verify_Unspawns_Option() = mcm->Add_Toggle_Option(Main_t::VERIFY_UNSPAWNS, Do_Verify_Unspawns());
 
-        Vector_t<Item_Section_t> sections;
-        sections.reserve(11);
-        sections.push_back(References_Item_Section_e::BASES);
-        sections.push_back(References_Item_Section_e::COMMANDS);
-        sections.push_back(References_Item_Section_e::FACTIONS);
-        sections.push_back(References_Item_Section_e::KEYWORDS);
-        sections.push_back(References_Item_Section_e::MODS);
-        sections.push_back(References_Item_Section_e::RACES);
-        sections.push_back(References_Item_Section_e::CELLS);
-        sections.push_back(References_Item_Section_e::LOCATIONS);
-        sections.push_back(References_Item_Section_e::QUESTS);
-        sections.push_back(References_Item_Section_e::REFERENCES);
-        sections.push_back(References_Item_Section_e::WORLDSPACES);
-        Build_Section_Options(sections);
+        Build_Section_Options();
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -602,23 +591,37 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                 Build_Header(Main_t::CENTER_UNSPAWN, List()->Items().size());
+                {
+                    Vector_t<Buildable_i*> buildables;
+                    buildables.reserve(11);
 
-                Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
-                for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-                    Item_Section_t item_section = item_sections[idx];
-                         if (item_section == References_Item_Section_e::BASES)          Build_Bases(item->Actor_Bases());
-                    else if (item_section == References_Item_Section_e::COMMANDS)       Build_Commands(item);
-                    else if (item_section == References_Item_Section_e::FACTIONS)       Build_Factions_And_Ranks(item->Factions_And_Ranks());
-                    else if (item_section == References_Item_Section_e::KEYWORDS)       Build_Keywords(item->Keywords());
-                    else if (item_section == References_Item_Section_e::MODS)           Build_Mod_Names(item->Mod_Names());
-                    else if (item_section == References_Item_Section_e::RACES)          Build_Race(item->Race());
-                    else if (item_section == References_Item_Section_e::TEMPLATES)      continue;
+                    Buildable_Bases_t<Base_t, Item_t> buildable_bases(this, item->Actor_Bases());
+                    Buildable_Commands_t<Base_t, Item_t> buildable_commands(this, item);
+                    Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, item->Factions_And_Ranks());
+                    Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, item->Keywords());
+                    Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->Mods());
+                    Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race());
 
-                    else if (item_section == References_Item_Section_e::CELLS)          Build_Cell(item->Cell());
-                    else if (item_section == References_Item_Section_e::LOCATIONS)      Build_Locations(item->Locations());
-                    else if (item_section == References_Item_Section_e::QUESTS)         Build_Quests(item->Quests());
-                    else if (item_section == References_Item_Section_e::REFERENCES)     Build_Reference(item, Main_t::SPAWNED_REFERENCE);
-                    else if (item_section == References_Item_Section_e::WORLDSPACES)    Build_Worldspaces(item->Worldspaces());
+                    Buildable_Cell_t<Base_t, Item_t> buildable_cell(this, item->Cell());
+                    Buildable_Locations_t<Base_t, Item_t> buildable_locations(this, item->Locations());
+                    Buildable_Quests_t<Base_t, Item_t> buildable_quests(this, item->Quests());
+                    Buildable_Reference_t<Base_t, Item_t> buildable_reference(this, item, Main_t::SPAWNED_REFERENCE);
+                    Buildable_Worldspaces_t<Base_t, Item_t> buildable_worldspaces(this, item->Worldspaces());
+
+                    buildables.push_back(&buildable_bases);
+                    buildables.push_back(&buildable_commands);
+                    buildables.push_back(&buildable_factions);
+                    buildables.push_back(&buildable_keywords);
+                    buildables.push_back(&buildable_mods);
+                    buildables.push_back(&buildable_race);
+
+                    buildables.push_back(&buildable_cell);
+                    buildables.push_back(&buildable_locations);
+                    buildables.push_back(&buildable_quests);
+                    buildables.push_back(&buildable_reference);
+                    buildables.push_back(&buildable_worldspaces);
+
+                    Build_Sections(buildables);
                 }
             } else {
                 List()->do_update_items = true;

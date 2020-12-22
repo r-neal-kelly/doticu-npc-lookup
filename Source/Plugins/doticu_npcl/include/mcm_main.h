@@ -17,6 +17,7 @@ namespace doticu_npcl { namespace MCM {
     using Comparator_e          = skylib::Comparator_e;
     using Cursor_e              = mcmlib::Cursor_e;
     using Flag_e                = mcmlib::Flag_e;
+    using Form_Type_e           = skylib::Form_Type_e;
     using Relation_e            = skylib::Relation_e;
     using Sex_e                 = skylib::Sex_e;
     using Rarity_e              = skylib::Rarity_e;
@@ -154,16 +155,33 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    ENEMY                               = "$dnpcl_enemy";
         static constexpr const char*    ARCHNEMESIS                         = "$dnpcl_archnemesis";
 
+        static constexpr const char*    IS_LOVER                            = "$dnpcl_is_lover";
+        static constexpr const char*    IS_ALLY                             = "$dnpcl_is_ally";
+        static constexpr const char*    IS_CONFIDANT                        = "$dnpcl_is_confidant";
+        static constexpr const char*    IS_FRIEND                           = "$dnpcl_is_friend";
+        static constexpr const char*    IS_ACQUAINTANCE                     = "$dnpcl_is_acquaintance";
+        static constexpr const char*    IS_RIVAL                            = "$dnpcl_is_rival";
+        static constexpr const char*    IS_FOE                              = "$dnpcl_is_foe";
+        static constexpr const char*    IS_ENEMY                            = "$dnpcl_is_enemy";
+        static constexpr const char*    IS_ARCHNEMESIS                      = "$dnpcl_is_archnemesis";
+
         static constexpr const char*    MORTAL                              = "$dnpcl_mortal";
         static constexpr const char*    PROTECTED                           = "$dnpcl_protected";
         static constexpr const char*    ESSENTIAL                           = "$dnpcl_essential";
         static constexpr const char*    INVULNERABLE                        = "$dnpcl_invulnerable";
 
+        static constexpr const char*    IS_MORTAL                           = "$dnpcl_is_mortal";
+        static constexpr const char*    IS_PROTECTED                        = "$dnpcl_is_protected";
+        static constexpr const char*    IS_ESSENTIAL                        = "$dnpcl_is_essential";
+        static constexpr const char*    IS_INVULNERABLE                     = "$dnpcl_is_invulnerable";
+
         static constexpr const char*    GENERAL                             = "$dnpcl_general";
         static constexpr const char*    SMART_SELECT                        = "$dnpcl_smart_select";
+        static constexpr const char*    SMART_SECTIONS                      = "$dnpcl_smart_sections";
         static constexpr const char*    UNCOMBATIVE_SPAWNS                  = "$dnpcl_uncombative_spawns";
         static constexpr const char*    PERSISTENT_SPAWNS                   = "$dnpcl_persistent_spawns";
         static constexpr const char*    STATIC_SPAWNS                       = "$dnpcl_static_spawns";
+        static constexpr const char*    VERIFY_SPAWNS                       = "$dnpcl_verify_spawns";
         static constexpr const char*    VERIFY_UNSPAWNS                     = "$dnpcl_verify_unspawns";
 
         static constexpr const char*    ITEM_SECTIONS                       = "$dnpcl_item_sections";
@@ -182,6 +200,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    DISABLE_REFERENCE                   = "$dnpcl_disable_reference";
         static constexpr const char*    SELECT_IN_CONSOLE                   = "$dnpcl_select_in_console";
 
+        static constexpr const char*    CONFIRM_SPAWN                       = "$dnpcl_confirm_spawn";
         static constexpr const char*    CONFIRM_UNSPAWN                     = "$dnpcl_confirm_unspawn";
         static constexpr const char*    CONFIRM_REMOVE_MARKER               = "$dnpcl_confirm_remove_marker";
         static constexpr const char*    YES                                 = "$dnpcl_yes";
@@ -275,8 +294,10 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    DEFAULT_PAGE                        = STATIC_BASES;
 
         static some<const char*>    To_Relation_Key(Relation_e relation);
+        static some<const char*>    To_Is_Relation_Key(Relation_e relation);
         static Relation_e           From_Relation_Key(some<const char*> relation_key);
         static some<const char*>    To_Vitality_Key(Vitality_e vitality);
+        static some<const char*>    To_Is_Vitality_Key(Vitality_e vitality);
         static Vitality_e           From_Vitality_Key(some<const char*> vitality_key);
 
     public:

@@ -2,6 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/virtual_variable.h"
+
 #include "mcm_bases.h"
 
 namespace doticu_npcl { namespace MCM {
@@ -36,6 +38,102 @@ namespace doticu_npcl { namespace MCM {
         else if (CString_t::Starts_With(Main_t::RACES, str, true))      return Bases_Item_Section_e::RACES;
         else if (CString_t::Starts_With(Main_t::TEMPLATES, str, true))  return Bases_Item_Section_e::TEMPLATES;
         else                                                            return Bases_Item_Section_e::NONE;
+    }
+
+}}
+
+namespace doticu_npcl { namespace MCM {
+
+    Vector_t<Item_Section_t> Item_Sections_t::Current()
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        size_t item_section_count = item_sections.size();
+
+        Vector_t<Item_Section_t> copy;
+        copy.reserve(item_section_count);
+
+        for (Index_t idx = 0, end = item_section_count; idx < end; idx += 1) {
+            Item_Section_t item_section = item_sections[idx];
+            if (item_section != Bases_Item_Section_e::NONE) {
+                copy.push_back(item_section);
+            }
+        }
+
+        return copy;
+    }
+
+    void Item_Sections_t::Reset(Vector_t<Item_Section_t>&& defaults)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        size_t default_count = defaults.size();
+        item_sections.clear();
+        item_sections.reserve(default_count);
+
+        for (Index_t idx = 0, end = default_count; idx < end; idx += 1) {
+            item_sections.push_back(defaults[idx]);
+        }
+    }
+
+    void Item_Sections_t::Enable(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        if (!item_sections.Has(item_section)) {
+            item_sections.push_back(item_section);
+        }
+    }
+
+    void Item_Sections_t::Disable(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        Index_t idx = item_sections.Index_Of(item_section);
+        if (idx > -1) {
+            item_sections.erase(item_sections.begin() + idx);
+        }
+    }
+
+    Bool_t Item_Sections_t::May_Move_Higher(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        return item_sections.Index_Of(item_section) > 0;
+    }
+
+    Bool_t Item_Sections_t::May_Move_Lower(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        Index_t idx = item_sections.Index_Of(item_section);
+        Index_t last = item_sections.size() - 1;
+        return idx > -1 && idx < last;
+    }
+
+    void Item_Sections_t::Move_Higher(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        Index_t idx = item_sections.Index_Of(item_section);
+        if (idx > 0) {
+            Item_Section_t item_section = item_sections[idx];
+            item_sections[idx] = item_sections[idx - 1];
+            item_sections[idx - 1] = item_section;
+        }
+    }
+
+    void Item_Sections_t::Move_Lower(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        Index_t idx = item_sections.Index_Of(item_section);
+        Index_t last = item_sections.size() - 1;
+        if (idx > -1 && idx < last) {
+            Item_Section_t item_section = item_sections[idx];
+            item_sections[idx] = item_sections[idx + 1];
+            item_sections[idx + 1] = item_section;
+        }
     }
 
 }}

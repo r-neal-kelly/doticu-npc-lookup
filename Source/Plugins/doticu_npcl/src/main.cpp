@@ -157,37 +157,82 @@ namespace doticu_npcl {
         return Consts_t::NPCL_Is_Installed_Global()->Bool();
     }
 
+    Bool_t Main_t::Are_Quests_Running()
+    {
+        const Vector_t<some<Quest_t*>>& quests = Quests();
+        for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
+            Quest_t* quest = quests[idx];
+            if (!quest->Is_Enabled()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    const Vector_t<some<Quest_t*>>& Main_t::Quests()
+    {
+        static Vector_t<some<Quest_t*>> quests;
+        if (quests.size() < 1) {
+            quests.push_back(Consts_t::NPCL_MCM_Quest());
+        }
+        return quests;
+    }
+
     void Main_t::Init()
     {
         SKYLIB_ASSERT(!Is_Installed());
 
-        const Version_t<u8>& npcl_version = Consts_t::NPCL_Version();
-
-        Consts_t::NPCL_Is_Installed_Global()->Bool(true);
-        Consts_t::NPCL_Major_Version_Global()->Long(npcl_version.major);
-        Consts_t::NPCL_Minor_Version_Global()->Long(npcl_version.minor);
-        Consts_t::NPCL_Patch_Version_Global()->Long(npcl_version.patch);
-
-        Vector_t<skylib::Quest_t*> quests;
-        quests.push_back(Consts_t::NPCL_MCM_Quest());
-
-        class UCallback_t : public skylib::Callback_i<>
+        class Start_Quests_Callback_t : public Callback_i<Bool_t>
         {
-            void operator()()
+            void operator()(Bool_t did_start_all)
             {
-                MCM::Main_t::Self()->On_Init();
+                if (did_start_all) {
+                    Consts_t::NPCL_Is_Installed_Global()->Bool(true);
+
+                    const Version_t<u8>& npcl_version = Consts_t::NPCL_Version();
+                    Consts_t::NPCL_Major_Version_Global()->Long(npcl_version.major);
+                    Consts_t::NPCL_Minor_Version_Global()->Long(npcl_version.minor);
+                    Consts_t::NPCL_Patch_Version_Global()->Long(npcl_version.patch);
+
+                    MCM::Main_t::Self()->On_Init();
+                } else {
+                    skylib::UI_t::Message_Box(FAILED_TO_INIT_QUESTS);
+                }
             }
         };
-        skylib::Quest_t::Start(quests, new UCallback_t());
+        Quest_t::Start(Quests(), new Start_Quests_Callback_t());
+    }
+
+    void Main_t::Reinit()
+    {
+        SKYLIB_ASSERT(Is_Installed());
+
+        class Start_Quests_Callback_t : public Callback_i<Bool_t>
+        {
+            void operator()(Bool_t did_start_all)
+            {
+                if (did_start_all) {
+                    MCM::Main_t::Self()->On_Load();
+                    Try_To_Update();
+                } else {
+                    skylib::UI_t::Message_Box(FAILED_TO_REINIT_QUESTS);
+                }
+            }
+        };
+        Quest_t::Start(Quests(), new Start_Quests_Callback_t());
     }
 
     void Main_t::After_Load()
     {
         SKYLIB_ASSERT(Is_Installed());
 
-        MCM::Main_t::Self()->On_Load();
-
-        Try_To_Update();
+        if (Are_Quests_Running()) {
+            MCM::Main_t::Self()->On_Load();
+            Try_To_Update();
+        } else {
+            skylib::UI_t::Message_Box(FAILED_TO_LOAD_QUESTS);
+            Reinit();
+        }
     }
 
     void Main_t::Before_Save()

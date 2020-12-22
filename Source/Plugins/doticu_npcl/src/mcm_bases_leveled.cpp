@@ -22,6 +22,7 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    using Base_t = Leveled_Bases_Base_t;
     using Item_t = Leveled_Bases_Base_t::Item_t;
 
     String_t                    Leveled_Bases_Base_t::Class_Name()          { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_leveled"); }
@@ -117,7 +118,7 @@ namespace doticu_npcl { namespace MCM {
         items.reserve(cached_leveled_count);
 
         for (Index_t idx = 0, end = cached_leveled_count; idx < end; idx += 1) {
-            read.push_back(&cached_leveleds[idx]);
+            items.push_back(&cached_leveleds[idx]);
         }
 
         return items;
@@ -332,19 +333,13 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option(Main_t::GENERAL);
         mcm->Add_Header_Option(Main_t::_NONE_);
         Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
+        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
         Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::UNCOMBATIVE_SPAWNS, Do_Uncombative_Spawns());
         Persistent_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::PERSISTENT_SPAWNS, Do_Persistent_Spawns());
         Static_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::STATIC_SPAWNS, Do_Static_Spawns());
+        do_verify_spawns_option = mcm->Add_Toggle_Option(Main_t::VERIFY_SPAWNS, Do_Verify_Spawns());
 
-        Vector_t<Item_Section_t> sections;
-        sections.reserve(6);
-        sections.push_back(Bases_Item_Section_e::BASES);
-        sections.push_back(Bases_Item_Section_e::FACTIONS);
-        sections.push_back(Bases_Item_Section_e::KEYWORDS);
-        sections.push_back(Bases_Item_Section_e::MODS);
-        sections.push_back(Bases_Item_Section_e::RACES);
-        sections.push_back(Bases_Item_Section_e::TEMPLATES);
-        Build_Section_Options(sections);
+        Build_Section_Options();
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -528,17 +523,17 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                 Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
+                {
+                    Vector_t<Buildable_i*> buildables;
+                    buildables.reserve(2);
 
-                Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
-                for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-                    Item_Section_t item_section = item_sections[idx];
-                         if (item_section == Bases_Item_Section_e::BASES)       Build_Leveled_Base(item->leveled);
-                    else if (item_section == Bases_Item_Section_e::COMMANDS)    continue;
-                    else if (item_section == Bases_Item_Section_e::FACTIONS)    continue;
-                    else if (item_section == Bases_Item_Section_e::KEYWORDS)    continue;
-                    else if (item_section == Bases_Item_Section_e::MODS)        Build_Mod_Names(item->leveled->Mod_Names());
-                    else if (item_section == Bases_Item_Section_e::RACES)       continue;
-                    else if (item_section == Bases_Item_Section_e::TEMPLATES)   continue;
+                    Buildable_Leveled_Base_t<Base_t, Item_t> buildable_leveled_base(this, item->leveled);
+                    Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->leveled->Mods());
+
+                    buildables.push_back(&buildable_leveled_base);
+                    buildables.push_back(&buildable_mods);
+
+                    Build_Sections(buildables);
                 }
             } else {
                 List()->do_update_items = true;
@@ -655,17 +650,25 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
                     Build_Header(Main_t::CENTER_SPAWN, nested_items.size());
+                    {
+                        Vector_t<Buildable_i*> buildables;
+                        buildables.reserve(6);
 
-                    Vector_t<Item_Section_t> item_sections = Options()->Item_Sections();
-                    for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-                        Item_Section_t item_section = item_sections[idx];
-                             if (item_section == Bases_Item_Section_e::BASES)       Build_Base(nested_item, Main_t::INTERNAL_BASE);
-                        else if (item_section == Bases_Item_Section_e::COMMANDS)    continue;
-                        else if (item_section == Bases_Item_Section_e::FACTIONS)    Build_Factions_And_Ranks(nested_item->Factions_And_Ranks());
-                        else if (item_section == Bases_Item_Section_e::KEYWORDS)    Build_Keywords(nested_item->Keywords());
-                        else if (item_section == Bases_Item_Section_e::MODS)        Build_Mod_Names(nested_item->Mod_Names());
-                        else if (item_section == Bases_Item_Section_e::RACES)       Build_Race(nested_item->Race());
-                        else if (item_section == Bases_Item_Section_e::TEMPLATES)   Build_Templates(nested_item->Templates());
+                        Buildable_Base_t<Base_t, Item_t> buildable_base(this, nested_item, Main_t::INTERNAL_BASE);
+                        Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, nested_item->Factions_And_Ranks());
+                        Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, nested_item->Keywords());
+                        Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, nested_item->Mods());
+                        Buildable_Race_t<Base_t, Item_t> buildable_race(this, nested_item->Race());
+                        Buildable_Templates_t<Base_t, Item_t> buildable_templates(this, nested_item->Templates());
+
+                        buildables.push_back(&buildable_base);
+                        buildables.push_back(&buildable_factions);
+                        buildables.push_back(&buildable_keywords);
+                        buildables.push_back(&buildable_mods);
+                        buildables.push_back(&buildable_race);
+                        buildables.push_back(&buildable_templates);
+
+                        Build_Sections(buildables);
                     }
                 } else {
                     Nested_View(Bases_Item_View_e::BASES);
@@ -703,9 +706,8 @@ namespace doticu_npcl { namespace MCM {
         Main_t* mcm = Main_t::Self();
 
         if (option == Primary_Option()) {
-            mcm->Flicker_Option(option);
-            Spawn(Item()->Current_Item());
-            mcm->Destroy_Latent_Callback(lcallback);
+            Select_Spawn_Option(Current_Item(), option, lcallback);
+            return;
 
         } else if (option == View_Bases_Option()) {
             mcm->Disable_Option(option);
@@ -814,9 +816,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == Primary_Option()) {
-            mcm->Flicker_Option(option);
-            Spawn(Current_Nested_Item());
-            mcm->Destroy_Latent_Callback(lcallback);
+            Select_Spawn_Option(Current_Nested_Item()(), option, lcallback);
+            return;
 
         } else if (option == Previous_Option()) {
             mcm->Disable_Option(option);

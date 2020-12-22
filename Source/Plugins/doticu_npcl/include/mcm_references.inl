@@ -841,69 +841,35 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void References_Options_t<B, I>::Reset_Item_Sections()
+    inline Vector_t<Item_Section_t> References_Options_t<B, I>::Default_Item_Sections()
     {
-        item_sections.clear();
-        item_sections.reserve(References_Item_Section_e::_END_);
+        Vector_t<Item_Section_t> sections;
+        sections.reserve(11);
 
-        item_sections.push_back(References_Item_Section_e::REFERENCES);
-        item_sections.push_back(References_Item_Section_e::COMMANDS);
-        item_sections.push_back(References_Item_Section_e::RACES);
-        item_sections.push_back(References_Item_Section_e::BASES);
-        item_sections.push_back(References_Item_Section_e::CELLS);
-        item_sections.push_back(References_Item_Section_e::LOCATIONS);
-        item_sections.push_back(References_Item_Section_e::WORLDSPACES);
-        item_sections.push_back(References_Item_Section_e::FACTIONS);
-        item_sections.push_back(References_Item_Section_e::KEYWORDS);
-        item_sections.push_back(References_Item_Section_e::QUESTS);
-        item_sections.push_back(References_Item_Section_e::MODS);
+        sections.push_back(References_Item_Section_e::REFERENCES);
+        sections.push_back(References_Item_Section_e::COMMANDS);
+        sections.push_back(References_Item_Section_e::RACES);
+        sections.push_back(References_Item_Section_e::BASES);
+
+        sections.push_back(References_Item_Section_e::CELLS);
+        sections.push_back(References_Item_Section_e::LOCATIONS);
+        sections.push_back(References_Item_Section_e::WORLDSPACES);
+        
+        sections.push_back(References_Item_Section_e::FACTIONS);
+        sections.push_back(References_Item_Section_e::KEYWORDS);
+        sections.push_back(References_Item_Section_e::QUESTS);
+        sections.push_back(References_Item_Section_e::MODS);
+
+        return sections;
     }
 
     template <typename B, typename I>
-    inline void References_Options_t<B, I>::Serialize_Item_Sections()
-    {
-        Vector_t<String_t> strs;
-        strs.reserve(References_Item_Section_e::_END_);
-
-        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-            String_t str = References_Item_Section_e::To_String(item_sections[idx]);
-            if (str) {
-                strs.push_back(str);
-            }
-        }
-
-        Item_Sections_Variable()->Values(strs);
-    }
-
-    template <typename B, typename I>
-    inline void References_Options_t<B, I>::Deserialize_Item_Sections()
-    {
-        V::Array_t* arr = Item_Sections_Variable()->Value();
-        if (arr) {
-            item_sections.clear();
-            item_sections.reserve(References_Item_Section_e::_END_);
-
-            for (Index_t idx = 0, end = arr->count; idx < end; idx += 1) {
-                V::Variable_t* var = arr->Point(idx);
-                if (var && var->Is_String()) {
-                    String_t str = var->String();
-                    if (str) {
-                        References_Item_Section_e section_e = References_Item_Section_e::From_String(str.data);
-                        if (section_e != References_Item_Section_e::NONE) {
-                            item_sections.push_back(section_e);
-                        }
-                    }
-                }
-            }
-        } else {
-            Options()->Reset_Item_Sections();
-        }
-    }
-
-    template <typename B, typename I>
-    inline void References_Options_t<B, I>::Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections)
+    inline void References_Options_t<B, I>::Build_Section_Options_Impl()
     {
         using Section_e = References_Item_Section_e;
+
+        Vector_t<Item_Section_t> allowed_sections = Options()->Default_Item_Sections();
+        Vector_t<Item_Section_t> current_sections = item_sections.Current();
 
         Main_t* mcm = Main_t::Self();
 
@@ -911,8 +877,8 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Menu_Option(label, Main_t::_DOTS_);
         };
-        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-            Section_e section_e = item_sections[idx];
+        for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            Section_e section_e = current_sections[idx];
             if (allowed_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)         bases_section_option        = Enabled(Main_t::BASES);
                 else if (section_e == Section_e::COMMANDS)      commands_section_option     = Enabled(Main_t::COMMANDS);
@@ -936,7 +902,7 @@ namespace doticu_npcl { namespace MCM {
         };
         for (Index_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
             Section_e section_e = allowed_sections[idx];
-            if (!Is_Item_Section_Enabled(section_e)) {
+            if (!current_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)         bases_section_option        = Disabled(Main_t::BASES);
                 else if (section_e == Section_e::COMMANDS)      commands_section_option     = Disabled(Main_t::COMMANDS);
                 else if (section_e == Section_e::FACTIONS)      factions_section_option     = Disabled(Main_t::FACTIONS);
@@ -952,6 +918,22 @@ namespace doticu_npcl { namespace MCM {
                 else if (section_e == Section_e::WORLDSPACES)   worldspaces_section_option  = Disabled(Main_t::WORLDSPACES);
             }
         }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Load()
+    {
+        if (!item_sections.Deserialize<References_Item_Section_e>(Item_Sections_Variable())) {
+            item_sections.Reset(Options()->Default_Item_Sections());
+        }
+        return true;
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Save()
+    {
+        item_sections.Serialize<References_Item_Section_e>(Item_Sections_Variable());
+        return true;
     }
 
     template <typename B, typename I>
@@ -1181,11 +1163,15 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::CELL);
                     show_cells_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    Cell_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_);
-                    if (cell->Is_Interior()) {
+                    Cell_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_); // 1
+                    if (cell->Is_Interior()) { // 2
                         mcm->Add_Text_Option(Main_t::IS_INTERIOR, Main_t::_NONE_);
                     } else {
                         mcm->Add_Text_Option(Main_t::IS_EXTERIOR, Main_t::_NONE_);
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
                     }
                 }
             } else {
@@ -1203,7 +1189,7 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Commands(some<Actor_t*> actor)
+    inline void References_Item_t<B, I>::Build_Commands(Actor_t* actor)
     {
         Main_t* mcm = Main_t::Self();
 
@@ -1214,7 +1200,7 @@ namespace doticu_npcl { namespace MCM {
                     show_commands_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     Markers_t* markers = Markers_t::Self();
-                    if (markers->Has_Marked(actor)) {
+                    if (markers->Has_Marked(actor)) { // 1
                         Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::REMOVE_MARKER_FROM_MAP, Main_t::_NONE_);
                     } else {
                         if (markers->Has_Space()) {
@@ -1224,19 +1210,23 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    mcm->Add_Empty_Option(); // Spawn a Clone? would have to add options that are available in bases, just hook them up
+                    mcm->Add_Empty_Option(); // 2 // Spawn a Clone? would have to add options that are available in bases, just hook them up
 
-                    Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_);
+                    Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_); // 3
 
-                    Go_To_Reference_Option() = mcm->Add_Text_Option(Main_t::GO_TO_REFERENCE, Main_t::_NONE_);
+                    Go_To_Reference_Option() = mcm->Add_Text_Option(Main_t::GO_TO_REFERENCE, Main_t::_NONE_); // 4
 
-                    if (actor->Is_Disabled()) {
+                    if (actor->Is_Disabled()) { // 5
                         Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::ENABLE_REFERENCE, Main_t::_NONE_);
                     } else {
                         Enable_Disable_Option() = mcm->Add_Text_Option(Main_t::DISABLE_REFERENCE, Main_t::_NONE_);
                     }
 
-                    Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_);
+                    Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_); // 6
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
                 }
             } else {
                 if (mcm->Can_Add_Options(2)) {
@@ -1334,25 +1324,48 @@ namespace doticu_npcl { namespace MCM {
 
         if (actor && actor->Is_Valid()) {
             if (Do_Show_References()) {
-                if (mcm->Can_Add_Options(2 + 4)) {
+                if (mcm->Can_Add_Options(2 + 8)) {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, type_name);
                     show_references_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_); // 1
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_); // 2
 
                     Actor_Base_t* actor_base = actor->Actor_Base();
                     if (actor_base && actor_base->Is_Valid()) {
-                        if (actor_base->Is_Male()) {
+                        if (actor_base->Is_Male()) { // 3
                             mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
                         } else {
                             mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
                         }
-                        if (actor_base->Is_Unique()) {
+                        if (actor_base->Is_Unique()) { // 4
                             mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
                         } else {
                             mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
                         }
+                        Vitality_e vitality = actor_base->Vitality(); // 5
+                        if (vitality != Vitality_e::NONE) {
+                            mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
+                        }
+                        Relation_e relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                        if (relation != Relation_e::NONE) {
+                            mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
+                        }
+                    }
+
+                    if (actor->Is_Alive()) { // 7
+                        mcm->Add_Text_Option(Main_t::IS_ALIVE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::IS_DEAD, Main_t::_NONE_);
+                    }
+                    if (actor->Is_Player_Teammate()) { // 8
+                        mcm->Add_Text_Option(Main_t::IS_TEAMMATE, Main_t::_NONE_);
+                    } else {
+                        mcm->Add_Text_Option(Main_t::ISNT_TEAMMATE, Main_t::_NONE_);
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
                     }
                 }
             } else {

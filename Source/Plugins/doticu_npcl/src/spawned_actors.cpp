@@ -8,6 +8,7 @@
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
 
+#include "consts.h"
 #include "spawned_actors.h"
 
 namespace doticu_npcl {
@@ -194,12 +195,22 @@ namespace doticu_npcl {
 
     Bool_t Spawned_Actors_t::Add(Actor_Base_t* base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
     {
-        return Add(Actor_t::Create(base, do_persist, do_uncombative, do_static));
+        Actor_t* actor = Actor_t::Create(base, do_persist, do_uncombative, do_static);
+        if (actor && actor->Is_Valid()) {
+            actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+        }
+
+        return Add(actor);
     }
 
     Bool_t Spawned_Actors_t::Add(Leveled_Actor_Base_t* leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
     {
-        return Add(Actor_t::Create(leveled_base, do_persist, do_uncombative, do_static));
+        Actor_t* actor = Actor_t::Create(leveled_base, do_persist, do_uncombative, do_static);
+        if (actor && actor->Is_Valid()) {
+            actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+        }
+
+        return Add(actor);
     }
 
     Bool_t Spawned_Actors_t::Remove(Actor_t* actor)

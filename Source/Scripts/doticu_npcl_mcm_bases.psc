@@ -38,9 +38,11 @@ int         p_filter_unique_generic_argument    =       0
 
 ; Options
 bool        p_options_do_smart_select           =    true
+bool        p_options_do_smart_sections         =    true
 bool        p_options_do_uncombative_spawns     =    true
 bool        p_options_do_persistent_spawns      =    true
 bool        p_options_do_static_spawns          =    true
+bool        p_options_do_verify_spawns          =    true
 
 string[]    p_options_item_sections             =    none
 

@@ -19,6 +19,62 @@
 
 namespace doticu_npcl { namespace MCM {
 
+    template <typename Item_Section_e>
+    Bool_t Item_Sections_t::Serialize(V::Array_Variable_t<String_t>* variable)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        size_t item_section_count = item_sections.size();
+        if (item_section_count > 0) {
+            Vector_t<String_t> strs;
+            strs.reserve(item_section_count);
+
+            for (Index_t idx = 0, end = item_section_count; idx < end; idx += 1) {
+                some<const char*> str = Item_Section_e::To_String(item_sections[idx]);
+                strs.push_back(str());
+            }
+
+            variable->Values(strs);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    template <typename Item_Section_e>
+    Bool_t Item_Sections_t::Deserialize(V::Array_Variable_t<String_t>* variable)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        V::Array_t* arr = variable->Value();
+        if (arr) {
+            item_sections.clear();
+            item_sections.reserve(arr->count);
+
+            for (Index_t idx = 0, end = arr->count; idx < end; idx += 1) {
+                V::Variable_t* var = arr->Point(idx);
+                if (var && var->Is_String()) {
+                    String_t str = var->String();
+                    if (str) {
+                        Item_Section_e item_section = Item_Section_e::From_String(str.data);
+                        if (item_section > Item_Section_e::NONE && item_section < Item_Section_e::_END_) {
+                            item_sections.push_back(item_section);
+                        }
+                    }
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}}
+
+namespace doticu_npcl { namespace MCM {
+
     template <typename B, typename I>
     inline V::String_Variable_t* Bases_t<B, I>::Current_View_Variable() { DEFINE_STRING("p_current_view"); }
 
@@ -1128,7 +1184,7 @@ namespace doticu_npcl { namespace MCM {
 namespace doticu_npcl { namespace MCM {
 
     template <typename B, typename I>
-    Vector_t<s64> Bases_Options_t<B, I>::item_sections;
+    Item_Sections_t Bases_Options_t<B, I>::item_sections;
 
     template <typename B, typename I>
     inline Int_t&   Bases_Options_t<B, I>::Back_Option()                { DEFINE_OPTION(); }
@@ -1142,6 +1198,11 @@ namespace doticu_npcl { namespace MCM {
     inline Int_t&   Bases_Options_t<B, I>::Persistent_Spawns_Option()   { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option()       { DEFINE_OPTION(); }
+
+    template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_smart_sections_option = -1;
+    template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_verify_spawns_option  = -1;
 
     template <typename B, typename I>
     Int_t   Bases_Options_t<B, I>::bases_section_option     = -1;
@@ -1168,6 +1229,9 @@ namespace doticu_npcl { namespace MCM {
         Uncombative_Spawns_Option() = -1;
         Persistent_Spawns_Option()  = -1;
         Static_Spawns_Option()      = -1;
+
+        do_smart_sections_option    = -1;
+        do_verify_spawns_option     = -1;
 
         bases_section_option        = -1;
         commands_section_option     = -1;
@@ -1196,11 +1260,15 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Smart_Select_Variable()       { DEFINE_BOOL("p_options_do_smart_select"); }
     template <typename B, typename I>
+    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Smart_Sections_Variable()     { DEFINE_BOOL("p_options_do_smart_sections"); }
+    template <typename B, typename I>
     inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Uncombative_Spawns_Variable() { DEFINE_BOOL("p_options_do_uncombative_spawns"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Persistent_Spawns_Variable()  { DEFINE_BOOL("p_options_do_persistent_spawns"); }
     template <typename B, typename I>
     inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Static_Spawns_Variable()      { DEFINE_BOOL("p_options_do_static_spawns"); }
+    template <typename B, typename I>
+    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Verify_Spawns_Variable()      { DEFINE_BOOL("p_options_do_verify_spawns"); }
 
     template <typename B, typename I>
     inline V::Array_Variable_t<String_t>*   Bases_Options_t<B, I>::Item_Sections_Variable()         { DEFINE_ARRAY_VARIABLE(String_t, "p_options_item_sections"); }
@@ -1209,6 +1277,11 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Select()                    { return Do_Smart_Select_Variable()->Value(); }
     template <typename B, typename I>
     inline void     Bases_Options_t<B, I>::Do_Smart_Select(Bool_t value)        { Do_Smart_Select_Variable()->Value(value); }
+
+    template <typename B, typename I>
+    inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Sections()                  { return Do_Smart_Sections_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Options_t<B, I>::Do_Smart_Sections(Bool_t value)      { Do_Smart_Sections_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline Bool_t   Bases_Options_t<B, I>::Do_Uncombative_Spawns()              { return Do_Uncombative_Spawns_Variable()->Value(); }
@@ -1226,153 +1299,42 @@ namespace doticu_npcl { namespace MCM {
     inline void     Bases_Options_t<B, I>::Do_Static_Spawns(Bool_t value)       { Do_Static_Spawns_Variable()->Value(value); }
 
     template <typename B, typename I>
+    inline Bool_t   Bases_Options_t<B, I>::Do_Verify_Spawns()                   { return Do_Verify_Spawns_Variable()->Value(); }
+    template <typename B, typename I>
+    inline void     Bases_Options_t<B, I>::Do_Verify_Spawns(Bool_t value)       { Do_Verify_Spawns_Variable()->Value(value); }
+
+    template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Reset()
     {
         Do_Smart_Select(true);
+        Do_Smart_Sections(true);
         Do_Uncombative_Spawns(true);
         Do_Persistent_Spawns(true);
         Do_Static_Spawns(true);
+        Do_Verify_Spawns(true);
 
-        Options()->Reset_Item_Sections();
+        item_sections.Reset(Options()->Default_Item_Sections());
     }
 
     template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Reset_Item_Sections()
+    inline Vector_t<Item_Section_t> Bases_Options_t<B, I>::Default_Item_Sections()
     {
-        item_sections.clear();
-        item_sections.reserve(Bases_Item_Section_e::_END_);
+        Vector_t<Item_Section_t> sections;
+        sections.reserve(6);
 
-        item_sections.push_back(Bases_Item_Section_e::BASES);
-        item_sections.push_back(Bases_Item_Section_e::COMMANDS);
-        item_sections.push_back(Bases_Item_Section_e::RACES);
-        item_sections.push_back(Bases_Item_Section_e::TEMPLATES);
-        item_sections.push_back(Bases_Item_Section_e::FACTIONS);
-        item_sections.push_back(Bases_Item_Section_e::KEYWORDS);
-        item_sections.push_back(Bases_Item_Section_e::MODS);
+        sections.push_back(Bases_Item_Section_e::BASES);
+        sections.push_back(Bases_Item_Section_e::RACES);
+        sections.push_back(Bases_Item_Section_e::TEMPLATES);
+
+        sections.push_back(Bases_Item_Section_e::FACTIONS);
+        sections.push_back(Bases_Item_Section_e::KEYWORDS);
+        sections.push_back(Bases_Item_Section_e::MODS);
+
+        return sections;
     }
 
     template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Serialize_Item_Sections()
-    {
-        Vector_t<String_t> strs;
-        strs.reserve(Bases_Item_Section_e::_END_);
-
-        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-            String_t str = Bases_Item_Section_e::To_String(item_sections[idx]);
-            if (str) {
-                strs.push_back(str);
-            }
-        }
-
-        Item_Sections_Variable()->Values(strs);
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Deserialize_Item_Sections()
-    {
-        V::Array_t* arr = Item_Sections_Variable()->Value();
-        if (arr) {
-            item_sections.clear();
-            item_sections.reserve(Bases_Item_Section_e::_END_);
-
-            for (Index_t idx = 0, end = arr->count; idx < end; idx += 1) {
-                V::Variable_t* var = arr->Point(idx);
-                if (var && var->Is_String()) {
-                    String_t str = var->String();
-                    if (str) {
-                        Bases_Item_Section_e section_e = Bases_Item_Section_e::From_String(str.data);
-                        if (section_e != Bases_Item_Section_e::NONE) {
-                            item_sections.push_back(section_e);
-                        }
-                    }
-                }
-            }
-        } else {
-            Options()->Reset_Item_Sections();
-        }
-    }
-
-    template <typename B, typename I>
-    inline Vector_t<Item_Section_t> Bases_Options_t<B, I>::Item_Sections()
-    {
-        size_t item_section_count = item_sections.size();
-
-        Vector_t<Item_Section_t> copy;
-        copy.reserve(item_section_count);
-
-        for (Index_t idx = 0, end = item_section_count; idx < end; idx += 1) {
-            Item_Section_t item_section = item_sections[idx];
-            if (item_section != Bases_Item_Section_e::NONE) {
-                copy.push_back(item_section);
-            }
-        }
-
-        return copy;
-    }
-
-    template <typename B, typename I>
-    inline Bool_t Bases_Options_t<B, I>::Is_Item_Section_Enabled(Item_Section_t section)
-    {
-        return item_sections.Has(section);
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Enable_Item_Section(Item_Section_t section)
-    {
-        if (!item_sections.Has(section)) {
-            item_sections.push_back(section);
-        }
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Disable_Item_Section(Item_Section_t section)
-    {
-        Index_t idx = item_sections.Index_Of(section);
-        if (idx > -1) {
-            item_sections.erase(item_sections.begin() + idx);
-        }
-    }
-
-    template <typename B, typename I>
-    inline Bool_t Bases_Options_t<B, I>::May_Move_Item_Section_Higher(Item_Section_t section)
-    {
-        Index_t idx = item_sections.Index_Of(section);
-        return idx > 0;
-    }
-
-    template <typename B, typename I>
-    inline Bool_t Bases_Options_t<B, I>::May_Move_Item_Section_Lower(Item_Section_t section)
-    {
-        Index_t idx = item_sections.Index_Of(section);
-        Index_t last = item_sections.size() - 1;
-        return idx > -1 && idx < last;
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Move_Item_Section_Higher(Item_Section_t section)
-    {
-        Index_t idx = item_sections.Index_Of(section);
-        if (idx > 0) {
-            Item_Section_t item_section = item_sections[idx];
-            item_sections[idx] = item_sections[idx - 1];
-            item_sections[idx - 1] = item_section;
-        }
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Move_Item_Section_Lower(Item_Section_t section)
-    {
-        Index_t idx = item_sections.Index_Of(section);
-        Index_t last = item_sections.size() - 1;
-        if (idx > -1 && idx < last) {
-            Item_Section_t item_section = item_sections[idx];
-            item_sections[idx] = item_sections[idx + 1];
-            item_sections[idx + 1] = item_section;
-        }
-    }
-
-    template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Build_Section_Options(Vector_t<Item_Section_t>& allowed_sections)
+    inline void Bases_Options_t<B, I>::Build_Section_Options()
     {
         Main_t* mcm = Main_t::Self();
 
@@ -1383,7 +1345,7 @@ namespace doticu_npcl { namespace MCM {
         mcm->Add_Header_Option(Main_t::ITEM_SECTIONS);
         mcm->Add_Header_Option("");
 
-        Options()->Build_Section_Options_Impl(allowed_sections);
+        Options()->Build_Section_Options_Impl();
 
         if (skylib::Is_Odd(mcm->Cursor_Position())) {
             mcm->Add_Empty_Option();
@@ -1391,9 +1353,12 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void Bases_Options_t<B, I>::Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections)
+    inline void Bases_Options_t<B, I>::Build_Section_Options_Impl()
     {
         using Section_e = Bases_Item_Section_e;
+
+        Vector_t<Item_Section_t> allowed_sections = Options()->Default_Item_Sections();
+        Vector_t<Item_Section_t> current_sections = item_sections.Current();
 
         Main_t* mcm = Main_t::Self();
 
@@ -1401,8 +1366,8 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Menu_Option(label, Main_t::_DOTS_);
         };
-        for (Index_t idx = 0, end = item_sections.size(); idx < end; idx += 1) {
-            Section_e section_e = item_sections[idx];
+        for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            Section_e section_e = current_sections[idx];
             if (allowed_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)     bases_section_option        = Enabled(Main_t::BASES);
                 else if (section_e == Section_e::COMMANDS)  commands_section_option     = Enabled(Main_t::COMMANDS);
@@ -1420,7 +1385,7 @@ namespace doticu_npcl { namespace MCM {
         };
         for (Index_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
             Section_e section_e = allowed_sections[idx];
-            if (!Is_Item_Section_Enabled(section_e)) {
+            if (!current_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)     bases_section_option        = Disabled(Main_t::BASES);
                 else if (section_e == Section_e::COMMANDS)  commands_section_option     = Disabled(Main_t::COMMANDS);
                 else if (section_e == Section_e::FACTIONS)  factions_section_option     = Disabled(Main_t::FACTIONS);
@@ -1435,7 +1400,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Select_Section_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback)
     {
-        Enable_Item_Section(item_section);
+        item_sections.Enable(item_section);
 
         Main_t* mcm = Main_t::Self();
         mcm->Disable_Option(option);
@@ -1452,12 +1417,12 @@ namespace doticu_npcl { namespace MCM {
         disable_section_menu_option = options.size();
         options.push_back(Main_t::DISABLE_SECTION);
 
-        if (May_Move_Item_Section_Higher(item_section)) {
+        if (item_sections.May_Move_Higher(item_section)) {
             move_section_higher_menu_option = options.size();
             options.push_back(Main_t::MOVE_SECTION_HIGHER);
         }
 
-        if (May_Move_Item_Section_Lower(item_section)) {
+        if (item_sections.May_Move_Lower(item_section)) {
             move_section_lower_menu_option = options.size();
             options.push_back(Main_t::MOVE_SECTION_LOWER);
         }
@@ -1476,16 +1441,39 @@ namespace doticu_npcl { namespace MCM {
 
         if (idx > -1) {
             if (idx == disable_section_menu_option) {
-                Disable_Item_Section(item_section);
+                item_sections.Disable(item_section);
             } else if (idx == move_section_higher_menu_option) {
-                Move_Item_Section_Higher(item_section);
+                item_sections.Move_Higher(item_section);
             } else if (idx == move_section_lower_menu_option) {
-                Move_Item_Section_Lower(item_section);
+                item_sections.Move_Lower(item_section);
             }
             mcm->Reset_Page();
         }
 
         mcm->Destroy_Latent_Callback(lcallback);
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Options_t<B, I>::Try_On_Init()
+    {
+        item_sections.Reset(Options()->Default_Item_Sections());
+        return true;
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Options_t<B, I>::Try_On_Load()
+    {
+        if (!item_sections.Deserialize<Bases_Item_Section_e>(Item_Sections_Variable())) {
+            item_sections.Reset(Options()->Default_Item_Sections());
+        }
+        return true;
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Options_t<B, I>::Try_On_Save()
+    {
+        item_sections.Serialize<Bases_Item_Section_e>(Item_Sections_Variable());
+        return true;
     }
 
     template <typename B, typename I>
@@ -1512,6 +1500,10 @@ namespace doticu_npcl { namespace MCM {
             Main_t::Self()->Toggle_And_Update(Do_Smart_Select_Variable(), option, lcallback);
             return true;
 
+        } else if (option == do_smart_sections_option) {
+            Main_t::Self()->Toggle_And_Update(Do_Smart_Sections_Variable(), option, lcallback);
+            return true;
+
         } else if (option == Uncombative_Spawns_Option()) {
             Main_t::Self()->Toggle_And_Update(Do_Uncombative_Spawns_Variable(), option, lcallback);
             return true;
@@ -1522,6 +1514,10 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Static_Spawns_Option()) {
             Main_t::Self()->Toggle_And_Update(Do_Static_Spawns_Variable(), option, lcallback);
+            return true;
+
+        } else if (option == do_verify_spawns_option) {
+            Main_t::Self()->Toggle_And_Update(Do_Verify_Spawns_Variable(), option, lcallback);
             return true;
 
         } else if (option == bases_section_option) {
@@ -1637,19 +1633,19 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Init()
     {
-        Options()->Reset_Item_Sections();
+        Options()->Try_On_Init();
     }
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Load()
     {
-        Options()->Deserialize_Item_Sections();
+        Options()->Try_On_Load();
     }
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Save()
     {
-        Options()->Serialize_Item_Sections();
+        Options()->Try_On_Save();
     }
 
     template <typename B, typename I>
@@ -1911,32 +1907,75 @@ namespace doticu_npcl { namespace MCM {
     inline void         Bases_Item_t<B, I>::Do_Show_Templates(Bool_t value) { Do_Show_Templates_Variable()->Value(value); }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Spawn(Actor_Base_t* base)
+    inline void Bases_Item_t<B, I>::Build_Sections(Vector_t<Buildable_i*> buildables)
     {
-        auto* options = Options();
-        Spawned_Actors_t::Self().Add(
-            base,
-            options->Do_Persistent_Spawns(),
-            options->Do_Uncombative_Spawns(),
-            options->Do_Static_Spawns()
-        );
-    }
-    template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Spawn(Leveled_Actor_Base_t* leveled_base)
-    {
-        auto* options = Options();
-        Spawned_Actors_t::Self().Add(
-            leveled_base,
-            options->Do_Persistent_Spawns(),
-            options->Do_Uncombative_Spawns(),
-            options->Do_Static_Spawns()
-        );
-    }
-    template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Spawn(Cached_Leveled_t* cached_leveled)
-    {
-        if (cached_leveled) {
-            Spawn(cached_leveled->leveled);
+        auto Buildable = [](Vector_t<Buildable_i*>& buildables, Item_Section_t item_section)->Buildable_i*
+        {
+            for (Index_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
+                Buildable_i* buildable = buildables[idx];
+                if (buildable && buildable->Type() == item_section) {
+                    return buildable;
+                }
+            }
+            return nullptr;
+        };
+
+        if (Options()->Do_Smart_Sections()) {
+            Vector_t<Buildable_i*> shown;
+            Vector_t<Buildable_i*> unshown;
+            Vector_t<Buildable_i*> disabled;
+
+            size_t buildable_count = buildables.size();
+            shown.reserve(buildable_count);
+            unshown.reserve(buildable_count);
+            disabled.reserve(buildable_count);
+
+            for (Index_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
+                Buildable_i* buildable = buildables[idx];
+                if (buildable) {
+                    if (buildable->Can_Enable()) {
+                        if (buildable->Can_Show()) {
+                            shown.push_back(buildable);
+                        } else {
+                            unshown.push_back(buildable);
+                        }
+                    } else {
+                        disabled.push_back(buildable);
+                    }
+                }
+            }
+
+            Vector_t<Item_Section_t> current_sections = Options()->item_sections.Current();
+            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+                Item_Section_t item_section = current_sections[idx];
+                Buildable_i* buildable = Buildable(shown, item_section);
+                if (buildable) {
+                    buildable->Build();
+                }
+            }
+            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+                Item_Section_t item_section = current_sections[idx];
+                Buildable_i* buildable = Buildable(unshown, item_section);
+                if (buildable) {
+                    buildable->Build();
+                }
+            }
+            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+                Item_Section_t item_section = current_sections[idx];
+                Buildable_i* buildable = Buildable(disabled, item_section);
+                if (buildable) {
+                    buildable->Build();
+                }
+            }
+        } else {
+            Vector_t<Item_Section_t> current_sections = Options()->item_sections.Current();
+            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+                Item_Section_t item_section = current_sections[idx];
+                Buildable_i* buildable = Buildable(buildables, item_section);
+                if (buildable) {
+                    buildable->Build();
+                }
+            }
         }
     }
 
@@ -1947,22 +1986,34 @@ namespace doticu_npcl { namespace MCM {
 
         if (base && base->Is_Valid()) {
             if (Do_Show_Bases()) {
-                if (mcm->Can_Add_Options(2 + 4)) {
+                if (mcm->Can_Add_Options(2 + 6)) {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, type_name);
                     show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_); // 1
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_); // 2
 
-                    if (base->Is_Male()) {
+                    if (base->Is_Male()) { // 3
                         mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
                     } else {
                         mcm->Add_Text_Option(Main_t::IS_FEMALE, Main_t::_NONE_);
                     }
-                    if (base->Is_Unique()) {
+                    if (base->Is_Unique()) { // 4
                         mcm->Add_Text_Option(Main_t::IS_UNIQUE, Main_t::_NONE_);
                     } else {
                         mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
+                    }
+                    Vitality_e vitality = base->Vitality(); // 5
+                    if (vitality != Vitality_e::NONE) {
+                        mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
+                    }
+                    Relation_e relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                    if (relation != Relation_e::NONE) {
+                        mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
+                    }
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
                     }
                 }
             } else {
@@ -1980,20 +2031,20 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Build_Factions_And_Ranks(Vector_t<Faction_And_Rank_t> factions_and_ranks)
+    inline void Bases_Item_t<B, I>::Build_Factions(Vector_t<Faction_And_Rank_t> factions)
     {
         Main_t* mcm = Main_t::Self();
 
-        size_t count = factions_and_ranks.size();
+        size_t count = factions.size();
         if (count > 0) {
             if (Do_Show_Factions()) {
                 if (mcm->Can_Add_Options(2 + count)) {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::FACTIONS);
                     show_factions_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    factions_and_ranks.Sort(Faction_And_Rank_t::Compare_Editor_Or_Form_IDs);
+                    factions.Sort(Faction_And_Rank_t::Compare_Editor_Or_Form_IDs);
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
+                        Faction_And_Rank_t& faction_and_rank = factions[idx];
                         Faction_t* faction = faction_and_rank.faction;
                         skylib::Faction_Rank_t rank = faction_and_rank.rank;
                         if (faction && faction->Is_Valid()) {
@@ -2091,11 +2142,15 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LEVELED_BASE);
                     show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_);
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_); // 1
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_); // 2
 
-                    View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_);
-                    mcm->Add_Empty_Option();
+                    View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_); // 3
+                    mcm->Add_Empty_Option(); // 4
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
                 }
             } else {
                 if (mcm->Can_Add_Options(2)) {
@@ -2112,11 +2167,11 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Build_Mod_Names(Vector_t<String_t> mod_names)
+    inline void Bases_Item_t<B, I>::Build_Mods(Vector_t<Mod_t*> mods)
     {
         Main_t* mcm = Main_t::Self();
 
-        size_t count = mod_names.size();
+        size_t count = mods.size();
         if (count > 0) {
             if (Do_Show_Mods()) {
                 if (mcm->Can_Add_Options(2 + count)) {
@@ -2124,7 +2179,10 @@ namespace doticu_npcl { namespace MCM {
                     show_mods_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod_names[idx].data, Main_t::_NONE_);
+                        Mod_t* mod = mods[idx];
+                        if (mod) {
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod->Name(), Main_t::_NONE_);
+                        }
                     }
 
                     if (skylib::Is_Odd(mcm->Cursor_Position())) {
@@ -2156,8 +2214,12 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::RACE);
                     show_races_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_);
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_);
+                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_); // 1
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_); // 2
+
+                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                        mcm->Add_Empty_Option();
+                    }
                 }
             } else {
                 if (mcm->Can_Add_Options(2)) {
@@ -2210,6 +2272,74 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Add_Text_Option(Main_t::_NONE_, Main_t::TEMPLATES, Flag_e::DISABLE);
                 show_templates_option = mcm->Add_Toggle_Option(Main_t::_NONE_, Do_Show_Templates());
             }
+        }
+    }
+
+    template <typename B, typename I>
+    template <typename Spawnable_t, enable_if_spawnable<Spawnable_t>>
+    inline void Bases_Item_t<B, I>::Select_Spawn_Option(Spawnable_t item, Int_t option, Latent_Callback_i* lcallback)
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (Options()->Do_Verify_Spawns()) {
+            class Verify_Callback_t : public Callback_i<Bool_t>
+            {
+            public:
+                Bases_Item_t<B, I>* self;
+                Spawnable_t item;
+                Latent_Callback_i* lcallback;
+                Verify_Callback_t(Bases_Item_t<B, I>* self,
+                                  Spawnable_t item,
+                                  Latent_Callback_i* lcallback) :
+                    self(self),
+                    item(item),
+                    lcallback(lcallback)
+                {
+                }
+                void operator()(Bool_t accept)
+                {
+                    if (accept) {
+                        if (item && item->Is_Valid()) {
+                            auto* options = self->Options();
+                            Spawned_Actors_t::Self().Add(
+                                item,
+                                options->Do_Persistent_Spawns(),
+                                options->Do_Uncombative_Spawns(),
+                                options->Do_Static_Spawns()
+                            );
+                        }
+                    }
+                    Main_t::Self()->Destroy_Latent_Callback(lcallback);
+                }
+            };
+            mcm->Flicker_Option(option);
+            mcm->Show_Message(
+                Main_t::CONFIRM_SPAWN,
+                true,
+                Main_t::YES,
+                Main_t::NO,
+                new Verify_Callback_t(this, item, lcallback)
+            );
+        } else {
+            mcm->Flicker_Option(option);
+            if (item && item->Is_Valid()) {
+                auto* options = Options();
+                Spawned_Actors_t::Self().Add(
+                    item,
+                    options->Do_Persistent_Spawns(),
+                    options->Do_Uncombative_Spawns(),
+                    options->Do_Static_Spawns()
+                );
+            }
+            mcm->Destroy_Latent_Callback(lcallback);
+        }
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Select_Spawn_Option(Cached_Leveled_t* item, Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (item) {
+            Select_Spawn_Option(item->leveled(), option, lcallback);
         }
     }
 

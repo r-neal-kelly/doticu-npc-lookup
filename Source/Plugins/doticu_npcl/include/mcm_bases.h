@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "filter.h"
 #include "mcm_main.h"
 
@@ -21,6 +23,34 @@ namespace doticu_npcl { namespace MCM {
     };
 
     using Item_Section_t = s64;
+
+    class Item_Sections_t
+    {
+    public:
+        Item_Sections_t()
+        {
+        }
+
+        Vector_t<Item_Section_t>        Current();
+        void                            Reset(Vector_t<Item_Section_t>&& defaults);
+
+        void                            Enable(Item_Section_t section);
+        void                            Disable(Item_Section_t section);
+
+        Bool_t                          May_Move_Higher(Item_Section_t section);
+        Bool_t                          May_Move_Lower(Item_Section_t section);
+        void                            Move_Higher(Item_Section_t section);
+        void                            Move_Lower(Item_Section_t section);
+
+        template                        <typename Item_Section_e>
+        Bool_t                          Serialize(V::Array_Variable_t<String_t>* variable);
+        template                        <typename Item_Section_e>
+        Bool_t                          Deserialize(V::Array_Variable_t<String_t>* variable);
+
+    private:
+        Vector_t<Item_Section_t>        item_sections;
+        std::mutex                      mutex;
+    };
 
     class Bases_Item_Section_e : public Enum_t<Item_Section_t>
     {
@@ -317,7 +347,7 @@ namespace doticu_npcl { namespace MCM {
     class Bases_Options_t : public Bases_t<Base_t, Item_t>
     {
     public:
-        static Vector_t<Item_Section_t> item_sections;
+        static Item_Sections_t item_sections;
 
     public:
         Int_t&  Back_Option();
@@ -327,6 +357,9 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Uncombative_Spawns_Option();
         Int_t&  Persistent_Spawns_Option();
         Int_t&  Static_Spawns_Option();
+
+        static Int_t do_smart_sections_option;
+        static Int_t do_verify_spawns_option;
 
         static Int_t bases_section_option;
         static Int_t commands_section_option;
@@ -346,15 +379,20 @@ namespace doticu_npcl { namespace MCM {
 
     public:
         V::Bool_Variable_t*             Do_Smart_Select_Variable();
+        V::Bool_Variable_t*             Do_Smart_Sections_Variable();
         V::Bool_Variable_t*             Do_Uncombative_Spawns_Variable();
         V::Bool_Variable_t*             Do_Persistent_Spawns_Variable();
         V::Bool_Variable_t*             Do_Static_Spawns_Variable();
+        V::Bool_Variable_t*             Do_Verify_Spawns_Variable();
 
         V::Array_Variable_t<String_t>*  Item_Sections_Variable();
 
     public:
         Bool_t  Do_Smart_Select();
         void    Do_Smart_Select(Bool_t value);
+
+        Bool_t  Do_Smart_Sections();
+        void    Do_Smart_Sections(Bool_t value);
 
         Bool_t  Do_Uncombative_Spawns();
         void    Do_Uncombative_Spawns(Bool_t value);
@@ -365,30 +403,26 @@ namespace doticu_npcl { namespace MCM {
         Bool_t  Do_Static_Spawns();
         void    Do_Static_Spawns(Bool_t value);
 
+        Bool_t  Do_Verify_Spawns();
+        void    Do_Verify_Spawns(Bool_t value);
+
     public:
         void    Reset();
 
     public:
-        void                        Reset_Item_Sections();
-        void                        Serialize_Item_Sections();
-        void                        Deserialize_Item_Sections();
+        Vector_t<Item_Section_t>    Default_Item_Sections();
 
-        Vector_t<Item_Section_t>    Item_Sections();
-        Bool_t                      Is_Item_Section_Enabled(Item_Section_t section);
-        void                        Enable_Item_Section(Item_Section_t section);
-        void                        Disable_Item_Section(Item_Section_t section);
-        Bool_t                      May_Move_Item_Section_Higher(Item_Section_t section);
-        Bool_t                      May_Move_Item_Section_Lower(Item_Section_t section);
-        void                        Move_Item_Section_Higher(Item_Section_t section);
-        void                        Move_Item_Section_Lower(Item_Section_t section);
-
-        void                        Build_Section_Options(Vector_t<Item_Section_t>& allowed_sections);
-        void                        Build_Section_Options_Impl(Vector_t<Item_Section_t>& allowed_sections);
+    public:
+        void                        Build_Section_Options();
+        void                        Build_Section_Options_Impl();
 
         void                        Select_Section_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
         void                        Open_Section_Menu_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
         void                        Accept_Section_Menu_Option(Item_Section_t item_section, Int_t idx, Latent_Callback_i* lcallback);
 
+        Bool_t                      Try_On_Init();
+        Bool_t                      Try_On_Load();
+        Bool_t                      Try_On_Save();
         Bool_t                      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
         Bool_t                      Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
         Bool_t                      Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
@@ -427,6 +461,14 @@ namespace doticu_npcl { namespace MCM {
         using Enum_t::Enum_t;
     };
 
+    template <typename T>
+    using enable_if_spawnable = std::enable_if_t<
+        std::is_same<T, Actor_Base_t*>::value ||
+        std::is_same<T, Leveled_Actor_Base_t*>::value,
+        Bool_t
+    >;
+
+    class Buildable_i;
     template <typename Base_t, typename Item_t>
     class Bases_Item_t : public Bases_t<Base_t, Item_t>
     {
@@ -495,19 +537,20 @@ namespace doticu_npcl { namespace MCM {
         void                Do_Show_Templates(Bool_t value);
 
     public:
-        void        Spawn(Actor_Base_t* base);
-        void        Spawn(Leveled_Actor_Base_t* leveled_base);
-        void        Spawn(Cached_Leveled_t* cached_leveled);
+        void        Build_Sections(Vector_t<Buildable_i*> buildables);
 
-    public:
         void        Build_Base(Actor_Base_t* base, const char* type_name);
-        void        Build_Factions_And_Ranks(Vector_t<Faction_And_Rank_t> factions_and_ranks);
+        void        Build_Factions(Vector_t<Faction_And_Rank_t> factions);
         void        Build_Header(const char* primary_option_name, size_t listed_item_count);
         void        Build_Keywords(Vector_t<Keyword_t*> keywords);
         void        Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base);
-        void        Build_Mod_Names(Vector_t<String_t> mod_names);
+        void        Build_Mods(Vector_t<Mod_t*> mods);
         void        Build_Race(Race_t* race);
         void        Build_Templates(Vector_t<Actor_Base_t*> templates);
+
+        template    <typename Spawnable_t, enable_if_spawnable<Spawnable_t> = true>
+        void        Select_Spawn_Option(Spawnable_t item, Int_t option, Latent_Callback_i* lcallback);
+        void        Select_Spawn_Option(Cached_Leveled_t* item, Int_t option, Latent_Callback_i* lcallback);
 
         Bool_t      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
 
@@ -527,6 +570,146 @@ namespace doticu_npcl { namespace MCM {
         void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
         void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
         void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+    };
+
+    class Buildable_i
+    {
+    public:
+        using Type_t = Item_Section_t;
+
+    public:
+        virtual         ~Buildable_i()  = default;
+        virtual Bool_t  Can_Enable()    = 0;
+        virtual Bool_t  Can_Show()      = 0;
+        virtual void    Build()         = 0;
+        virtual Type_t  Type()          = 0;
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Base_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Actor_Base_t*                   actor_base;
+        const char*                     type_name;
+
+        Buildable_Base_t(Bases_Item_t<Base_t, Item_t>* builder, Actor_Base_t* actor_base, const char* type_name) :
+            builder(builder), actor_base(actor_base), type_name(type_name)
+        {
+        }
+        virtual         ~Buildable_Base_t()             = default;
+        virtual Bool_t  Can_Enable()        override    { return actor_base && actor_base->Is_Valid() && type_name; }
+        virtual Bool_t  Can_Show()          override    { return builder->Do_Show_Bases(); }
+        virtual void    Build()             override    { builder->Build_Base(actor_base, type_name); }
+        virtual Type_t  Type()              override    { return Bases_Item_Section_e::BASES; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Factions_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Vector_t<Faction_And_Rank_t>    factions;
+
+        Buildable_Factions_t(Bases_Item_t<Base_t, Item_t>* builder, Vector_t<Faction_And_Rank_t>&& factions) :
+            builder(builder), factions(std::move(factions))
+        {
+        }
+        virtual         ~Buildable_Factions_t()             = default;
+        virtual Bool_t  Can_Enable()            override    { return factions.size() > 0; }
+        virtual Bool_t  Can_Show()              override    { return builder->Do_Show_Factions(); }
+        virtual void    Build()                 override    { builder->Build_Factions(factions); }
+        virtual Type_t  Type()                  override    { return Bases_Item_Section_e::FACTIONS; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Keywords_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Vector_t<Keyword_t*>            keywords;
+
+        Buildable_Keywords_t(Bases_Item_t<Base_t, Item_t>* builder, Vector_t<Keyword_t*>&& keywords) :
+            builder(builder), keywords(std::move(keywords))
+        {
+        }
+        virtual         ~Buildable_Keywords_t()             = default;
+        virtual Bool_t  Can_Enable()            override    { return keywords.size() > 0; }
+        virtual Bool_t  Can_Show()              override    { return builder->Do_Show_Keywords(); }
+        virtual void    Build()                 override    { builder->Build_Keywords(keywords); }
+        virtual Type_t  Type()                  override    { return Bases_Item_Section_e::KEYWORDS; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Leveled_Base_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Leveled_Actor_Base_t*           leveled_base;
+
+        Buildable_Leveled_Base_t(Bases_Item_t<Base_t, Item_t>* builder, Leveled_Actor_Base_t* leveled_base) :
+            builder(builder), leveled_base(leveled_base)
+        {
+        }
+        virtual         ~Buildable_Leveled_Base_t()             = default;
+        virtual Bool_t  Can_Enable()                override    { return leveled_base && leveled_base->Is_Valid(); }
+        virtual Bool_t  Can_Show()                  override    { return builder->Do_Show_Bases(); }
+        virtual void    Build()                     override    { builder->Build_Leveled_Base(leveled_base); }
+        virtual Type_t  Type()                      override    { return Bases_Item_Section_e::BASES; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Mods_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Vector_t<Mod_t*>                mods;
+
+        Buildable_Mods_t(Bases_Item_t<Base_t, Item_t>* builder, Vector_t<Mod_t*>&& mods) :
+            builder(builder), mods(std::move(mods))
+        {
+        }
+        virtual         ~Buildable_Mods_t()             = default;
+        virtual Bool_t  Can_Enable()        override    { return mods.size() > 0; }
+        virtual Bool_t  Can_Show()          override    { return builder->Do_Show_Mods(); }
+        virtual void    Build()             override    { builder->Build_Mods(mods); }
+        virtual Type_t  Type()              override    { return Bases_Item_Section_e::MODS; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Race_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Race_t*                         race;
+
+        Buildable_Race_t(Bases_Item_t<Base_t, Item_t>* builder, Race_t* race) :
+            builder(builder), race(race)
+        {
+        }
+        virtual         ~Buildable_Race_t()             = default;
+        virtual Bool_t  Can_Enable()        override    { return race && race->Is_Valid(); }
+        virtual Bool_t  Can_Show()          override    { return builder->Do_Show_Races(); }
+        virtual void    Build()             override    { builder->Build_Race(race); }
+        virtual Type_t  Type()              override    { return Bases_Item_Section_e::RACES; }
+    };
+
+    template <typename Base_t, typename Item_t>
+    class Buildable_Templates_t : public Buildable_i
+    {
+    public:
+        Bases_Item_t<Base_t, Item_t>*   builder;
+        Vector_t<Actor_Base_t*>         templates;
+
+        Buildable_Templates_t(Bases_Item_t<Base_t, Item_t>* builder, Vector_t<Actor_Base_t*>&& templates) :
+            builder(builder), templates(std::move(templates))
+        {
+        }
+        virtual         ~Buildable_Templates_t()                = default;
+        virtual Bool_t  Can_Enable()                override    { return templates.size() > 0; }
+        virtual Bool_t  Can_Show()                  override    { return builder->Do_Show_Templates(); }
+        virtual void    Build()                     override    { builder->Build_Templates(templates); }
+        virtual Type_t  Type()                      override    { return Bases_Item_Section_e::TEMPLATES; }
     };
 
 }}

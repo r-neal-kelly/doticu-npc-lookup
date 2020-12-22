@@ -49,7 +49,7 @@ namespace doticu_npcl {
     skylib::Quest_t*        Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(),   skylib::Quest_t,        0x000D62); }
 
     const Version_t<u8>     Consts_t::Skyrim_Required_Version()     { DEFINE_VERSION(1, 5, 97, 0); }
-    const Version_t<u8>     Consts_t::NPCL_Version()                { DEFINE_VERSION(1, 1, 1); }
+    const Version_t<u8>     Consts_t::NPCL_Version()                { DEFINE_VERSION(2, 0, 0); }
 
     #undef DEFINE_MOD
     #undef DEFINE_FORM

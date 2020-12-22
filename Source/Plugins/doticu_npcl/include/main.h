@@ -16,8 +16,15 @@ namespace doticu_skylib { namespace Virtual {
 
 namespace doticu_npcl {
 
+    using Quest_t = skylib::Quest_t;
+
     class Main_t
     {
+    public:
+        static constexpr const char*    FAILED_TO_INIT_QUESTS   = "$dnpcl_failed_to_init_quests";
+        static constexpr const char*    FAILED_TO_LOAD_QUESTS   = "$dnpcl_failed_to_load_quests";
+        static constexpr const char*    FAILED_TO_REINIT_QUESTS = "$dnpcl_failed_to_reinit_quests";
+
     public:
         static const SKSEInterface*             SKSE;
         static const SKSEPapyrusInterface*      SKSE_PAPYRUS;
@@ -33,8 +40,12 @@ namespace doticu_npcl {
         static Bool_t   Has_Requirements();
         static Bool_t   Is_Active();
         static Bool_t   Is_Installed();
+        static Bool_t   Are_Quests_Running();
+
+        static const Vector_t<some<Quest_t*>>& Quests();
 
         static void     Init();
+        static void     Reinit();
         static void     After_Load();
         static void     Before_Save();
 
