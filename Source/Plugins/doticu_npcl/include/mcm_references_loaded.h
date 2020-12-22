@@ -63,6 +63,9 @@ namespace doticu_npcl { namespace MCM {
     class Loaded_References_Filter_t : public References_Filter_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
     public:
+        Toggle_Type_e Toggle_Type();
+
+    public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
     };
 
@@ -98,7 +101,6 @@ namespace doticu_npcl { namespace MCM {
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}

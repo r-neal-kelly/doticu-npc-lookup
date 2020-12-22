@@ -291,6 +291,14 @@ namespace doticu_npcl { namespace MCM {
         Destroy_Latent_Callback(lcallback);
     }
 
+    void Main_t::Highlight(String_t info_text, Latent_Callback_i* lcallback)
+    {
+        SKYLIB_ASSERT_SOME(info_text);
+
+        Info_Text(info_text);
+        Destroy_Latent_Callback(lcallback);
+    }
+
     Bool_t Main_t::Should_Translate_Page_Titles()
     {
         return Global_Options_t::Self()->Translate_Page_Titles(); // maybe add a non english check here.

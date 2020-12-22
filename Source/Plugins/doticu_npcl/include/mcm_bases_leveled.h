@@ -32,9 +32,6 @@ namespace doticu_npcl { namespace MCM {
         Leveled_Bases_Filter_t*     Filter();
         Leveled_Bases_Options_t*    Options();
         Leveled_Bases_Item_t*       Item();
-
-    public:
-        Toggle_Type_e               Toggle_Type();
     };
 
 }}
@@ -75,6 +72,9 @@ namespace doticu_npcl { namespace MCM {
 
     class Leveled_Bases_Filter_t : public Bases_Filter_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
+    public:
+        Toggle_Type_e Toggle_Type();
+
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
     };

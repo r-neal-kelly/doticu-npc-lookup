@@ -34,6 +34,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Item_Section_t>        Current();
         void                            Reset(Vector_t<Item_Section_t>&& defaults);
 
+        Bool_t                          Is_Enabled(Item_Section_t section);
         void                            Enable(Item_Section_t section);
         void                            Disable(Item_Section_t section);
 
@@ -319,24 +320,28 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>      Selectable_Vitalities();
 
     public:
-        void Build_Filters(const char* type_name);
+        void    Build_Filters(const char* type_name);
+
+        void    Highlight_Toggle_Option(Latent_Callback_i* lcallback);
 
     public:
-        void On_Init();
-        void On_Load();
-        void On_Save();
-        void On_Config_Open();
-        void On_Config_Close();
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+
+        void    On_Init();
+        void    On_Load();
+        void    On_Save();
+        void    On_Config_Open();
+        void    On_Config_Close();
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
+        void    On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -350,32 +355,31 @@ namespace doticu_npcl { namespace MCM {
         static Item_Sections_t item_sections;
 
     public:
-        Int_t&  Back_Option();
-        Int_t&  Reset_Option();
+        static Int_t    back_option;
+        static Int_t    reset_option;
 
-        Int_t&  Smart_Select_Option();
-        Int_t&  Uncombative_Spawns_Option();
-        Int_t&  Persistent_Spawns_Option();
-        Int_t&  Static_Spawns_Option();
+        static Int_t    do_smart_select_option;
+        static Int_t    do_smart_sections_option;
+        static Int_t    do_uncombative_spawns_option;
+        static Int_t    do_persistent_spawns_option;
+        static Int_t    do_static_spawns_option;
+        static Int_t    do_verify_spawns_option;
 
-        static Int_t do_smart_sections_option;
-        static Int_t do_verify_spawns_option;
+        static Int_t    bases_section_option;
+        static Int_t    commands_section_option;
+        static Int_t    factions_section_option;
+        static Int_t    keywords_section_option;
+        static Int_t    mods_section_option;
+        static Int_t    races_section_option;
+        static Int_t    templates_section_option;
 
-        static Int_t bases_section_option;
-        static Int_t commands_section_option;
-        static Int_t factions_section_option;
-        static Int_t keywords_section_option;
-        static Int_t mods_section_option;
-        static Int_t races_section_option;
-        static Int_t templates_section_option;
+        void            Reset_Option_Ints();
 
-        void    Reset_Option_Ints();
+        static Int_t    disable_section_menu_option;
+        static Int_t    move_section_higher_menu_option;
+        static Int_t    move_section_lower_menu_option;
 
-        static Int_t disable_section_menu_option;
-        static Int_t move_section_higher_menu_option;
-        static Int_t move_section_lower_menu_option;
-
-        void    Reset_Menu_Option_Ints();
+        void            Reset_Menu_Option_Ints();
 
     public:
         V::Bool_Variable_t*             Do_Smart_Select_Variable();
@@ -406,43 +410,47 @@ namespace doticu_npcl { namespace MCM {
         Bool_t  Do_Verify_Spawns();
         void    Do_Verify_Spawns(Bool_t value);
 
-    public:
         void    Reset();
 
     public:
-        Vector_t<Item_Section_t>    Default_Item_Sections();
+        Vector_t<Item_Section_t> Default_Item_Sections();
 
     public:
-        void                        Build_Section_Options();
-        void                        Build_Section_Options_Impl();
+        void    Build_Header_Options();
+        void    Build_General_Options();
+        void    Build_Section_Options();
+        void    Build_Section_Options_Impl();
 
-        void                        Select_Section_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
-        void                        Open_Section_Menu_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
-        void                        Accept_Section_Menu_Option(Item_Section_t item_section, Int_t idx, Latent_Callback_i* lcallback);
+        void    Select_Section_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
+        void    Open_Section_Menu_Option(Item_Section_t item_section, Int_t option, Latent_Callback_i* lcallback);
+        void    Accept_Section_Menu_Option(Item_Section_t item_section, Int_t idx, Latent_Callback_i* lcallback);
 
-        Bool_t                      Try_On_Init();
-        Bool_t                      Try_On_Load();
-        Bool_t                      Try_On_Save();
-        Bool_t                      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        Bool_t                      Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        Bool_t                      Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void    Highlight_Section_Option(Item_Section_t item_section, Latent_Callback_i* lcallback);
 
     public:
-        void On_Init();
-        void On_Load();
-        void On_Save();
-        void On_Config_Open();
-        void On_Config_Close();
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Init();
+        Bool_t  Try_On_Load();
+        Bool_t  Try_On_Save();
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+
+        void    On_Init();
+        void    On_Load();
+        void    On_Save();
+        void    On_Config_Open();
+        void    On_Config_Close();
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
+        void    On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -468,6 +476,19 @@ namespace doticu_npcl { namespace MCM {
         Bool_t
     >;
 
+    template <typename T>
+    using enable_if_raceable = std::enable_if_t<
+        std::is_same<T, Actor_Base_t>::value ||
+        std::is_same<T, Actor_t>::value,
+        Bool_t
+    >;
+    template <typename T>
+    using enable_if_not_raceable = std::enable_if_t<
+        !std::is_same<T, Actor_Base_t>::value &&
+        !std::is_same<T, Actor_t>::value,
+        Bool_t
+    >;
+
     class Buildable_i;
     template <typename Base_t, typename Item_t>
     class Bases_Item_t : public Bases_t<Base_t, Item_t>
@@ -480,25 +501,23 @@ namespace doticu_npcl { namespace MCM {
         static constexpr Int_t          ITEMS_PER_PAGE      = 18;
 
     public:
-        Int_t&  Back_Option();
-        Int_t&  Primary_Option();
-        Int_t&  Previous_Option();
-        Int_t&  Next_Option();
-        Int_t&  View_Item_Option();
-        Int_t&  View_Bases_Option();
+        static Int_t    back_option;
+        static Int_t    previous_option;
+        static Int_t    next_option;
+        static Int_t    view_nested_option;
+        static Int_t    spawn_option;
 
-        static Int_t show_bases_option;
-        static Int_t show_commands_option;
-        static Int_t show_factions_option;
-        static Int_t show_keywords_option;
-        static Int_t show_mods_option;
-        static Int_t show_races_option;
-        static Int_t show_templates_option;
+        static Int_t    show_bases_option;
+        static Int_t    show_commands_option;
+        static Int_t    show_factions_option;
+        static Int_t    show_keywords_option;
+        static Int_t    show_mods_option;
+        static Int_t    show_races_option;
+        static Int_t    show_templates_option;
 
-        Int_t&  Race_Name_Option();
-        Int_t&  Cell_Name_Option();
+        static Int_t    race_name_option;
 
-        void    Reset_Option_Ints();
+        void            Reset_Option_Ints();
 
     public:
         V::String_Variable_t*   Nested_View_Variable();
@@ -541,7 +560,7 @@ namespace doticu_npcl { namespace MCM {
 
         void        Build_Base(Actor_Base_t* base, const char* type_name);
         void        Build_Factions(Vector_t<Faction_And_Rank_t> factions);
-        void        Build_Header(const char* primary_option_name, size_t listed_item_count);
+        void        Build_Header(Int_t& top_right_option, const char* top_right_name, size_t listed_item_count);
         void        Build_Keywords(Vector_t<Keyword_t*> keywords);
         void        Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base);
         void        Build_Mods(Vector_t<Mod_t*> mods);
@@ -551,25 +570,32 @@ namespace doticu_npcl { namespace MCM {
         template    <typename Spawnable_t, enable_if_spawnable<Spawnable_t> = true>
         void        Select_Spawn_Option(Spawnable_t item, Int_t option, Latent_Callback_i* lcallback);
         void        Select_Spawn_Option(Cached_Leveled_t* item, Int_t option, Latent_Callback_i* lcallback);
+        void        Select_Spawn_Option(Actor_t* item, Int_t option, Latent_Callback_i* lcallback);
 
-        Bool_t      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        template    <typename Raceable_t, enable_if_raceable<Raceable_t> = true>
+        void        Highlight_Race_Option(Raceable_t* raceable, Latent_Callback_i* lcallback);
+        template    <typename Unraceable_t, enable_if_not_raceable<Unraceable_t> = true>
+        void        Highlight_Race_Option(Unraceable_t* unraceable, Latent_Callback_i* lcallback);
 
     public:
-        void On_Init();
-        void On_Load();
-        void On_Save();
-        void On_Config_Open();
-        void On_Config_Close();
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
-        void On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
-        void On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+
+        void    On_Init();
+        void    On_Load();
+        void    On_Save();
+        void    On_Config_Open();
+        void    On_Config_Close();
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Slider_Accept(Int_t option, Float_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
+        void    On_Option_Keymap_Change(Int_t option, Int_t key, String_t conflict, String_t mod, Latent_Callback_i* lcallback);
+        void    On_Option_Default(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
     class Buildable_i

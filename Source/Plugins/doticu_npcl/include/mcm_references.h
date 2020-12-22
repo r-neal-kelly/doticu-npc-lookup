@@ -155,10 +155,12 @@ namespace doticu_npcl { namespace MCM {
         void Build_Filters(const char* type_name);
 
     public:
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
-        void On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        void    On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -169,24 +171,26 @@ namespace doticu_npcl { namespace MCM {
     class References_Options_t : public Bases_Options_t<Base_t, Item_t>
     {
     public:
-        static Int_t cells_section_option;
-        static Int_t locations_section_option;
-        static Int_t quests_section_option;
-        static Int_t references_section_option;
-        static Int_t worldspaces_section_option;
+        static Int_t    cells_section_option;
+        static Int_t    locations_section_option;
+        static Int_t    quests_section_option;
+        static Int_t    references_section_option;
+        static Int_t    worldspaces_section_option;
 
-        void    Reset_Option_Ints();
+        void            Reset_Option_Ints();
 
     public:
         Vector_t<Item_Section_t>    Default_Item_Sections();
 
         void                        Build_Section_Options_Impl();
 
-        Bool_t                      Try_On_Load();
-        Bool_t                      Try_On_Save();
-        Bool_t                      Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        Bool_t                      Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
-        Bool_t                      Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+    public:
+        Bool_t  Try_On_Load();
+        Bool_t  Try_On_Save();
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -197,11 +201,15 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_t : public Bases_Item_t<Base_t, Item_t>
     {
     public:
+        static Int_t unspawn_option;
+
         static Int_t show_cells_option;
         static Int_t show_locations_option;
         static Int_t show_quests_option;
         static Int_t show_references_option;
         static Int_t show_worldspaces_option;
+
+        static Int_t cell_name_option;
 
         Int_t&  Select_In_Console_Option();
         Int_t&  Mark_On_Map_Option();
@@ -239,7 +247,11 @@ namespace doticu_npcl { namespace MCM {
         void    Build_Reference(Actor_t* actor, const char* type_name);
         void    Build_Worldspaces(Vector_t<some<Worldspace_t*>> worldspaces);
 
+        void    Highlight_Cell_Option(Actor_t* actor, Latent_Callback_i* lcallback);
+
+    public:
         Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
     };
 
     template <typename Base_t, typename Item_t>

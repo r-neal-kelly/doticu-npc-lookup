@@ -314,6 +314,11 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
+    Toggle_Type_e Spawned_References_Filter_t::Toggle_Type()
+    {
+        return Toggle_Type_e::EITHER;
+    }
+
     void Spawned_References_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -338,13 +343,13 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    Int_t& Spawned_References_Options_t::Do_Verify_Unspawns_Option() { DEFINE_OPTION(); }
+    Int_t Spawned_References_Options_t::do_verify_unspawns_option = -1;
 
     void Spawned_References_Options_t::Reset_Option_Ints()
     {
-        References_Options_t<Spawned_References_Base_t, Item_t>::Reset_Option_Ints();
+        do_verify_unspawns_option = -1;
 
-        Do_Verify_Unspawns_Option() = -1;
+        References_Options_t<Base_t, Item_t>::Reset_Option_Ints();
     }
 
     V::Bool_Variable_t* Spawned_References_Options_t::Do_Verify_Unspawns_Variable()     { DEFINE_BOOL_VARIABLE("p_options_do_verify_unspawns"); }
@@ -354,9 +359,43 @@ namespace doticu_npcl { namespace MCM {
 
     void Spawned_References_Options_t::Reset()
     {
-        References_Options_t<Spawned_References_Base_t, Item_t>::Reset();
-
         Do_Verify_Unspawns(true);
+
+        References_Options_t<Base_t, Item_t>::Reset();
+    }
+
+    Bool_t Spawned_References_Options_t::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == do_verify_unspawns_option) {
+            Main_t::Self()->Toggle_And_Update(Do_Verify_Unspawns_Variable(), option, lcallback);
+            return true;
+
+        } else if (References_Options_t<Base_t, Item_t>::Try_On_Option_Select(option, lcallback)) {
+            return true;
+
+        } else {
+            return false;
+
+        }
+    }
+
+    Bool_t Spawned_References_Options_t::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == do_verify_unspawns_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_VERIFY_UNSPAWNS, lcallback);
+            return true;
+
+
+
+        } else if (References_Options_t<Base_t, Item_t>::Try_On_Option_Highlight(option, lcallback)) {
+            return true;
+
+
+
+        } else {
+            return false;
+
+        }
     }
 
     void Spawned_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
@@ -374,50 +413,10 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-        Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
-
-        mcm->Add_Header_Option(Main_t::GENERAL);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
-        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
-        Do_Verify_Unspawns_Option() = mcm->Add_Toggle_Option(Main_t::VERIFY_UNSPAWNS, Do_Verify_Unspawns());
-
+        Build_Header_Options();
+        Build_General_Options();
+        do_verify_unspawns_option = mcm->Add_Toggle_Option(Main_t::VERIFY_UNSPAWNS, Do_Verify_Unspawns());
         Build_Section_Options();
-
-        mcm->Destroy_Latent_Callback(lcallback);
-    }
-
-    void Spawned_References_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
-    {
-        if (option == Do_Verify_Unspawns_Option()) {
-            Main_t* mcm = Main_t::Self();
-            Bool_t value = Do_Verify_Unspawns();
-            Do_Verify_Unspawns(!value);
-            mcm->Toggle_Option_Value(option, !value);
-            mcm->Destroy_Latent_Callback(lcallback);
-
-        } else if (References_Options_t<Spawned_References_Base_t, Item_t>::Try_On_Option_Select(option, lcallback)) {
-            return;
-
-        } else {
-            Main_t::Self()->Destroy_Latent_Callback(lcallback);
-
-        }
-    }
-
-    void Spawned_References_Options_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Reset_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_RESET_OPTIONS);
-
-        } else if (option == Smart_Select_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_SMART_SELECT);
-        } else if (option == Do_Verify_Unspawns_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_VERIFY_UNSPAWNS);
-        }
 
         mcm->Destroy_Latent_Callback(lcallback);
     }
@@ -590,7 +589,7 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                Build_Header(Main_t::CENTER_UNSPAWN, List()->Items().size());
+                Build_Header(unspawn_option, Main_t::CENTER_UNSPAWN, List()->Items().size());
                 {
                     Vector_t<Buildable_i*> buildables;
                     buildables.reserve(11);
@@ -641,8 +640,9 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Primary_Option()) {
+        if (option == unspawn_option) {
             Select_Unspawn(mcm, option, lcallback);
+            return;
 
         } else if (option == Mark_On_Map_Option()) {
             mcm->Flicker_Option(option);
@@ -718,47 +718,6 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
 
         }
-    }
-
-    void Spawned_References_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        Item_t item = Current_Item();
-        if (item && item->Is_Valid()) {
-            if (option == Primary_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_UNSPAWN);
-            } else if (option == Mark_On_Map_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_ADD_REMOVE_MAP_MARKER);
-            } else if (option == Move_To_Player_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_MOVE_TO_PLAYER);
-            } else if (option == Go_To_Reference_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_GO_TO_REFERENCE);
-            } else if (option == Enable_Disable_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_ENABLE_DISABLE_REFERENCE);
-            } else if (option == Select_In_Console_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_SELECT_IN_CONSOLE);
-
-            } else if (option == Race_Name_Option()) {
-                Race_t* race = item->Race();
-                if (race) {
-                    const char* name = race->Name();
-                    const char* editor_id = race->Get_Editor_ID();
-                    const char* form_id = race->Form_ID_String().data;
-                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
-                }
-            } else if (option == Cell_Name_Option()) {
-                Cell_t* cell = item->Cell();
-                if (cell) {
-                    const char* name = cell->Name();
-                    const char* editor_id = cell->Get_Editor_ID();
-                    const char* form_id = cell->Form_ID_String().data;
-                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
-                }
-            }
-        }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
 }}

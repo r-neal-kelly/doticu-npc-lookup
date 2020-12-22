@@ -395,6 +395,86 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline Bool_t References_Filter_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == Reference_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Reference_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Reference_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Worldspace_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Worldspace_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Worldspace_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Location_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Location_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Location_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Cell_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Cell_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Cell_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Quest_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Quest_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Quest_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Interior_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+        } else if (option == Exterior_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+
+        } else if (option == Alive_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+        } else if (option == Dead_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+
+        } else if (option == Is_Teammate_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+        } else if (option == Isnt_Teammate_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+
+        } else {
+            return Bases_Filter_t<B, I>::Try_On_Option_Highlight(option, lcallback);
+
+        }
+    }
+
+    template <typename B, typename I>
     inline void References_Filter_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -1032,9 +1112,48 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    template <typename B, typename I>
+    inline Bool_t References_Options_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == cells_section_option) {
+            Highlight_Section_Option(References_Item_Section_e::CELLS, lcallback);
+            return true;
+
+        } else if (option == locations_section_option) {
+            Highlight_Section_Option(References_Item_Section_e::LOCATIONS, lcallback);
+            return true;
+
+        } else if (option == quests_section_option) {
+            Highlight_Section_Option(References_Item_Section_e::QUESTS, lcallback);
+            return true;
+
+        } else if (option == references_section_option) {
+            Highlight_Section_Option(References_Item_Section_e::REFERENCES, lcallback);
+            return true;
+
+        } else if (option == worldspaces_section_option) {
+            Highlight_Section_Option(References_Item_Section_e::WORLDSPACES, lcallback);
+            return true;
+
+
+
+        } else if (Bases_Options_t<B, I>::Try_On_Option_Highlight(option, lcallback)) {
+            return true;
+
+
+
+        } else {
+            return false;
+
+        }
+    }
+
 }}
 
 namespace doticu_npcl { namespace MCM {
+
+    template <typename B, typename I>
+    Int_t References_Item_t<B, I>::unspawn_option           = -1;
 
     template <typename B, typename I>
     Int_t References_Item_t<B, I>::show_cells_option        = -1;
@@ -1046,6 +1165,9 @@ namespace doticu_npcl { namespace MCM {
     Int_t References_Item_t<B, I>::show_references_option   = -1;
     template <typename B, typename I>
     Int_t References_Item_t<B, I>::show_worldspaces_option  = -1;
+
+    template <typename B, typename I>
+    Int_t References_Item_t<B, I>::cell_name_option         = -1;
 
     template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Select_In_Console_Option()       { DEFINE_OPTION(); }
@@ -1063,11 +1185,15 @@ namespace doticu_npcl { namespace MCM {
     {
         Bases_Item_t<B, I>::Reset_Option_Ints();
 
+        unspawn_option                  = -1;
+
         show_cells_option               = -1;
         show_locations_option           = -1;
         show_quests_option              = -1;
         show_references_option          = -1;
         show_worldspaces_option         = -1;
+
+        cell_name_option                = -1;
 
         Select_In_Console_Option()      = -1;
         Mark_On_Map_Option()            = -1;
@@ -1163,7 +1289,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::CELL);
                     show_cells_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    Cell_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_); // 1
+                    cell_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_); // 1
                     if (cell->Is_Interior()) { // 2
                         mcm->Add_Text_Option(Main_t::IS_INTERIOR, Main_t::_NONE_);
                     } else {
@@ -1210,7 +1336,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    mcm->Add_Empty_Option(); // 2 // Spawn a Clone? would have to add options that are available in bases, just hook them up
+                    spawn_option = mcm->Add_Text_Option(Main_t::SPAWN_A_CLONE, Main_t::_NONE_); // 2
 
                     Move_To_Player_Option() = mcm->Add_Text_Option(Main_t::MOVE_TO_PLAYER, Main_t::_NONE_); // 3
 
@@ -1420,6 +1546,21 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void References_Item_t<B, I>::Highlight_Cell_Option(Actor_t* actor, Latent_Callback_i* lcallback)
+    {
+        if (actor && actor->Is_Valid()) {
+            Cell_t* cell = actor->Cell();
+            if (cell && cell->Is_Valid()) {
+                const char* name = cell->Name();
+                const char* editor_id = cell->Get_Editor_ID();
+                const char* form_id = cell->Form_ID_String().data;
+                Main_t* mcm = Main_t::Self();
+                mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
+            }
+        }
+    }
+
+    template <typename B, typename I>
     inline Bool_t References_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -1444,11 +1585,61 @@ namespace doticu_npcl { namespace MCM {
             mcm->Toggle_And_Reset(Do_Show_Worldspaces_Variable(), option, lcallback);
             return true;
 
-        } else if (Bases_Item_t<B, I>::Try_On_Option_Select(option, lcallback)) {
+        } else {
+            return Bases_Item_t<B, I>::Try_On_Option_Select(option, lcallback);
+
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t References_Item_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == show_cells_option || option == show_cells_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_locations_option || option == show_locations_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_quests_option || option == show_quests_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_references_option || option == show_references_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_worldspaces_option || option == show_worldspaces_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+
+        } else if (option == spawn_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SPAWN_A_CLONE, lcallback);
+            return true;
+        } else if (option == unspawn_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_UNSPAWN, lcallback);
+            return true;
+
+        } else if (option == Move_To_Player_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_MOVE_TO_PLAYER, lcallback);
+            return true;
+        } else if (option == Go_To_Reference_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_GO_TO_REFERENCE, lcallback);
+            return true;
+
+        } else if (option == Mark_On_Map_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ADD_REMOVE_MAP_MARKER, lcallback);
+            return true;
+        } else if (option == Enable_Disable_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ENABLE_DISABLE_REFERENCE, lcallback);
+            return true;
+        } else if (option == Select_In_Console_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SELECT_IN_CONSOLE, lcallback);
+            return true;
+
+        } else if (option == cell_name_option) {
+            Highlight_Cell_Option(Item()->Current_Item(), lcallback);
             return true;
 
         } else {
-            return false;
+            return Bases_Item_t<B, I>::Try_On_Option_Highlight(option, lcallback);
 
         }
     }

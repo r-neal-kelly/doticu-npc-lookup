@@ -796,7 +796,7 @@ namespace doticu_npcl { namespace MCM {
 
         mcm->Add_Header_Option(Main_t::OTHER);
         mcm->Add_Header_Option(Main_t::_NONE_);
-        if (Toggle_Type() == Toggle_Type_e::EITHER) {
+        if (Filter()->Toggle_Type() == Toggle_Type_e::EITHER) {
 
             Male_Option() = mcm->Add_Toggle_Option(Main_t::IS_MALE, Male_Female_Argument() == Binary_e::A);
             Female_Option() = mcm->Add_Toggle_Option(Main_t::IS_FEMALE, Male_Female_Argument() == Binary_e::B);
@@ -804,7 +804,7 @@ namespace doticu_npcl { namespace MCM {
             Unique_Option() = mcm->Add_Toggle_Option(Main_t::IS_UNIQUE, Unique_Generic_Argument() == Binary_e::A);
             Generic_Option() = mcm->Add_Toggle_Option(Main_t::IS_GENERIC, Unique_Generic_Argument() == Binary_e::B);
 
-        } else if (Toggle_Type() == Toggle_Type_e::ANY) {
+        } else if (Filter()->Toggle_Type() == Toggle_Type_e::ANY) {
 
             Binary_e male_female_argument = Male_Female_Argument();
             Male_Option() = mcm->Add_Toggle_Option(
@@ -829,6 +829,121 @@ namespace doticu_npcl { namespace MCM {
                 unique_generic_argument == Binary_e::B ||
                 unique_generic_argument == Binary_e::ALL
             );
+
+        }
+    }
+
+    template <typename B, typename I>
+    inline void  Bases_Filter_t<B, I>::Highlight_Toggle_Option(Latent_Callback_i* lcallback)
+    {
+        if (Filter()->Toggle_Type() == Toggle_Type_e::EITHER) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_TOGGLE_EITHER, lcallback);
+        } else if (Filter()->Toggle_Type() == Toggle_Type_e::ANY) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_TOGGLE_ANY, lcallback);
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Filter_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == Back_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_BACK, lcallback);
+            return true;
+        } else if (option == Clear_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_CLEAR, lcallback);
+            return true;
+
+        } else if (option == Mod_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Mod_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Mod_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Race_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Race_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Race_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Base_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Base_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Base_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Template_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Template_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Template_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Faction_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Faction_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Faction_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Keyword_Search_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SEARCH, lcallback);
+            return true;
+        } else if (option == Keyword_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Keyword_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Relation_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Relation_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Vitality_Select_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_SELECT, lcallback);
+            return true;
+        } else if (option == Vitality_Negate_Option()) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_FILTER_NEGATE, lcallback);
+            return true;
+
+        } else if (option == Male_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+        } else if (option == Female_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+
+        } else if (option == Unique_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+        } else if (option == Generic_Option()) {
+            Highlight_Toggle_Option(lcallback);
+            return true;
+
+        } else {
+            Main_t::Self()->Destroy_Latent_Callback(lcallback);
+            return true;
 
         }
     }
@@ -921,7 +1036,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Toggle_Option_Value(option, !value);
 
         } else {
-            if (Toggle_Type() == Toggle_Type_e::EITHER) {
+            if (Filter()->Toggle_Type() == Toggle_Type_e::EITHER) {
                 if (option == Male_Option()) {
                     mcm->Toggle_Either(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
                 } else if (option == Female_Option()) {
@@ -933,7 +1048,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
 
                 }
-            } else if (Toggle_Type() == Toggle_Type_e::ANY) {
+            } else if (Filter()->Toggle_Type() == Toggle_Type_e::ANY) {
                 if (option == Male_Option()) {
                     mcm->Toggle_Any(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
                 } else if (option == Female_Option()) {
@@ -1176,7 +1291,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Filter()->Try_On_Option_Highlight(option, lcallback);
     }
 
 }}
@@ -1187,20 +1302,20 @@ namespace doticu_npcl { namespace MCM {
     Item_Sections_t Bases_Options_t<B, I>::item_sections;
 
     template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Back_Option()                { DEFINE_OPTION(); }
+    Int_t   Bases_Options_t<B, I>::back_option              = -1;
     template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Reset_Option()               { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Smart_Select_Option()        { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Uncombative_Spawns_Option()  { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Persistent_Spawns_Option()   { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Options_t<B, I>::Static_Spawns_Option()       { DEFINE_OPTION(); }
+    Int_t   Bases_Options_t<B, I>::reset_option             = -1;
 
     template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_smart_select_option = -1;
+    template <typename B, typename I>
     Int_t   Bases_Options_t<B, I>::do_smart_sections_option = -1;
+    template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_uncombative_spawns_option = -1;
+    template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_persistent_spawns_option = -1;
+    template <typename B, typename I>
+    Int_t   Bases_Options_t<B, I>::do_static_spawns_option = -1;
     template <typename B, typename I>
     Int_t   Bases_Options_t<B, I>::do_verify_spawns_option  = -1;
 
@@ -1222,24 +1337,23 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Reset_Option_Ints()
     {
-        Back_Option()               = -1;
-        Reset_Option()              = -1;
+        back_option                     = -1;
+        reset_option                    = -1;
 
-        Smart_Select_Option()       = -1;
-        Uncombative_Spawns_Option() = -1;
-        Persistent_Spawns_Option()  = -1;
-        Static_Spawns_Option()      = -1;
+        do_smart_select_option          = -1;
+        do_smart_sections_option        = -1;
+        do_uncombative_spawns_option    = -1;
+        do_persistent_spawns_option     = -1;
+        do_static_spawns_option         = -1;
+        do_verify_spawns_option         = -1;
 
-        do_smart_sections_option    = -1;
-        do_verify_spawns_option     = -1;
-
-        bases_section_option        = -1;
-        commands_section_option     = -1;
-        factions_section_option     = -1;
-        keywords_section_option     = -1;
-        mods_section_option         = -1;
-        races_section_option        = -1;
-        templates_section_option    = -1;
+        bases_section_option            = -1;
+        commands_section_option         = -1;
+        factions_section_option         = -1;
+        keywords_section_option         = -1;
+        mods_section_option             = -1;
+        races_section_option            = -1;
+        templates_section_option        = -1;
     }
 
     template <typename B, typename I>
@@ -1331,6 +1445,39 @@ namespace doticu_npcl { namespace MCM {
         sections.push_back(Bases_Item_Section_e::MODS);
 
         return sections;
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::Build_Header_Options()
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+            mcm->Add_Empty_Option();
+        }
+
+        back_option = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        reset_option = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
+    }
+
+    template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::Build_General_Options()
+    {
+        Main_t* mcm = Main_t::Self();
+
+        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+            mcm->Add_Empty_Option();
+        }
+
+        mcm->Add_Header_Option(Main_t::GENERAL);
+        mcm->Add_Header_Option(Main_t::_NONE_);
+
+        do_smart_select_option = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
+        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
+        do_uncombative_spawns_option = mcm->Add_Toggle_Option(Main_t::UNCOMBATIVE_SPAWNS, Do_Uncombative_Spawns());
+        do_persistent_spawns_option = mcm->Add_Toggle_Option(Main_t::PERSISTENT_SPAWNS, Do_Persistent_Spawns());
+        do_static_spawns_option = mcm->Add_Toggle_Option(Main_t::STATIC_SPAWNS, Do_Static_Spawns());
+        do_verify_spawns_option = mcm->Add_Toggle_Option(Main_t::VERIFY_SPAWNS, Do_Verify_Spawns());
     }
 
     template <typename B, typename I>
@@ -1454,6 +1601,16 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void Bases_Options_t<B, I>::Highlight_Section_Option(Item_Section_t item_section, Latent_Callback_i* lcallback)
+    {
+        if (item_sections.Is_Enabled(item_section)) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_OPTIONS_ENABLED_SECTION, lcallback);
+        } else {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_OPTIONS_DISABLED_SECTION, lcallback);
+        }
+    }
+
+    template <typename B, typename I>
     inline Bool_t Bases_Options_t<B, I>::Try_On_Init()
     {
         item_sections.Reset(Options()->Default_Item_Sections());
@@ -1479,7 +1636,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t Bases_Options_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        if (option == Back_Option()) {
+        if (option == back_option) {
             Main_t* mcm = Main_t::Self();
             mcm->Disable_Option(option);
             List()->do_update_items = true;
@@ -1488,7 +1645,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
             return true;
 
-        } else if (option == Reset_Option()) {
+        } else if (option == reset_option) {
             Main_t* mcm = Main_t::Self();
             mcm->Disable_Option(option);
             Options()->Reset();
@@ -1496,7 +1653,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
             return true;
 
-        } else if (option == Smart_Select_Option()) {
+        } else if (option == do_smart_select_option) {
             Main_t::Self()->Toggle_And_Update(Do_Smart_Select_Variable(), option, lcallback);
             return true;
 
@@ -1504,15 +1661,15 @@ namespace doticu_npcl { namespace MCM {
             Main_t::Self()->Toggle_And_Update(Do_Smart_Sections_Variable(), option, lcallback);
             return true;
 
-        } else if (option == Uncombative_Spawns_Option()) {
+        } else if (option == do_uncombative_spawns_option) {
             Main_t::Self()->Toggle_And_Update(Do_Uncombative_Spawns_Variable(), option, lcallback);
             return true;
 
-        } else if (option == Persistent_Spawns_Option()) {
+        } else if (option == do_persistent_spawns_option) {
             Main_t::Self()->Toggle_And_Update(Do_Persistent_Spawns_Variable(), option, lcallback);
             return true;
 
-        } else if (option == Static_Spawns_Option()) {
+        } else if (option == do_static_spawns_option) {
             Main_t::Self()->Toggle_And_Update(Do_Static_Spawns_Variable(), option, lcallback);
             return true;
 
@@ -1631,6 +1788,78 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline Bool_t Bases_Options_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == back_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_OPTIONS_BACK, lcallback);
+            return true;
+
+        } else if (option == reset_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_RESET_OPTIONS, lcallback);
+            return true;
+
+
+        } else if (option == do_smart_select_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SMART_SELECT, lcallback);
+            return true;
+
+        } else if (option == do_smart_sections_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SMART_SECTIONS, lcallback);
+            return true;
+
+        } else if (option == do_uncombative_spawns_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_UNCOMBATIVE_SPAWNS, lcallback);
+            return true;
+
+        } else if (option == do_persistent_spawns_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_PERSISTENT_SPAWNS, lcallback);
+            return true;
+
+        } else if (option == do_static_spawns_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_STATIC_SPAWNS, lcallback);
+            return true;
+
+        } else if (option == do_verify_spawns_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_VERIFY_SPAWNS, lcallback);
+            return true;
+
+
+        } else if (option == bases_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::BASES, lcallback);
+            return true;
+
+        } else if (option == commands_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::COMMANDS, lcallback);
+            return true;
+
+        } else if (option == factions_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::FACTIONS, lcallback);
+            return true;
+
+        } else if (option == keywords_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::KEYWORDS, lcallback);
+            return true;
+
+        } else if (option == mods_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::MODS, lcallback);
+            return true;
+
+        } else if (option == races_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::RACES, lcallback);
+            return true;
+
+        } else if (option == templates_section_option) {
+            Highlight_Section_Option(Bases_Item_Section_e::TEMPLATES, lcallback);
+            return true;
+
+
+        } else {
+            return false;
+
+        }
+    }
+
+    template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Init()
     {
         Options()->Try_On_Init();
@@ -1667,36 +1896,24 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        if (Options()->Try_On_Option_Select(option, lcallback)) {
-            return;
-
-        } else {
+        if (!Options()->Try_On_Option_Select(option, lcallback)) {
             Main_t::Self()->Destroy_Latent_Callback(lcallback);
-
         }
     }
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-        if (Options()->Try_On_Option_Menu_Open(option, lcallback)) {
-            return;
-
-        } else {
+        if (!Options()->Try_On_Option_Menu_Open(option, lcallback)) {
             Main_t::Self()->Destroy_Latent_Callback(lcallback);
-
         }
     }
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
-        if (Options()->Try_On_Option_Menu_Accept(option, idx, lcallback)) {
-            return;
-
-        } else {
+        if (!Options()->Try_On_Option_Menu_Accept(option, idx, lcallback)) {
             Main_t::Self()->Destroy_Latent_Callback(lcallback);
-
         }
     }
 
@@ -1733,22 +1950,9 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
-
-        if (option == Reset_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_RESET_OPTIONS);
-
-        } else if (option == Smart_Select_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_SMART_SELECT);
-        } else if (option == Uncombative_Spawns_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_UNCOMBATIVE_SPAWNS);
-        } else if (option == Persistent_Spawns_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_PERSISTENT_SPAWNS);
-        } else if (option == Static_Spawns_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_STATIC_SPAWNS);
+        if (!Options()->Try_On_Option_Highlight(option, lcallback)) {
+            Main_t::Self()->Destroy_Latent_Callback(lcallback);
         }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
 }}
@@ -1756,17 +1960,15 @@ namespace doticu_npcl { namespace MCM {
 namespace doticu_npcl { namespace MCM {
 
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Back_Option()                   { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::back_option           = -1;
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Primary_Option()                { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::previous_option       = -1;
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Previous_Option()               { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::next_option           = -1;
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Next_Option()                   { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::view_nested_option    = -1;
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::View_Item_Option()              { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::View_Bases_Option()             { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::spawn_option          = -1;
 
     template <typename B, typename I>
     Int_t Bases_Item_t<B, I>::show_bases_option     = -1;
@@ -1784,30 +1986,26 @@ namespace doticu_npcl { namespace MCM {
     Int_t Bases_Item_t<B, I>::show_templates_option = -1;
 
     template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Race_Name_Option()              { DEFINE_OPTION(); }
-    template <typename B, typename I>
-    inline Int_t&   Bases_Item_t<B, I>::Cell_Name_Option()              { DEFINE_OPTION(); }
+    Int_t Bases_Item_t<B, I>::race_name_option      = -1;
 
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Reset_Option_Ints()
     {
-        Back_Option()                   = -1;
-        Primary_Option()                = -1;
-        Previous_Option()               = -1;
-        Next_Option()                   = -1;
-        View_Item_Option()              = -1;
-        View_Bases_Option()             = -1;
+        back_option             = -1;
+        previous_option         = -1;
+        next_option             = -1;
+        view_nested_option      = -1;
+        spawn_option            = -1;
 
-        show_bases_option               = -1;
-        show_commands_option            = -1;
-        show_factions_option            = -1;
-        show_keywords_option            = -1;
-        show_mods_option                = -1;
-        show_races_option               = -1;
-        show_templates_option           = -1;
+        show_bases_option       = -1;
+        show_commands_option    = -1;
+        show_factions_option    = -1;
+        show_keywords_option    = -1;
+        show_mods_option        = -1;
+        show_races_option       = -1;
+        show_templates_option   = -1;
 
-        Race_Name_Option()              = -1;
-        Cell_Name_Option()              = -1;
+        race_name_option        = -1;
     }
 
     template <typename B, typename I>
@@ -2076,18 +2274,18 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void Bases_Item_t<B, I>::Build_Header(const char* primary_option_name, size_t listed_item_count)
+    inline void Bases_Item_t<B, I>::Build_Header(Int_t& top_right_option, const char* top_right_name, size_t listed_item_count)
     {
         Main_t* mcm = Main_t::Self();
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-        Primary_Option() = mcm->Add_Text_Option(primary_option_name, Main_t::_NONE_);
+        back_option = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+        top_right_option = mcm->Add_Text_Option(top_right_name, Main_t::_NONE_);
         if (listed_item_count > 1) {
-            Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
-            Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
+            previous_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_);
+            next_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_);
         } else {
-            Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
-            Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+            previous_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
+            next_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_ITEM, Main_t::_NONE_, Flag_e::DISABLE);
         }
         mcm->Add_Header_Option("");
         mcm->Add_Header_Option("");
@@ -2145,7 +2343,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_); // 1
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_); // 2
 
-                    View_Bases_Option() = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_); // 3
+                    view_nested_option = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_); // 3
                     mcm->Add_Empty_Option(); // 4
 
                     if (skylib::Is_Odd(mcm->Cursor_Position())) {
@@ -2214,7 +2412,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::RACE);
                     show_races_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    Race_Name_Option() = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_); // 1
+                    race_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_); // 1
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_); // 2
 
                     if (skylib::Is_Odd(mcm->Cursor_Position())) {
@@ -2344,11 +2542,42 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
+    inline void Bases_Item_t<B, I>::Select_Spawn_Option(Actor_t* item, Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (item && item->Is_Valid()) {
+            Select_Spawn_Option(item->Actor_Base(), option, lcallback);
+        }
+    }
+
+    template <typename B, typename I>
+    template <typename Raceable_t, enable_if_raceable<Raceable_t>>
+    inline void Bases_Item_t<B, I>::Highlight_Race_Option(Raceable_t* raceable, Latent_Callback_i* lcallback)
+    {
+        if (raceable && raceable->Is_Valid()) {
+            Race_t* race = raceable->Race();
+            if (race && race->Is_Valid()) {
+                const char* name = race->Name();
+                const char* editor_id = race->Get_Editor_ID();
+                const char* form_id = race->Form_ID_String().data;
+                Main_t* mcm = Main_t::Self();
+                mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
+            }
+        }
+    }
+
+    template <typename B, typename I>
+    template <typename Unraceable_t, enable_if_not_raceable<Unraceable_t>>
+    inline void Bases_Item_t<B, I>::Highlight_Race_Option(Unraceable_t* unraceable, Latent_Callback_i* lcallback)
+    {
+        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+    }
+
+    template <typename B, typename I>
     inline Bool_t Bases_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
+        if (option == back_option) {
             mcm->Disable_Option(option);
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);
@@ -2356,7 +2585,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
             return true;
 
-        } else if (option == Previous_Option()) {
+        } else if (option == previous_option) {
             mcm->Disable_Option(option);
             if (!Item()->Current_Item(Item()->Previous_Item())) {
                 List()->do_update_items = true;
@@ -2366,7 +2595,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Destroy_Latent_Callback(lcallback);
             return true;
 
-        } else if (option == Next_Option()) {
+        } else if (option == next_option) {
             mcm->Disable_Option(option);
             if (!Item()->Current_Item(Item()->Next_Item())) {
                 List()->do_update_items = true;
@@ -2374,6 +2603,10 @@ namespace doticu_npcl { namespace MCM {
             }
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
+            return true;
+
+        } else if (option == spawn_option) {
+            Select_Spawn_Option(Item()->Current_Item(), option, lcallback);
             return true;
 
         } else if (option == show_bases_option || option == show_bases_option - 1) {
@@ -2406,6 +2639,45 @@ namespace doticu_npcl { namespace MCM {
 
         } else {
             return false;
+        }
+    }
+
+    template <typename B, typename I>
+    inline Bool_t Bases_Item_t<B, I>::Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
+    {
+        if (option == show_bases_option || option == show_bases_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_commands_option || option == show_commands_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_factions_option || option == show_factions_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_keywords_option || option == show_keywords_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_mods_option || option == show_mods_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_races_option || option == show_races_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+        } else if (option == show_templates_option || option == show_templates_option - 1) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_ITEM_TOGGLE_SECTION, lcallback);
+            return true;
+
+        } else if (option == spawn_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SPAWN, lcallback);
+            return true;
+
+        } else if (option == race_name_option) {
+            Highlight_Race_Option(Item()->Current_Item(), lcallback);
+            return true;
+
+        } else {
+            Main_t::Self()->Destroy_Latent_Callback(lcallback);
+            return true;
         }
     }
 
@@ -2479,10 +2751,11 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t::Self()->Destroy_Latent_Callback(lcallback);
     }
+
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t::Self()->Destroy_Latent_Callback(lcallback);
+        Item()->Try_On_Option_Highlight(option, lcallback);
     }
 
 }}

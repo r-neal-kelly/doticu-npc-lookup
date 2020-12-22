@@ -76,6 +76,13 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
+    Bool_t Item_Sections_t::Is_Enabled(Item_Section_t item_section)
+    {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        return item_sections.Has(item_section);
+    }
+
     void Item_Sections_t::Enable(Item_Section_t item_section)
     {
         std::lock_guard<std::mutex> guard(mutex);

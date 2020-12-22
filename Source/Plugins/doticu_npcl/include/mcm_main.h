@@ -194,6 +194,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    VIEW_INTERNAL_BASES                 = "$dnpcl_view_internal_bases";
         static constexpr const char*    ADD_MARKER_TO_MAP                   = "$dnpcl_add_marker_to_map";
         static constexpr const char*    REMOVE_MARKER_FROM_MAP              = "$dnpcl_remove_marker_from_map";
+        static constexpr const char*    SPAWN_A_CLONE                       = "$dnpcl_spawn_a_clone";
         static constexpr const char*    MOVE_TO_PLAYER                      = "$dnpcl_move_to_player";
         static constexpr const char*    GO_TO_REFERENCE                     = "$dnpcl_go_to_reference";
         static constexpr const char*    ENABLE_REFERENCE                    = "$dnpcl_enable_reference";
@@ -222,15 +223,30 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    CENTER_SPAWN                        = "$dnpcl_center_spawn";
         static constexpr const char*    CENTER_UNSPAWN                      = "$dnpcl_center_unspawn";
 
+        static constexpr const char*    HIGHLIGHT_FILTER_BACK               = "$dnpcl_highlight_filter_back";
+        static constexpr const char*    HIGHLIGHT_FILTER_CLEAR              = "$dnpcl_highlight_filter_clear";
+        static constexpr const char*    HIGHLIGHT_FILTER_SEARCH             = "$dnpcl_highlight_filter_search";
+        static constexpr const char*    HIGHLIGHT_FILTER_SELECT             = "$dnpcl_highlight_filter_select";
+        static constexpr const char*    HIGHLIGHT_FILTER_NEGATE             = "$dnpcl_highlight_filter_negate";
+        static constexpr const char*    HIGHLIGHT_FILTER_TOGGLE_EITHER      = "$dnpcl_highlight_filter_toggle_either";
+        static constexpr const char*    HIGHLIGHT_FILTER_TOGGLE_ANY         = "$dnpcl_highlight_filter_toggle_any";
+
+        static constexpr const char*    HIGHLIGHT_OPTIONS_BACK              = "$dnpcl_highlight_options_back";
         static constexpr const char*    HIGHLIGHT_RESET_OPTIONS             = "$dnpcl_highlight_reset_options";
         static constexpr const char*    HIGHLIGHT_SMART_SELECT              = "$dnpcl_highlight_smart_select";
+        static constexpr const char*    HIGHLIGHT_SMART_SECTIONS            = "$dnpcl_highlight_smart_sections";
         static constexpr const char*    HIGHLIGHT_UNCOMBATIVE_SPAWNS        = "$dnpcl_highlight_uncombative_spawns";
         static constexpr const char*    HIGHLIGHT_PERSISTENT_SPAWNS         = "$dnpcl_highlight_persistent_spawns";
         static constexpr const char*    HIGHLIGHT_STATIC_SPAWNS             = "$dnpcl_highlight_static_spawns";
+        static constexpr const char*    HIGHLIGHT_VERIFY_SPAWNS             = "$dnpcl_highlight_verify_spawns";
         static constexpr const char*    HIGHLIGHT_VERIFY_UNSPAWNS           = "$dnpcl_highlight_verify_unspawns";
+        static constexpr const char*    HIGHLIGHT_OPTIONS_ENABLED_SECTION   = "$dnpcl_highlight_options_enabled_section";
+        static constexpr const char*    HIGHLIGHT_OPTIONS_DISABLED_SECTION  = "$dnpcl_highlight_options_disabled_section";
 
+        static constexpr const char*    HIGHLIGHT_ITEM_TOGGLE_SECTION       = "$dnpcl_highlight_item_toggle_section";
         static constexpr const char*    HIGHLIGHT_SPAWN                     = "$dnpcl_highlight_spawn";
         static constexpr const char*    HIGHLIGHT_SPAWN_LEVELED             = "$dnpcl_highlight_spawn_leveled";
+        static constexpr const char*    HIGHLIGHT_SPAWN_A_CLONE             = "$dnpcl_highlight_spawn_a_clone";
         static constexpr const char*    HIGHLIGHT_UNSPAWN                   = "$dnpcl_highlight_unspawn";
         static constexpr const char*    HIGHLIGHT_VIEW_INTERNAL_BASES       = "$dnpcl_highlight_view_internal_bases";
         static constexpr const char*    HIGHLIGHT_ADD_REMOVE_MAP_MARKER     = "$dnpcl_highlight_add_remove_map_marker";
@@ -326,6 +342,7 @@ namespace doticu_npcl { namespace MCM {
 
         void                Toggle_And_Reset(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
         void                Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
+        void                Highlight(String_t info_text, Latent_Callback_i* lcallback);
 
         Bool_t              Should_Translate_Page_Titles();
         std::wstring        Translation(const wchar_t* key);

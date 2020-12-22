@@ -34,8 +34,6 @@ namespace doticu_npcl { namespace MCM {
     Dynamic_Bases_Options_t*    Dynamic_Bases_Base_t::Options()             { return reinterpret_cast<Dynamic_Bases_Options_t*>(this); }
     Dynamic_Bases_Item_t*       Dynamic_Bases_Base_t::Item()                { return reinterpret_cast<Dynamic_Bases_Item_t*>(this); }
 
-    Toggle_Type_e               Dynamic_Bases_Base_t::Toggle_Type()         { return Toggle_Type_e::EITHER; }
-
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -247,6 +245,11 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
+    Toggle_Type_e Dynamic_Bases_Filter_t::Toggle_Type()
+    {
+        return Toggle_Type_e::EITHER;
+    }
+
     void Dynamic_Bases_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -286,18 +289,8 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-        Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
-
-        mcm->Add_Header_Option(Main_t::GENERAL);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
-        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
-        Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::UNCOMBATIVE_SPAWNS, Do_Uncombative_Spawns());
-        Persistent_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::PERSISTENT_SPAWNS, Do_Persistent_Spawns());
-        Static_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::STATIC_SPAWNS, Do_Static_Spawns());
-        do_verify_spawns_option = mcm->Add_Toggle_Option(Main_t::VERIFY_SPAWNS, Do_Verify_Spawns());
-
+        Build_Header_Options();
+        Build_General_Options();
         Build_Section_Options();
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -398,7 +391,7 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
+                Build_Header(spawn_option, Main_t::CENTER_SPAWN, List()->Items().size());
                 {
                     Vector_t<Buildable_i*> buildables;
                     buildables.reserve(6);
@@ -437,40 +430,13 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Primary_Option()) {
-            Select_Spawn_Option(Current_Item(), option, lcallback);
-            return;
-
-        } else if (Try_On_Option_Select(option, lcallback)) {
+        if (Try_On_Option_Select(option, lcallback)) {
             return;
 
         } else {
             mcm->Destroy_Latent_Callback(lcallback);
 
         }
-    }
-
-    void Dynamic_Bases_Item_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
-    {
-        Main_t* mcm = Main_t::Self();
-
-        Item_t item = Current_Item();
-        if (item && item->Is_Valid()) {
-            if (option == Primary_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_SPAWN);
-
-            } else if (option == Race_Name_Option()) {
-                Race_t* race = item->Race();
-                if (race) {
-                    const char* name = race->Name();
-                    const char* editor_id = race->Get_Editor_ID();
-                    const char* form_id = race->Form_ID_String().data;
-                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
-                }
-            }
-        }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
 }}

@@ -35,8 +35,6 @@ namespace doticu_npcl { namespace MCM {
     Leveled_Bases_Options_t*    Leveled_Bases_Base_t::Options()             { return reinterpret_cast<Leveled_Bases_Options_t*>(this); }
     Leveled_Bases_Item_t*       Leveled_Bases_Base_t::Item()                { return reinterpret_cast<Leveled_Bases_Item_t*>(this); }
 
-    Toggle_Type_e               Leveled_Bases_Base_t::Toggle_Type()         { return Toggle_Type_e::ANY; }
-
 }}
 
 namespace doticu_npcl { namespace MCM {
@@ -288,6 +286,11 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
+    Toggle_Type_e Leveled_Bases_Filter_t::Toggle_Type()
+    {
+        return Toggle_Type_e::ANY;
+    }
+
     void Leveled_Bases_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
         Main_t* mcm = Main_t::Self();
@@ -327,18 +330,8 @@ namespace doticu_npcl { namespace MCM {
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-        Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-        Reset_Option() = mcm->Add_Text_Option(Main_t::CENTER_RESET, Main_t::_NONE_);
-
-        mcm->Add_Header_Option(Main_t::GENERAL);
-        mcm->Add_Header_Option(Main_t::_NONE_);
-        Smart_Select_Option() = mcm->Add_Toggle_Option(Main_t::SMART_SELECT, Do_Smart_Select());
-        do_smart_sections_option = mcm->Add_Toggle_Option(Main_t::SMART_SECTIONS, Do_Smart_Sections());
-        Uncombative_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::UNCOMBATIVE_SPAWNS, Do_Uncombative_Spawns());
-        Persistent_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::PERSISTENT_SPAWNS, Do_Persistent_Spawns());
-        Static_Spawns_Option() = mcm->Add_Toggle_Option(Main_t::STATIC_SPAWNS, Do_Static_Spawns());
-        do_verify_spawns_option = mcm->Add_Toggle_Option(Main_t::VERIFY_SPAWNS, Do_Verify_Spawns());
-
+        Build_Header_Options();
+        Build_General_Options();
         Build_Section_Options();
 
         mcm->Destroy_Latent_Callback(lcallback);
@@ -522,7 +515,7 @@ namespace doticu_npcl { namespace MCM {
                 mcm->Cursor_Position(0);
                 mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                Build_Header(Main_t::CENTER_SPAWN, List()->Items().size());
+                Build_Header(spawn_option, Main_t::CENTER_SPAWN, List()->Items().size());
                 {
                     Vector_t<Buildable_i*> buildables;
                     buildables.reserve(2);
@@ -582,14 +575,14 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_INTERNAL_BASES, item_count, page_index, page_count));
                 }
 
-                Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-                Primary_Option() = mcm->Add_Text_Option(Main_t::_NONE_, Main_t::_NONE_);
+                back_option = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::_NONE_);
                 if (page_count > 1) {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_);
+                    previous_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_);
+                    next_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_);
                 } else {
-                    Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
-                    Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+                    previous_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+                    next_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
                 }
 
                 mcm->Add_Header_Option(Main_t::_NONE_);
@@ -611,10 +604,10 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_INTERNAL_BASES, 0, 0, 1));
                 }
 
-                Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
-                Primary_Option() = mcm->Add_Text_Option(Main_t::_NONE_, Main_t::_NONE_);
-                Previous_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
-                Next_Option() = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+                back_option = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
+                mcm->Add_Text_Option(Main_t::_NONE_, Main_t::_NONE_);
+                previous_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_PREVIOUS_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
+                next_option = mcm->Add_Text_Option(Main_t::CENTER_GO_TO_NEXT_PAGE, Main_t::_NONE_, Flag_e::DISABLE);
 
                 mcm->Add_Header_Option(Main_t::NO_INTERNAL_BASES);
             }
@@ -649,7 +642,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Cursor_Position(0);
                     mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
 
-                    Build_Header(Main_t::CENTER_SPAWN, nested_items.size());
+                    Build_Header(spawn_option, Main_t::CENTER_SPAWN, nested_items.size());
                     {
                         Vector_t<Buildable_i*> buildables;
                         buildables.reserve(6);
@@ -705,11 +698,7 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Primary_Option()) {
-            Select_Spawn_Option(Current_Item(), option, lcallback);
-            return;
-
-        } else if (option == View_Bases_Option()) {
+        if (option == view_nested_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::BASES);
             Nested_Index(0);
@@ -729,13 +718,13 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
+        if (option == back_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::ITEM);
             Nested_Index(0);
             mcm->Reset_Page();
 
-        } else if (option == Previous_Option()) {
+        } else if (option == previous_option) {
             mcm->Disable_Option(option);
 
             Item_t item = Current_Item();
@@ -758,7 +747,7 @@ namespace doticu_npcl { namespace MCM {
             }
 
             mcm->Reset_Page();
-        } else if (option == Next_Option()) {
+        } else if (option == next_option) {
             mcm->Disable_Option(option);
 
             Item_t item = Current_Item();
@@ -808,18 +797,18 @@ namespace doticu_npcl { namespace MCM {
     {
         Main_t* mcm = Main_t::Self();
 
-        if (option == Back_Option()) {
+        if (option == back_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::BASES);
             Nested_Form(0);
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
 
-        } else if (option == Primary_Option()) {
+        } else if (option == spawn_option) {
             Select_Spawn_Option(Current_Nested_Item()(), option, lcallback);
             return;
 
-        } else if (option == Previous_Option()) {
+        } else if (option == previous_option) {
             mcm->Disable_Option(option);
             Actor_Base_t* nested_item = Previous_Nested_Item();
             if (nested_item) {
@@ -831,7 +820,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
 
-        } else if (option == Next_Option()) {
+        } else if (option == next_option) {
             mcm->Disable_Option(option);
             Actor_Base_t* nested_item = Next_Nested_Item();
             if (nested_item) {
@@ -863,19 +852,18 @@ namespace doticu_npcl { namespace MCM {
 
     void Leveled_Bases_Item_t::On_Option_Highlight_Item(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        if (option == spawn_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_SPAWN_LEVELED, lcallback);
+            return;
 
-        Item_t item = Current_Item();
-        if (item) {
-            if (option == Primary_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_SPAWN_LEVELED);
+        } else if (option == view_nested_option) {
+            Main_t::Self()->Highlight(Main_t::HIGHLIGHT_VIEW_INTERNAL_BASES, lcallback);
+            return;
 
-            } else if (option == View_Bases_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_VIEW_INTERNAL_BASES);
-            }
+        } else {
+            Bases_Item_t<Base_t, Item_t>::Try_On_Option_Highlight(option, lcallback);
+
         }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
     void Leveled_Bases_Item_t::On_Option_Highlight_Bases(Int_t option, Latent_Callback_i* lcallback)
@@ -885,25 +873,14 @@ namespace doticu_npcl { namespace MCM {
 
     void Leveled_Bases_Item_t::On_Option_Highlight_Bases_Item(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        if (option == race_name_option) {
+            Highlight_Race_Option(Item()->Current_Nested_Item()(), lcallback);
+            return;
 
-        maybe<Actor_Base_t*> item = Current_Nested_Item();
-        if (item && item->Is_Valid()) {
-            if (option == Primary_Option()) {
-                mcm->Info_Text(Main_t::HIGHLIGHT_SPAWN);
+        } else {
+            Bases_Item_t<Base_t, Item_t>::Try_On_Option_Highlight(option, lcallback);
 
-            } else if (option == Race_Name_Option()) {
-                Race_t* race = item->Race();
-                if (race) {
-                    const char* name = race->Name();
-                    const char* editor_id = race->Get_Editor_ID();
-                    const char* form_id = race->Form_ID_String().data;
-                    mcm->Info_Text(mcm->Pretty_ID(name, editor_id, form_id));
-                }
-            }
         }
-
-        mcm->Destroy_Latent_Callback(lcallback);
     }
 
 }}

@@ -75,10 +75,10 @@ namespace doticu_npcl { namespace MCM {
         Item_t              Null_Item();
 
     public:
-        void On_Load();
-        void On_Save();
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Load();
+        void    On_Save();
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -87,6 +87,9 @@ namespace doticu_npcl { namespace MCM {
 
     class Spawned_References_Filter_t : public References_Filter_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
+    public:
+        Toggle_Type_e Toggle_Type();
+
     public:
         void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
     };
@@ -98,24 +101,24 @@ namespace doticu_npcl { namespace MCM {
     class Spawned_References_Options_t : public References_Options_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
     public:
-        Int_t&              Do_Verify_Unspawns_Option();
+        static Int_t    do_verify_unspawns_option;
 
-        void                Reset_Option_Ints();
+        void            Reset_Option_Ints();
 
     public:
         V::Bool_Variable_t* Do_Verify_Unspawns_Variable();
 
     public:
-        Bool_t              Do_Verify_Unspawns();
-        void                Do_Verify_Unspawns(Bool_t value);
+        Bool_t  Do_Verify_Unspawns();
+        void    Do_Verify_Unspawns(Bool_t value);
+
+        void    Reset();
 
     public:
-        void Reset();
+        Bool_t  Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        Bool_t  Try_On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
 
-    public:
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
     };
 
 }}
@@ -141,9 +144,8 @@ namespace doticu_npcl { namespace MCM {
         void Select_Unspawn(some<Main_t*> mcm, Int_t option, some<Latent_Callback_i*> lcallback);
 
     public:
-        void On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
-        void On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
-        void On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
+        void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
     };
 
 }}
