@@ -50,19 +50,19 @@ namespace doticu_npcl { namespace MCM {
     V::Array_Variable_t<Int_t>*     Spawned_References_List_t::Actor_Base_IDs_Variable()        { DEFINE_ARRAY_VARIABLE(Int_t, "p_actor_base_ids"); }
     V::Array_Variable_t<String_t>*  Spawned_References_List_t::Actor_Base_Mod_Names_Variable()  { DEFINE_ARRAY_VARIABLE(String_t, "p_actor_base_mod_names"); }
 
-    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_IDs()                                      { return Actor_IDs_Variable()->Unpack_Array<Form_ID_t>(); }
+    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_IDs()                                      { return Actor_IDs_Variable()->Unpack<Vector_t<Form_ID_t>>(); }
     void                Spawned_References_List_t::Actor_IDs(Vector_t<Form_ID_t> values)            { Actor_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
     V::Array_t*         Spawned_References_List_t::Actor_IDs_Array()                                { return Actor_IDs_Variable()->Value(); }
 
-    Vector_t<String_t>  Spawned_References_List_t::Actor_Mod_Names()                                { return Actor_Mod_Names_Variable()->Unpack_Array<String_t>(); }
+    Vector_t<String_t>  Spawned_References_List_t::Actor_Mod_Names()                                { return Actor_Mod_Names_Variable()->Unpack<Vector_t<String_t>>(); }
     void                Spawned_References_List_t::Actor_Mod_Names(Vector_t<String_t> values)       { Actor_Mod_Names_Variable()->Values(values); }
     V::Array_t*         Spawned_References_List_t::Actor_Mod_Names_Array()                          { return Actor_Mod_Names_Variable()->Value(); }
 
-    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_Base_IDs()                                 { return Actor_Base_IDs_Variable()->Unpack_Array<Form_ID_t>(); }
+    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_Base_IDs()                                 { return Actor_Base_IDs_Variable()->Unpack<Vector_t<Form_ID_t>>(); }
     void                Spawned_References_List_t::Actor_Base_IDs(Vector_t<Form_ID_t> values)       { Actor_Base_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
     V::Array_t*         Spawned_References_List_t::Actor_Base_IDs_Array()                           { return Actor_Base_IDs_Variable()->Value(); }
 
-    Vector_t<String_t>  Spawned_References_List_t::Actor_Base_Mod_Names()                           { return Actor_Base_Mod_Names_Variable()->Unpack_Array<String_t>(); }
+    Vector_t<String_t>  Spawned_References_List_t::Actor_Base_Mod_Names()                           { return Actor_Base_Mod_Names_Variable()->Unpack<Vector_t<String_t>>(); }
     void                Spawned_References_List_t::Actor_Base_Mod_Names(Vector_t<String_t> values)  { Actor_Base_Mod_Names_Variable()->Values(values); }
     V::Array_t*         Spawned_References_List_t::Actor_Base_Mod_Names_Array()                     { return Actor_Base_Mod_Names_Variable()->Value(); }
 
