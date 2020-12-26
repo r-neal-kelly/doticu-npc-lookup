@@ -6,15 +6,6 @@
 
 #include "intrinsic.h"
 
-namespace doticu_skylib {
-
-    class Actor_Base_t;
-    class Global_t;
-    class Mod_t;
-    class Quest_t;
-
-}
-
 namespace doticu_npcl {
 
     class Consts_t {
@@ -22,22 +13,22 @@ namespace doticu_npcl {
         static constexpr const char* SKYRIM_ESM_NAME    = "Skyrim.esm";
         static constexpr const char* NPCL_ESP_NAME      = "doticu_npc_lookup.esp";
 
-        static skylib::Actor_t*         Skyrim_Player_Actor();
+        static some<Actor_t*>       Skyrim_Player_Actor();
 
-        static skylib::Actor_Base_t*    Skyrim_Player_Actor_Base();
+        static some<Actor_Base_t*>  Skyrim_Player_Actor_Base();
 
-        static skylib::Global_t*        NPCL_Is_Installed_Global();
-        static skylib::Global_t*        NPCL_Major_Version_Global();
-        static skylib::Global_t*        NPCL_Minor_Version_Global();
-        static skylib::Global_t*        NPCL_Patch_Version_Global();
+        static some<Global_t*>      NPCL_Is_Installed_Global();
+        static some<Global_t*>      NPCL_Major_Version_Global();
+        static some<Global_t*>      NPCL_Minor_Version_Global();
+        static some<Global_t*>      NPCL_Patch_Version_Global();
 
-        static skylib::Mod_t*           Skyrim_Mod();
-        static skylib::Mod_t*           NPCL_Mod();
+        static maybe<Mod_t*>        Skyrim_Mod();
+        static maybe<Mod_t*>        NPCL_Mod();
 
-        static skylib::Quest_t*         NPCL_MCM_Quest();
+        static some<Quest_t*>       NPCL_MCM_Quest();
 
-        static const Version_t<u8>      Skyrim_Required_Version();
-        static const Version_t<u8>      NPCL_Version();
+        static const Version_t<u8>  Skyrim_Required_Version();
+        static const Version_t<u8>  NPCL_Version();
     };
 
 }

@@ -14,14 +14,14 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    String_t            Global_Options_t::Class_Name()                          { DEFINE_CLASS_NAME("doticu_npcl_mcm_global_options"); }
-    V::Class_t*         Global_Options_t::Class()                               { DEFINE_CLASS(); }
-    V::Object_t*        Global_Options_t::Object()                              { DEFINE_OBJECT(); }
-    Global_Options_t*   Global_Options_t::Self()                                { return static_cast<Global_Options_t*>(Consts_t::NPCL_MCM_Quest()); }
+    String_t                Global_Options_t::Class_Name()                          { DEFINE_CLASS_NAME("doticu_npcl_mcm_global_options"); }
+    V::Class_t*             Global_Options_t::Class()                               { DEFINE_CLASS(); }
+    V::Object_t*            Global_Options_t::Object()                              { DEFINE_OBJECT(); }
+    some<Global_Options_t*> Global_Options_t::Self()                                { return static_cast<some<Global_Options_t*>>(Consts_t::NPCL_MCM_Quest()); }
 
-    Int_t&              Global_Options_t::Reset_Option()                        { DEFINE_OPTION(); }
-    Int_t&              Global_Options_t::Prioritize_MCM_Menu_Option()          { DEFINE_OPTION(); }
-    Int_t&              Global_Options_t::Translate_Page_Titles_Option()        { DEFINE_OPTION(); }
+    Int_t&                  Global_Options_t::Reset_Option()                        { DEFINE_OPTION(); }
+    Int_t&                  Global_Options_t::Prioritize_MCM_Menu_Option()          { DEFINE_OPTION(); }
+    Int_t&                  Global_Options_t::Translate_Page_Titles_Option()        { DEFINE_OPTION(); }
 
     void Global_Options_t::Reset_Option_Ints()
     {
@@ -85,7 +85,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Global_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Reset_Option_Ints();
 
@@ -108,7 +108,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Global_Options_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Reset_Option()) {
             mcm->Disable_Option(option);
@@ -127,9 +127,9 @@ namespace doticu_npcl { namespace MCM {
                 class Callback_t : public Callback_i<Bool_t>
                 {
                 public:
-                    Main_t* mcm;
+                    some<Main_t*> mcm;
                     Latent_Callback_i* lcallback;
-                    Callback_t(Main_t* mcm, Latent_Callback_i* lcallback) :
+                    Callback_t(some<Main_t*> mcm, Latent_Callback_i* lcallback) :
                         mcm(mcm), lcallback(lcallback)
                     {
                     }
@@ -195,7 +195,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Global_Options_t::On_Option_Highlight(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Reset_Option()) {
             mcm->Info_Text(Main_t::HIGHLIGHT_RESET_OPTIONS);

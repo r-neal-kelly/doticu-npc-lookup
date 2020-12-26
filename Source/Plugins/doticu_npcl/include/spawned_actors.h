@@ -41,13 +41,13 @@ namespace doticu_npcl {
         void    Validate();
         void    Reserve(size_t count);
 
-        Index_t Index_Of(Actor_t* actor);
-        Bool_t  Has(Actor_t* actor);
-        Bool_t  Add(Actor_t* actor);
+        Index_t Index_Of(some<Actor_t*> actor);
+        Bool_t  Has(some<Actor_t*> actor);
+        Bool_t  Add(some<Actor_t*> actor);
         Bool_t  Add(Form_ID_t actor_id, String_t actor_mod_name, Form_ID_t actor_base_id, String_t actor_base_mod_name);
-        Bool_t  Add(Actor_Base_t* base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
-        Bool_t  Add(Leveled_Actor_Base_t* leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
-        Bool_t  Remove(Actor_t* actor);
+        Bool_t  Add(some<Actor_Base_t*> base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
+        Bool_t  Add(some<Leveled_Actor_Base_t*> leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static);
+        Bool_t  Remove(some<Actor_t*> actor);
         Bool_t  Remove(Index_t index);
         void    Clear();
     };

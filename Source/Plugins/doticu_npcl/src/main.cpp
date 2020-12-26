@@ -99,14 +99,14 @@ namespace doticu_npcl {
         #define REGISTER(TYPE_)                         \
         SKYLIB_M                                        \
             TYPE_::Register_Me(machine);                \
-            _MESSAGE("Added " #TYPE_ " functions.");    \
+            SKYLIB_LOG("Added " #TYPE_ " functions.");  \
         SKYLIB_W
 
         REGISTER(MCM::Main_t);
 
         #undef REGISTER
 
-        _MESSAGE("Added all functions.\n");
+        SKYLIB_LOG("Added all functions.\n");
 
         return true;
     }
@@ -161,7 +161,7 @@ namespace doticu_npcl {
     {
         const Vector_t<some<Quest_t*>>& quests = Quests();
         for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
-            Quest_t* quest = quests[idx];
+            some<Quest_t*> quest = quests[idx];
             if (!quest->Is_Enabled()) {
                 return false;
             }

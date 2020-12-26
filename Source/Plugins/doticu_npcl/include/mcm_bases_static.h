@@ -20,15 +20,15 @@ namespace doticu_npcl { namespace MCM {
         using Item_t = Actor_Base_t*;
 
     public:
-        static String_t         Class_Name();
-        static V::Class_t*      Class();
-        V::Object_t*            Object();
+        static String_t                 Class_Name();
+        static V::Class_t*              Class();
+        V::Object_t*                    Object();
 
-        static Static_Bases_t*  Self();
-        Static_Bases_List_t*    List();
-        Static_Bases_Filter_t*  Filter();
-        Static_Bases_Options_t* Options();
-        Static_Bases_Item_t*    Item();
+        static some<Static_Bases_t*>    Self();
+        some<Static_Bases_List_t*>      List();
+        some<Static_Bases_Filter_t*>    Filter();
+        some<Static_Bases_Options_t*>   Options();
+        some<Static_Bases_Item_t*>      Item();
     };
 
 }}

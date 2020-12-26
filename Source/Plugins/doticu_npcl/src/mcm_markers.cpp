@@ -23,11 +23,10 @@ namespace doticu_npcl { namespace MCM {
     std::mutex Markers_t::cache_mutex;
     skylib::Stack_Array_t<Alias_Actor_t, Markers_t::MAX_MARKERS> Markers_t::alias_actors;
 
-    String_t        Markers_t::Class_Name() { DEFINE_CLASS_NAME("doticu_npcl_mcm_markers"); }
-    V::Class_t*     Markers_t::Class()      { DEFINE_CLASS(); }
-    V::Object_t*    Markers_t::Object()     { DEFINE_OBJECT(); }
-
-    Markers_t*      Markers_t::Self()       { return static_cast<Markers_t*>(Consts_t::NPCL_MCM_Quest()); }
+    String_t            Markers_t::Class_Name() { DEFINE_CLASS_NAME("doticu_npcl_mcm_markers"); }
+    V::Class_t*         Markers_t::Class()      { DEFINE_CLASS(); }
+    V::Object_t*        Markers_t::Object()     { DEFINE_OBJECT(); }
+    some<Markers_t*>    Markers_t::Self()       { return static_cast<some<Markers_t*>>(Consts_t::NPCL_MCM_Quest()); }
 
     class Mark_Callback_t : public V::Callback_t
     {
@@ -126,7 +125,7 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
-        skylib::Player_t* player = skylib::Player_t::Self();
+        some<Player_t*> player = Player_t::Self();
         for (Index_t idx = 0, end = player->objectives.count; idx < end; idx += 1) {
             auto& player_objective = player->objectives.entries[idx];
             auto* objective = player_objective.objective;
@@ -318,7 +317,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         mcm->Cursor_Position(0);
         mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
@@ -354,18 +353,18 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Index_t marker_index = mcm->Option_To_Item_Index(option, MAX_MARKERS, 0, 2, 16);
         if (marker_index > -1 && marker_index < MAX_MARKERS) {
             class Callback_t : public Callback_i<Bool_t>
             {
             public:
-                Main_t* mcm;
+                some<Main_t*> mcm;
                 Markers_t* self;
                 Index_t marker_index;
                 Latent_Callback_i* lcallback;
-                Callback_t(Main_t* mcm, Markers_t* self, Index_t marker_index, Latent_Callback_i* lcallback) :
+                Callback_t(some<Main_t*> mcm, Markers_t* self, Index_t marker_index, Latent_Callback_i* lcallback) :
                     mcm(mcm), self(self), marker_index(marker_index), lcallback(lcallback)
                 {
                 }

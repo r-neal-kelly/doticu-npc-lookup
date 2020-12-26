@@ -22,15 +22,15 @@ namespace doticu_npcl { namespace MCM {
     using Base_t = Loaded_References_Base_t;
     using Item_t = Loaded_References_Base_t::Item_t;
 
-    String_t                        Loaded_References_Base_t::Class_Name()          { DEFINE_CLASS_NAME("doticu_npcl_mcm_references_loaded"); }
-    V::Class_t*                     Loaded_References_Base_t::Class()               { DEFINE_CLASS(); }
-    V::Object_t*                    Loaded_References_Base_t::Object()              { DEFINE_OBJECT(); }
+    String_t                            Loaded_References_Base_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcl_mcm_references_loaded"); }
+    V::Class_t*                         Loaded_References_Base_t::Class()       { DEFINE_CLASS(); }
+    V::Object_t*                        Loaded_References_Base_t::Object()      { DEFINE_OBJECT(); }
 
-    Loaded_References_t*            Loaded_References_Base_t::Self()                { return static_cast<Loaded_References_t*>(Consts_t::NPCL_MCM_Quest()); }
-    Loaded_References_List_t*       Loaded_References_Base_t::List()                { return reinterpret_cast<Loaded_References_List_t*>(this); }
-    Loaded_References_Filter_t*     Loaded_References_Base_t::Filter()              { return reinterpret_cast<Loaded_References_Filter_t*>(this); }
-    Loaded_References_Options_t*    Loaded_References_Base_t::Options()             { return reinterpret_cast<Loaded_References_Options_t*>(this); }
-    Loaded_References_Item_t*       Loaded_References_Base_t::Item()                { return reinterpret_cast<Loaded_References_Item_t*>(this); }
+    some<Loaded_References_t*>          Loaded_References_Base_t::Self()        { return static_cast<some<Loaded_References_t*>>(Consts_t::NPCL_MCM_Quest()); }
+    some<Loaded_References_List_t*>     Loaded_References_Base_t::List()        { return reinterpret_cast<Loaded_References_List_t*>(this); }
+    some<Loaded_References_Filter_t*>   Loaded_References_Base_t::Filter()      { return reinterpret_cast<Loaded_References_Filter_t*>(this); }
+    some<Loaded_References_Options_t*>  Loaded_References_Base_t::Options()     { return reinterpret_cast<Loaded_References_Options_t*>(this); }
+    some<Loaded_References_Item_t*>     Loaded_References_Base_t::Item()        { return reinterpret_cast<Loaded_References_Item_t*>(this); }
 
 }}
 
@@ -97,7 +97,7 @@ namespace doticu_npcl { namespace MCM {
             do_update_items = true;
         }
 
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Reset_Option_Ints();
 
@@ -168,7 +168,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_List_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Filter_Option()) {
             mcm->Disable_Option(option);
@@ -250,7 +250,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_Filter_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Reset_Option_Ints();
 
@@ -274,7 +274,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_Options_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Reset_Option_Ints();
 
@@ -306,8 +306,8 @@ namespace doticu_npcl { namespace MCM {
     Item_t Loaded_References_Item_t::Current_Item()
     {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
-        if (item && item->Is_Valid() && List()->Items().Has(item)) {
-            return item;
+        if (item && item->Is_Valid() && List()->Items().Has(item())) {
+            return item();
         } else {
             return nullptr;
         }
@@ -328,7 +328,7 @@ namespace doticu_npcl { namespace MCM {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(item);
+            Index_t idx = items.Index_Of(item());
             if (idx > -1) {
                 if (idx == 0) {
                     idx = items.size() - 1;
@@ -349,7 +349,7 @@ namespace doticu_npcl { namespace MCM {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(item);
+            Index_t idx = items.Index_Of(item());
             if (idx > -1) {
                 if (idx == items.size() - 1) {
                     idx = 0;
@@ -367,14 +367,14 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_Item_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Reset_Option_Ints();
 
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t item_index = items.Index_Of(item);
+            Index_t item_index = items.Index_Of(item());
             if (item_index > -1) {
                 if (mcm->Should_Translate_Page_Titles()) {
                     mcm->Translated_Title_Text(
@@ -396,7 +396,7 @@ namespace doticu_npcl { namespace MCM {
                     buildables.reserve(11);
 
                     Buildable_Bases_t<Base_t, Item_t> buildable_bases(this, item->Actor_Bases());
-                    Buildable_Commands_t<Base_t, Item_t> buildable_commands(this, item);
+                    Buildable_Commands_t<Base_t, Item_t> buildable_commands(this, item());
                     Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, item->Factions_And_Ranks());
                     Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, item->Keywords());
                     Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->Mods());
@@ -405,7 +405,7 @@ namespace doticu_npcl { namespace MCM {
                     Buildable_Cell_t<Base_t, Item_t> buildable_cell(this, item->Cell());
                     Buildable_Locations_t<Base_t, Item_t> buildable_locations(this, item->Locations());
                     Buildable_Quests_t<Base_t, Item_t> buildable_quests(this, item->Quests());
-                    Buildable_Reference_t<Base_t, Item_t> buildable_reference(this, item, Main_t::LOADED_REFERENCE);
+                    Buildable_Reference_t<Base_t, Item_t> buildable_reference(this, item(), Main_t::LOADED_REFERENCE);
                     Buildable_Worldspaces_t<Base_t, Item_t> buildable_worldspaces(this, item->Worldspaces());
 
                     buildables.push_back(&buildable_bases);
@@ -439,17 +439,17 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_Item_t::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mark_On_Map_Option()) {
             mcm->Flicker_Option(option);
             Item_t item = Current_Item();
             if (item && item->Is_Valid()) {
-                Markers_t* markers = Markers_t::Self();
+                some<Markers_t*> markers = Markers_t::Self();
                 if (markers->Has_Marked(item)) {
-                    Markers_t::Self()->Unmark(item);
+                    markers->Unmark(item);
                 } else {
-                    Markers_t::Self()->Mark(item);
+                    markers->Mark(item);
                 }
                 mcm->Reset_Page();
             }

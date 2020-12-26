@@ -34,10 +34,10 @@ namespace doticu_npcl { namespace MCM {
         static skylib::Stack_Array_t<Alias_Actor_t, MAX_MARKERS> alias_actors;
 
     public:
-        static String_t     Class_Name();
-        static V::Class_t*  Class();
-        V::Object_t*        Object();
-        static Markers_t*   Self();
+        static String_t         Class_Name();
+        static V::Class_t*      Class();
+        V::Object_t*            Object();
+        static some<Markers_t*> Self();
 
     public:
         void                        Refresh_Cache();

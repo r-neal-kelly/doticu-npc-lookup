@@ -725,7 +725,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Vector_t<String_t> Bases_Filter_t<B, I>::Selectable_Relations()
     {
-        return Selectable_Relations_t<B, I>(Consts_t::Skyrim_Player_Actor_Base()).Results();
+        return Selectable_Relations_t<B, I>(Consts_t::Skyrim_Player_Actor_Base()()).Results();
     }
 
     template <typename B, typename I>
@@ -737,7 +737,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::Build_Filters(const char* type_name)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         Clear_Option() = mcm->Add_Text_Option(Main_t::CENTER_CLEAR, Main_t::_NONE_);
@@ -982,7 +982,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Back_Option()) {
             mcm->Disable_Option(option);
@@ -1069,7 +1069,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Select_Option()) {
             mcm->Flicker_Option(option);
@@ -1119,7 +1119,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Select_Option()) {
             if (idx > -1) {
@@ -1245,7 +1245,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Search_Option()) {
             Mod_Argument(value);
@@ -1450,7 +1450,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Build_Header_Options()
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (skylib::Is_Odd(mcm->Cursor_Position())) {
             mcm->Add_Empty_Option();
@@ -1463,7 +1463,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Build_General_Options()
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (skylib::Is_Odd(mcm->Cursor_Position())) {
             mcm->Add_Empty_Option();
@@ -1483,7 +1483,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Build_Section_Options()
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (skylib::Is_Odd(mcm->Cursor_Position())) {
             mcm->Add_Empty_Option();
@@ -1507,7 +1507,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Item_Section_t> allowed_sections = Options()->Default_Item_Sections();
         Vector_t<Item_Section_t> current_sections = item_sections.Current();
 
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         auto Enabled = [&mcm](const char* label)->Int_t
         {
@@ -1549,7 +1549,7 @@ namespace doticu_npcl { namespace MCM {
     {
         item_sections.Enable(item_section);
 
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
         mcm->Disable_Option(option);
         mcm->Reset_Page();
         mcm->Destroy_Latent_Callback(lcallback);
@@ -1574,7 +1574,7 @@ namespace doticu_npcl { namespace MCM {
             options.push_back(Main_t::MOVE_SECTION_LOWER);
         }
 
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
         mcm->Flicker_Option(option);
         mcm->Menu_Dialog_Values(options);
         mcm->Menu_Dialog_Default(-1);
@@ -1584,7 +1584,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Accept_Section_Menu_Option(Item_Section_t item_section, Int_t idx, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (idx > -1) {
             if (idx == disable_section_menu_option) {
@@ -1637,7 +1637,7 @@ namespace doticu_npcl { namespace MCM {
     inline Bool_t Bases_Options_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         if (option == back_option) {
-            Main_t* mcm = Main_t::Self();
+            some<Main_t*> mcm = Main_t::Self();
             mcm->Disable_Option(option);
             List()->do_update_items = true;
             Options()->Current_View(Bases_View_e::LIST);
@@ -1646,7 +1646,7 @@ namespace doticu_npcl { namespace MCM {
             return true;
 
         } else if (option == reset_option) {
-            Main_t* mcm = Main_t::Self();
+            some<Main_t*> mcm = Main_t::Self();
             mcm->Disable_Option(option);
             Options()->Reset();
             mcm->Reset_Page();
@@ -2180,7 +2180,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Base(Actor_Base_t* base, const char* type_name)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (base && base->Is_Valid()) {
             if (Do_Show_Bases()) {
@@ -2205,7 +2205,7 @@ namespace doticu_npcl { namespace MCM {
                     if (vitality != Vitality_e::NONE) {
                         mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
                     }
-                    Relation_e relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                    Relation_e relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()()); // 6
                     if (relation != Relation_e::NONE) {
                         mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
                     }
@@ -2231,7 +2231,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Factions(Vector_t<Faction_And_Rank_t> factions)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = factions.size();
         if (count > 0) {
@@ -2276,7 +2276,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Header(Int_t& top_right_option, const char* top_right_name, size_t listed_item_count)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         back_option = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         top_right_option = mcm->Add_Text_Option(top_right_name, Main_t::_NONE_);
@@ -2294,7 +2294,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Keywords(Vector_t<Keyword_t*> keywords)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = keywords.size();
         if (count > 0) {
@@ -2332,7 +2332,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Leveled_Base(Leveled_Actor_Base_t* leveled_base)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (leveled_base && leveled_base->Is_Valid()) {
             if (Do_Show_Bases()) {
@@ -2367,7 +2367,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Mods(Vector_t<Mod_t*> mods)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = mods.size();
         if (count > 0) {
@@ -2404,7 +2404,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Race(Race_t* race)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (race && race->Is_Valid()) {
             if (Do_Show_Races()) {
@@ -2436,7 +2436,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Templates(Vector_t<Actor_Base_t*> templates)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = templates.size();
         if (count > 0) {
@@ -2477,7 +2477,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename Spawnable_t, enable_if_spawnable<Spawnable_t>>
     inline void Bases_Item_t<B, I>::Select_Spawn_Option(Spawnable_t item, Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (Options()->Do_Verify_Spawns()) {
             class Verify_Callback_t : public Callback_i<Bool_t>
@@ -2498,7 +2498,7 @@ namespace doticu_npcl { namespace MCM {
                 {
                     if (accept) {
                         if (item && item->Is_Valid()) {
-                            auto* options = self->Options();
+                            auto options = self->Options();
                             Spawned_Actors_t::Self().Add(
                                 item,
                                 options->Do_Persistent_Spawns(),
@@ -2521,7 +2521,7 @@ namespace doticu_npcl { namespace MCM {
         } else {
             mcm->Flicker_Option(option);
             if (item && item->Is_Valid()) {
-                auto* options = Options();
+                auto options = Options();
                 Spawned_Actors_t::Self().Add(
                     item,
                     options->Do_Persistent_Spawns(),
@@ -2559,7 +2559,7 @@ namespace doticu_npcl { namespace MCM {
                 const char* name = race->Name();
                 const char* editor_id = race->Get_Editor_ID();
                 const char* form_id = race->Form_ID_String().data;
-                Main_t* mcm = Main_t::Self();
+                some<Main_t*> mcm = Main_t::Self();
                 mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
             }
         }
@@ -2575,7 +2575,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t Bases_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == back_option) {
             mcm->Disable_Option(option);

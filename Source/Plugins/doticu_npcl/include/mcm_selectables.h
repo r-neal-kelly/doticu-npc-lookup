@@ -15,7 +15,7 @@ namespace doticu_npcl { namespace MCM {
     class Selectable_Data_t
     {
     public:
-        using Filter_t              = std::remove_pointer_t<decltype(Base_t::Self()->Filter())>;
+        using Filter_t              = std::remove_pointer_t<decltype(Base_t::Self()->Filter()())>;
 
         using Smart_Get_f           = String_t(Filter_t::*)();
         using Smart_Set_f           = void(Filter_t::*)(String_t);
@@ -62,17 +62,17 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Init(Smart_Get_f smart_get_f, Smart_Set_f smart_set_f)
         {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
+            auto self = Base_t::Self();
+            auto list = self->List();
+            auto filter = self->Filter();
+            auto options = self->Options();
 
             if (options->Do_Smart_Select()) {
-                String_t current = (filter->*smart_get_f)();
-                (filter->*smart_set_f)("");
+                String_t current = (filter()->*smart_get_f)();
+                (filter()->*smart_set_f)("");
                 list->do_update_items = true;
                 items = list->Items();
-                (filter->*smart_set_f)(current);
+                (filter()->*smart_set_f)(current);
             } else {
                 items = list->Default_Items();
             }
@@ -82,17 +82,17 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Init(Smart_Get_Relation_f smart_get_f, Smart_Set_Relation_f smart_set_f)
         {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
+            auto self = Base_t::Self();
+            auto list = self->List();
+            auto filter = self->Filter();
+            auto options = self->Options();
 
             if (options->Do_Smart_Select()) {
-                Relation_e current = (filter->*smart_get_f)();
-                (filter->*smart_set_f)(Relation_e::NONE);
+                Relation_e current = (filter()->*smart_get_f)();
+                (filter()->*smart_set_f)(Relation_e::NONE);
                 list->do_update_items = true;
                 items = list->Items();
-                (filter->*smart_set_f)(current);
+                (filter()->*smart_set_f)(current);
             } else {
                 items = list->Default_Items();
             }
@@ -102,17 +102,17 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Init(Smart_Get_Vitality_f smart_get_f, Smart_Set_Vitality_f smart_set_f)
         {
-            auto* self = Base_t::Self();
-            auto* list = self->List();
-            auto* filter = self->Filter();
-            auto* options = self->Options();
+            auto self = Base_t::Self();
+            auto list = self->List();
+            auto filter = self->Filter();
+            auto options = self->Options();
 
             if (options->Do_Smart_Select()) {
-                Vitality_e current = (filter->*smart_get_f)();
-                (filter->*smart_set_f)(Vitality_e::NONE);
+                Vitality_e current = (filter()->*smart_get_f)();
+                (filter()->*smart_set_f)(Vitality_e::NONE);
                 list->do_update_items = true;
                 items = list->Items();
-                (filter->*smart_set_f)(current);
+                (filter()->*smart_set_f)(current);
             } else {
                 items = list->Default_Items();
             }
@@ -254,7 +254,7 @@ namespace doticu_npcl { namespace MCM {
 
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
-            Selectable_Mods_t<Base_t, Form_t*>::Select(item->leveled, output);
+            Selectable_Mods_t<Base_t, Form_t*>::Select(item->leveled(), output);
         }
     };
 
@@ -488,7 +488,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
                 for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                    Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
         }
@@ -594,7 +594,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
                 for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                    Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
         }
@@ -686,7 +686,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
                 for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
-                    Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx], output);
+                    Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
         }
@@ -803,7 +803,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->Is_Valid()) {
                 Vector_t<some<Worldspace_t*>> worldspaces = item->Worldspaces();
                 for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
-                    Selectable_Worldspaces_t<Base_t, Worldspace_t*>::Select(worldspaces[idx], output);
+                    Selectable_Worldspaces_t<Base_t, Worldspace_t*>::Select(worldspaces[idx](), output);
                 }
             }
         }
@@ -1041,7 +1041,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx], base_to_compare, output);
+                    Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx](), base_to_compare, output);
                 }
             }
         }
@@ -1124,7 +1124,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx], output);
+                    Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx](), output);
                 }
             }
         }

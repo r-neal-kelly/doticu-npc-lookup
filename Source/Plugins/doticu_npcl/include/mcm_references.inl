@@ -283,7 +283,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::Build_Filters(const char* type_name)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         Back_Option() = mcm->Add_Text_Option(Main_t::CENTER_BACK, Main_t::_NONE_);
         Clear_Option() = mcm->Add_Text_Option(Main_t::CENTER_CLEAR, Main_t::_NONE_);
@@ -477,7 +477,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Back_Option()) {
             mcm->Disable_Option(option);
@@ -588,7 +588,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::On_Option_Menu_Open(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Select_Option()) {
             mcm->Flicker_Option(option);
@@ -663,7 +663,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::On_Option_Menu_Accept(Int_t option, Int_t idx, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Select_Option()) {
             if (idx > -1) {
@@ -842,7 +842,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Search_Option()) {
             Mod_Argument(value);
@@ -951,7 +951,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Item_Section_t> allowed_sections = Options()->Default_Item_Sections();
         Vector_t<Item_Section_t> current_sections = item_sections.Current();
 
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         auto Enabled = [&mcm](const char* label)->Int_t
         {
@@ -1241,7 +1241,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Bases(Vector_t<Actor_Base_t*> actor_bases)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = actor_bases.size();
         if (count > 0) {
@@ -1281,7 +1281,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Cell(Cell_t* cell)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (cell && cell->Is_Valid()) {
             if (Do_Show_Cells()) {
@@ -1317,7 +1317,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Commands(Actor_t* actor)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (actor && actor->Is_Valid()) {
             if (Do_Show_Commands()) {
@@ -1325,7 +1325,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::COMMANDS);
                     show_commands_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    Markers_t* markers = Markers_t::Self();
+                    some<Markers_t*> markers = Markers_t::Self();
                     if (markers->Has_Marked(actor)) { // 1
                         Mark_On_Map_Option() = mcm->Add_Text_Option(Main_t::REMOVE_MARKER_FROM_MAP, Main_t::_NONE_);
                     } else {
@@ -1371,7 +1371,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Locations(Vector_t<Location_t*> locations)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = locations.size();
         if (count > 0) {
@@ -1408,7 +1408,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Quests(Vector_t<Quest_t*> quests)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = quests.size();
         if (count > 0) {
@@ -1446,7 +1446,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Reference(Actor_t* actor, const char* type_name)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (actor && actor->Is_Valid()) {
             if (Do_Show_References()) {
@@ -1473,7 +1473,7 @@ namespace doticu_npcl { namespace MCM {
                         if (vitality != Vitality_e::NONE) {
                             mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
                         }
-                        Relation_e relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                        Relation_e relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()()); // 6
                         if (relation != Relation_e::NONE) {
                             mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
                         }
@@ -1511,7 +1511,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Worldspaces(Vector_t<some<Worldspace_t*>> worldspaces)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         size_t count = worldspaces.size();
         if (count > 0) {
@@ -1521,7 +1521,7 @@ namespace doticu_npcl { namespace MCM {
                     show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        Worldspace_t* worldspace = worldspaces[idx];
+                        some<Worldspace_t*> worldspace = worldspaces[idx];
                         if (worldspace->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + worldspace->Any_Name().data, Main_t::_NONE_);
                         }
@@ -1554,7 +1554,7 @@ namespace doticu_npcl { namespace MCM {
                 const char* name = cell->Name();
                 const char* editor_id = cell->Get_Editor_ID();
                 const char* form_id = cell->Form_ID_String().data;
-                Main_t* mcm = Main_t::Self();
+                some<Main_t*> mcm = Main_t::Self();
                 mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
             }
         }
@@ -1563,7 +1563,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t References_Item_t<B, I>::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
-        Main_t* mcm = Main_t::Self();
+        some<Main_t*> mcm = Main_t::Self();
 
         if (option == show_cells_option || option == show_cells_option - 1) {
             mcm->Toggle_And_Reset(Do_Show_Cells_Variable(), option, lcallback);

@@ -23,15 +23,15 @@ namespace doticu_npcl { namespace MCM {
         using Item_t = Cached_Leveled_t*;
 
     public:
-        static String_t             Class_Name();
-        static V::Class_t*          Class();
-        V::Object_t*                Object();
+        static String_t                 Class_Name();
+        static V::Class_t*              Class();
+        V::Object_t*                    Object();
 
-        static Leveled_Bases_t*     Self();
-        Leveled_Bases_List_t*       List();
-        Leveled_Bases_Filter_t*     Filter();
-        Leveled_Bases_Options_t*    Options();
-        Leveled_Bases_Item_t*       Item();
+        static some<Leveled_Bases_t*>   Self();
+        some<Leveled_Bases_List_t*>     List();
+        some<Leveled_Bases_Filter_t*>   Filter();
+        some<Leveled_Bases_Options_t*>  Options();
+        some<Leveled_Bases_Item_t*>     Item();
     };
 
 }}

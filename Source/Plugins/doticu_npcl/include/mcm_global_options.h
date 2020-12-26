@@ -11,10 +11,10 @@ namespace doticu_npcl { namespace MCM {
     class Global_Options_t : public Quest_t
     {
     public:
-        static String_t             Class_Name();
-        static V::Class_t*          Class();
-        V::Object_t*                Object();
-        static Global_Options_t*    Self();
+        static String_t                 Class_Name();
+        static V::Class_t*              Class();
+        V::Object_t*                    Object();
+        static some<Global_Options_t*>  Self();
 
     public:
         Int_t&  Reset_Option();

@@ -79,13 +79,15 @@ namespace doticu_npcl {
         actor_base_mod_names.reserve(count);
     }
 
-    Index_t Spawned_Actors_t::Index_Of(Actor_t* actor)
+    Index_t Spawned_Actors_t::Index_Of(some<Actor_t*> actor)
     {
+        SKYLIB_ASSERT_SOME(actor);
+
         std::lock_guard<std::mutex> guard(mutex);
 
-        if (actor && actor->Is_Valid()) {
+        if (actor->Is_Valid()) {
             for (Index_t idx = 0, end = actors.size(); idx < end; idx += 1) {
-                if (actors[idx] == actor) {
+                if (actors[idx] == actor()) {
                     return idx;
                 }
             }
@@ -95,8 +97,10 @@ namespace doticu_npcl {
         }
     }
 
-    Bool_t Spawned_Actors_t::Has(Actor_t* actor)
+    Bool_t Spawned_Actors_t::Has(some<Actor_t*> actor)
     {
+        SKYLIB_ASSERT_SOME(actor);
+
         return Index_Of(actor) > -1;
     }
 
@@ -123,16 +127,18 @@ namespace doticu_npcl {
         }
     }
 
-    Bool_t Spawned_Actors_t::Add(Actor_t* actor)
+    Bool_t Spawned_Actors_t::Add(some<Actor_t*> actor)
     {
-        if (actor && actor->Is_Valid() && !Has(actor)) {
+        SKYLIB_ASSERT_SOME(actor);
+
+        if (actor->Is_Valid() && !Has(actor)) {
             Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
             if (actor_base && actor_base->Is_Valid()) {
                 Mod_t* actor_base_mod = actor_base->Indexed_Mod();
                 if (actor_base_mod) {
                     String_t actor_base_mod_name = actor_base_mod->Name();
                     if (actor_base_mod_name) {
-                        Add_Impl(this, actor, actor_base, actor_base_mod_name);
+                        Add_Impl(this, actor(), actor_base, actor_base_mod_name);
                         return true;
                     } else {
                         return false;
@@ -151,15 +157,15 @@ namespace doticu_npcl {
     Bool_t Spawned_Actors_t::Add(Form_ID_t actor_id, String_t actor_mod_name, Form_ID_t actor_base_id, String_t actor_base_mod_name)
     {
         if (actor_base_mod_name) {
-            Mod_t* actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name.data);
+            maybe<Mod_t*> actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name.data);
             if (actor_base_mod) {
-                actor_base_id = Form_t::Reindex(actor_base_id, actor_base_mod);
+                actor_base_id = Form_t::Reindex(actor_base_id, actor_base_mod());
                 if (actor_base_id > 0) {
                     if (Form_t::Is_Static(actor_id)) {
                         if (actor_mod_name) {
-                            Mod_t* actor_mod = Mod_t::Active_Mod(actor_mod_name.data);
+                            maybe<Mod_t*> actor_mod = Mod_t::Active_Mod(actor_mod_name.data);
                             if (actor_mod) {
-                                actor_id = Form_t::Reindex(actor_id, actor_mod);
+                                actor_id = Form_t::Reindex(actor_id, actor_mod());
                                 if (actor_id == 0) {
                                     return false;
                                 }
@@ -170,11 +176,11 @@ namespace doticu_npcl {
                             return false;
                         }
                     }
-                    Actor_t* actor = static_cast<maybe<Actor_t*>>(Game_t::Form(actor_id));
+                    maybe<Actor_t*> actor = static_cast<maybe<Actor_t*>>(Game_t::Form(actor_id));
                     if (actor && actor->Is_Valid()) {
                         Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
                         if (actor_base && actor_base->Is_Valid() && actor_base->form_id == actor_base_id) {
-                            Add_Impl(this, actor, actor_base, actor_base_mod_name);
+                            Add_Impl(this, actor(), actor_base, actor_base_mod_name);
                             return true;
                         } else {
                             return false;
@@ -193,28 +199,36 @@ namespace doticu_npcl {
         }
     }
 
-    Bool_t Spawned_Actors_t::Add(Actor_Base_t* base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
+    Bool_t Spawned_Actors_t::Add(some<Actor_Base_t*> base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
     {
-        Actor_t* actor = Actor_t::Create(base, do_persist, do_uncombative, do_static);
+        SKYLIB_ASSERT_SOME(base);
+
+        maybe<Actor_t*> actor = Actor_t::Create(base, do_persist, do_uncombative, do_static);
         if (actor && actor->Is_Valid()) {
             actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+            return Add(actor());
+        } else {
+            return false;
         }
-
-        return Add(actor);
     }
 
-    Bool_t Spawned_Actors_t::Add(Leveled_Actor_Base_t* leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
+    Bool_t Spawned_Actors_t::Add(some<Leveled_Actor_Base_t*> leveled_base, Bool_t do_persist, Bool_t do_uncombative, Bool_t do_static)
     {
-        Actor_t* actor = Actor_t::Create(leveled_base, do_persist, do_uncombative, do_static);
+        SKYLIB_ASSERT_SOME(leveled_base);
+
+        maybe<Actor_t*> actor = Actor_t::Create(leveled_base, do_persist, do_uncombative, do_static);
         if (actor && actor->Is_Valid()) {
             actor->Move_To_Orbit(Consts_t::Skyrim_Player_Actor(), 160.0f, 0.0f);
+            return Add(actor());
+        } else {
+            return false;
         }
-
-        return Add(actor);
     }
 
-    Bool_t Spawned_Actors_t::Remove(Actor_t* actor)
+    Bool_t Spawned_Actors_t::Remove(some<Actor_t*> actor)
     {
+        SKYLIB_ASSERT_SOME(actor);
+
         return Remove(Index_Of(actor));
     }
 

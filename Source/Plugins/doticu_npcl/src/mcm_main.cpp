@@ -16,12 +16,12 @@
 #include "mcm_bases_static.h"
 #include "mcm_bases_dynamic.h"
 #include "mcm_bases_leveled.h"
+#include "mcm_global_options.h"
+#include "mcm_markers.h"
 #include "mcm_references.h"
 #include "mcm_references.inl"
 #include "mcm_references_loaded.h"
 #include "mcm_references_spawned.h"
-#include "mcm_markers.h"
-#include "mcm_global_options.h"
 
 namespace doticu_npcl { namespace MCM {
 
@@ -82,23 +82,23 @@ namespace doticu_npcl { namespace MCM {
     {
         SKYLIB_ASSERT_SOME(relation_key);
 
-        if (CString_t::Is_Same(LOVER, relation_key, false)) {
+        if (CString_t::Is_Same(LOVER, relation_key(), false)) {
             return Relation_e::LOVER;
-        } else if (CString_t::Is_Same(ALLY, relation_key, false)) {
+        } else if (CString_t::Is_Same(ALLY, relation_key(), false)) {
             return Relation_e::ALLY;
-        } else if (CString_t::Is_Same(CONFIDANT, relation_key, false)) {
+        } else if (CString_t::Is_Same(CONFIDANT, relation_key(), false)) {
             return Relation_e::CONFIDANT;
-        } else if (CString_t::Is_Same(FRIEND, relation_key, false)) {
+        } else if (CString_t::Is_Same(FRIEND, relation_key(), false)) {
             return Relation_e::FRIEND;
-        } else if (CString_t::Is_Same(ACQUAINTANCE, relation_key, false)) {
+        } else if (CString_t::Is_Same(ACQUAINTANCE, relation_key(), false)) {
             return Relation_e::ACQUAINTANCE;
-        } else if (CString_t::Is_Same(RIVAL, relation_key, false)) {
+        } else if (CString_t::Is_Same(RIVAL, relation_key(), false)) {
             return Relation_e::RIVAL;
-        } else if (CString_t::Is_Same(FOE, relation_key, false)) {
+        } else if (CString_t::Is_Same(FOE, relation_key(), false)) {
             return Relation_e::FOE;
-        } else if (CString_t::Is_Same(ENEMY, relation_key, false)) {
+        } else if (CString_t::Is_Same(ENEMY, relation_key(), false)) {
             return Relation_e::ENEMY;
-        } else if (CString_t::Is_Same(ARCHNEMESIS, relation_key, false)) {
+        } else if (CString_t::Is_Same(ARCHNEMESIS, relation_key(), false)) {
             return Relation_e::ARCHNEMESIS;
         } else {
             return Relation_e::NONE;
@@ -139,13 +139,13 @@ namespace doticu_npcl { namespace MCM {
     {
         SKYLIB_ASSERT_SOME(vitality_key);
 
-        if (CString_t::Is_Same(MORTAL, vitality_key, false)) {
+        if (CString_t::Is_Same(MORTAL, vitality_key(), false)) {
             return Vitality_e::MORTAL;
-        } else if (CString_t::Is_Same(PROTECTED, vitality_key, false)) {
+        } else if (CString_t::Is_Same(PROTECTED, vitality_key(), false)) {
             return Vitality_e::PROTECTED;
-        } else if (CString_t::Is_Same(ESSENTIAL, vitality_key, false)) {
+        } else if (CString_t::Is_Same(ESSENTIAL, vitality_key(), false)) {
             return Vitality_e::ESSENTIAL;
-        } else if (CString_t::Is_Same(INVULNERABLE, vitality_key, false)) {
+        } else if (CString_t::Is_Same(INVULNERABLE, vitality_key(), false)) {
             return Vitality_e::INVULNERABLE;
         } else {
             return Vitality_e::NONE;
@@ -154,11 +154,11 @@ namespace doticu_npcl { namespace MCM {
 
     using Default_Page_t = Static_Bases_t;
 
-    std::mutex          Main_t::mutex;
+    std::mutex      Main_t::mutex;
 
-    Main_t*             Main_t::Self()                  { return static_cast<Main_t*>(Consts_t::NPCL_MCM_Quest()); }
-    String_t            Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm_main"); }
-    V::Class_t*         Main_t::Class()                 { DEFINE_CLASS(); }
+    some<Main_t*>   Main_t::Self()                  { return static_cast<some<Main_t*>>(Consts_t::NPCL_MCM_Quest()); }
+    String_t        Main_t::Class_Name()            { DEFINE_CLASS_NAME("doticu_npcl_mcm_main"); }
+    V::Class_t*     Main_t::Class()                 { DEFINE_CLASS(); }
 
     Int_t Main_t::String_Comparator(const char* str_a, const char* str_b)
     {

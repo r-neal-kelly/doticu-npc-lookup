@@ -24,26 +24,6 @@
 
 namespace doticu_npcl {
 
-    using Binary_e              = skylib::Binary_e;
-    using Relation_e            = skylib::Relation_e;
-    using Vitality_e            = skylib::Vitality_e;
-
-    using CString_t             = skylib::CString_t;
-
-    using Actor_t               = skylib::Actor_t;
-    using Actor_Base_t          = skylib::Actor_Base_t;
-    using Cell_t                = skylib::Cell_t;
-    using Faction_t             = skylib::Faction_t;
-    using Faction_And_Rank_t    = skylib::Faction_And_Rank_t;
-    using Form_t                = skylib::Form_t;
-    using Keyword_t             = skylib::Keyword_t;
-    using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
-    using Location_t            = skylib::Location_t;
-    using Mod_t                 = skylib::Mod_t;
-    using Quest_t               = skylib::Quest_t;
-    using Race_t                = skylib::Race_t;
-    using Worldspace_t          = skylib::Worldspace_t;
-
     class Filter_e : public Binary_e
     {
     public:
@@ -131,10 +111,10 @@ namespace doticu_npcl {
     {
     public:
         Relation_Filter_i(Filter_State_t<Item_t>& state,
-                          Actor_Base_t* base_to_compare,
+                          some<Actor_Base_t*> base_to_compare,
                           Relation_e relation,
                           Bool_t do_negate,
-                          Filter_e(*Compare)(Item_t, Actor_Base_t*, Relation_e)) :
+                          Filter_e(*Compare)(Item_t, some<Actor_Base_t*>, Relation_e)) :
             Filter_i<Item_t>(state)
         {
             if (relation != Relation_e::NONE) {
@@ -294,8 +274,8 @@ namespace doticu_npcl {
 
         static Filter_e Compare(Item_t item, String_t string)
         {
-            if (item && item->leveled->Is_Valid()) {
-                return Mod_Filter_t<Form_t*>::Compare(item->leveled, string);
+            if (item && item->leveled && item->leveled->Is_Valid()) {
+                return Mod_Filter_t<Form_t*>::Compare(item->leveled(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -408,7 +388,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Race_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                    if (Race_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -503,7 +483,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Base_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                    if (Base_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -587,7 +567,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Template_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                    if (Template_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -711,7 +691,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Faction_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                    if (Faction_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -839,7 +819,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Keyword_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], string) == Filter_e::IS_MATCH) {
+                    if (Keyword_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -981,7 +961,7 @@ namespace doticu_npcl {
             if (item && item->Is_Valid()) {
                 Vector_t<some<Worldspace_t*>> worldspaces = item->Worldspaces();
                 for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
-                    if (Worldspace_Filter_t<Worldspace_t*>::Compare(worldspaces[idx], string) == Filter_e::IS_MATCH) {
+                    if (Worldspace_Filter_t<Worldspace_t*>::Compare(worldspaces[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -1216,15 +1196,15 @@ namespace doticu_npcl {
         using Item_t = Actor_Base_t*;
 
     public:
-        Relation_Filter_t(Filter_State_t<Item_t>& state, Actor_Base_t* base_to_compare, Relation_e relation, Bool_t do_negate) :
+        Relation_Filter_t(Filter_State_t<Item_t>& state, some<Actor_Base_t*> base_to_compare, Relation_e relation, Bool_t do_negate) :
             Relation_Filter_i<Item_t>(state, base_to_compare, relation, do_negate, &Compare)
         {
         }
 
-        static Filter_e Compare(Item_t item, Actor_Base_t* base_to_compare, Relation_e relation)
+        static Filter_e Compare(Item_t item, some<Actor_Base_t*> base_to_compare, Relation_e relation)
         {
             if (item) {
-                if (Relation_e::Between(item, base_to_compare) == relation) {
+                if (Relation_e::Between(item, base_to_compare()) == relation) {
                     return Filter_e::IS_MATCH;
                 } else {
                     return Filter_e::ISNT_MATCH;
@@ -1242,17 +1222,17 @@ namespace doticu_npcl {
         using Item_t = Cached_Leveled_t*;
 
     public:
-        Relation_Filter_t(Filter_State_t<Item_t>& state, Actor_Base_t* base_to_compare, Relation_e relation, Bool_t do_negate) :
+        Relation_Filter_t(Filter_State_t<Item_t>& state, some<Actor_Base_t*> base_to_compare, Relation_e relation, Bool_t do_negate) :
             Relation_Filter_i<Item_t>(state, base_to_compare, relation, do_negate, &Compare)
         {
         }
 
-        static Filter_e Compare(Item_t item, Actor_Base_t* base_to_compare, Relation_e relation)
+        static Filter_e Compare(Item_t item, some<Actor_Base_t*> base_to_compare, Relation_e relation)
         {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Relation_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], base_to_compare, relation) == Filter_e::IS_MATCH) {
+                    if (Relation_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), base_to_compare, relation) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -1270,12 +1250,12 @@ namespace doticu_npcl {
         using Item_t = Actor_t*;
 
     public:
-        Relation_Filter_t(Filter_State_t<Item_t>& state, Actor_Base_t* base_to_compare, Relation_e relation, Bool_t do_negate) :
+        Relation_Filter_t(Filter_State_t<Item_t>& state, some<Actor_Base_t*> base_to_compare, Relation_e relation, Bool_t do_negate) :
             Relation_Filter_i<Item_t>(state, base_to_compare, relation, do_negate, &Compare)
         {
         }
 
-        static Filter_e Compare(Item_t item, Actor_Base_t* base_to_compare, Relation_e relation)
+        static Filter_e Compare(Item_t item, some<Actor_Base_t*> base_to_compare, Relation_e relation)
         {
             if (item && item->Is_Valid()) {
                 return Relation_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), base_to_compare, relation);
@@ -1357,7 +1337,7 @@ namespace doticu_npcl {
             if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Vitality_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], vitality) == Filter_e::IS_MATCH) {
+                    if (Vitality_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), vitality) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -1456,7 +1436,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Male_Female_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], binary) == Filter_e::IS_MATCH) {
+                    if (Male_Female_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), binary) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -1555,7 +1535,7 @@ namespace doticu_npcl {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
                 for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
-                    if (Unique_Generic_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx], binary) == Filter_e::IS_MATCH) {
+                    if (Unique_Generic_Filter_t<Actor_Base_t*>::Compare(actor_bases[idx](), binary) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }

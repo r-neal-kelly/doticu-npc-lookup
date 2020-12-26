@@ -12,54 +12,6 @@
 
 namespace doticu_npcl { namespace MCM {
 
-    using Actor_Value_e         = skylib::Actor_Value_e;
-    using Binary_e              = skylib::Binary_e;
-    using Comparator_e          = skylib::Comparator_e;
-    using Cursor_e              = mcmlib::Cursor_e;
-    using Flag_e                = mcmlib::Flag_e;
-    using Form_Type_e           = skylib::Form_Type_e;
-    using Relation_e            = skylib::Relation_e;
-    using Sex_e                 = skylib::Sex_e;
-    using Rarity_e              = skylib::Rarity_e;
-    using Vitality_e            = skylib::Vitality_e;
-
-    using Actor_t               = skylib::Actor_t;
-    using Actor_Base_t          = skylib::Actor_Base_t;
-    using Alias_Base_t          = skylib::Alias_Base_t;
-    using Cell_t                = skylib::Cell_t;
-    using CString_t             = skylib::CString_t;
-    using Faction_t             = skylib::Faction_t;
-    using Faction_And_Rank_t    = skylib::Faction_And_Rank_t;
-    using Form_ID_t             = skylib::Form_ID_t;
-    using Game_t                = skylib::Game_t;
-    using Keyword_t             = skylib::Keyword_t;
-    using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
-    using Location_t            = skylib::Location_t;
-    using Mod_t                 = skylib::Mod_t;
-    using Quest_t               = skylib::Quest_t;
-    using Race_t                = skylib::Race_t;
-    using Reference_t           = skylib::Reference_t;
-    using Translations_t        = skylib::Translations_t;
-    using Worldspace_t          = skylib::Worldspace_t;
-
-    namespace V {
-
-        using Array_t           = skylib::Virtual::Array_t;
-        using Callback_t        = skylib::Virtual::Callback_t;
-        using Class_t           = skylib::Virtual::Class_t;
-        using Machine_t         = skylib::Virtual::Machine_t;
-        using Object_t          = skylib::Virtual::Object_t;
-        using Stack_ID_t        = skylib::Virtual::Stack_ID_t;
-        using Variable_t        = skylib::Virtual::Variable_t;
-
-        template <typename T>
-        using Array_Variable_t  = skylib::Virtual::Array_Variable_t<T>;
-        using Bool_Variable_t   = skylib::Virtual::Bool_Variable_t;
-        using Int_Variable_t    = skylib::Virtual::Int_Variable_t;
-        using String_Variable_t = skylib::Virtual::String_Variable_t;
-
-    }
-
     using Latent_Callback_i = Callback_i<>;
 
     class Main_t : public mcmlib::Config_Base_t
@@ -319,10 +271,10 @@ namespace doticu_npcl { namespace MCM {
     public:
         static std::mutex   mutex;
 
-        static Main_t*      Self();
-        static String_t     Class_Name();
-        static V::Class_t*  Class();
-        static Int_t        String_Comparator(const char* str_a, const char* str_b);
+        static some<Main_t*>    Self();
+        static String_t         Class_Name();
+        static V::Class_t*      Class();
+        static Int_t            String_Comparator(const char* str_a, const char* str_b);
 
     public:
         V::Object_t* Object();
