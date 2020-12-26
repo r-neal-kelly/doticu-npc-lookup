@@ -55,7 +55,7 @@ namespace doticu_npcl {
             SKSE_MESSAGING = static_cast<const SKSEMessagingInterface*>(SKSE->QueryInterface(kInterface_Messaging));
             SKSE_PLUGIN_HANDLE = SKSE->GetPluginHandle();
             if (SKSE_PAPYRUS && SKSE_MESSAGING) {
-                if (SKSE_PAPYRUS->Register(reinterpret_cast<Bool_t(*)(skylib::Virtual::Registry_t*)>(SKSE_Register_Functions))) {
+                if (SKSE_PAPYRUS->Register(reinterpret_cast<SKSEPapyrusInterface::RegisterFunctions>(SKSE_Register_Functions))) {
                     auto Callback = [](SKSEMessagingInterface::Message* message)->void
                     {
                         if (message) {

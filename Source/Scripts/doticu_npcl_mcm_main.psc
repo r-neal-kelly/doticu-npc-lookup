@@ -16,5 +16,3 @@ event OnOptionInputAccept(int option, string value) native
 event OnOptionKeymapChange(int option, int key_code, string conflict, string conflicting_mod) native
 event OnOptionDefault(int option) native
 event OnOptionHighlight(int option) native
-
-;ObjectReference[] function Lookup_References(int[] form_types, Keyword[] keywords) native
