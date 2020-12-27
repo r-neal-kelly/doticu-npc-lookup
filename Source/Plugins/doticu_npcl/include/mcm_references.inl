@@ -13,10 +13,6 @@
 #include "mcm_bases.inl"
 #include "mcm_references.h"
 
-#define DEFINE_BOOL     DEFINE_BOOL_VARIABLE
-#define DEFINE_INT      DEFINE_INT_VARIABLE
-#define DEFINE_STRING   DEFINE_STRING_VARIABLE
-
 namespace doticu_npcl { namespace MCM {
 
 
@@ -117,120 +113,60 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    References_Filter_t<B, I>::Reference_Argument_Variable()            { DEFINE_STRING("p_filter_reference_argument"); }
+    inline V::Variable_tt<String_t>&    References_Filter_t<B, I>::Reference_Argument()         { DEFINE_VAR(String_t, "p_filter_reference_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Reference_Do_Negate_Variable()           { DEFINE_BOOL("p_filter_reference_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      References_Filter_t<B, I>::Reference_Do_Negate()        { DEFINE_VAR(Bool_t, "p_filter_reference_do_negate"); }
     
     template <typename B, typename I>
-    inline V::String_Variable_t*    References_Filter_t<B, I>::Worldspace_Argument_Variable()           { DEFINE_STRING("p_filter_worldspace_argument"); }
+    inline V::Variable_tt<String_t>&    References_Filter_t<B, I>::Worldspace_Argument()        { DEFINE_VAR(String_t, "p_filter_worldspace_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Worldspace_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_worldspace_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      References_Filter_t<B, I>::Worldspace_Do_Negate()       { DEFINE_VAR(Bool_t, "p_filter_worldspace_do_negate"); }
     
     template <typename B, typename I>
-    inline V::String_Variable_t*    References_Filter_t<B, I>::Location_Argument_Variable()             { DEFINE_STRING("p_filter_location_argument"); }
+    inline V::Variable_tt<String_t>&    References_Filter_t<B, I>::Location_Argument()          { DEFINE_VAR(String_t, "p_filter_location_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Location_Do_Negate_Variable()            { DEFINE_BOOL("p_filter_location_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      References_Filter_t<B, I>::Location_Do_Negate()         { DEFINE_VAR(Bool_t, "p_filter_location_do_negate"); }
     
     template <typename B, typename I>
-    inline V::String_Variable_t*    References_Filter_t<B, I>::Cell_Argument_Variable()                 { DEFINE_STRING("p_filter_cell_argument"); }
+    inline V::Variable_tt<String_t>&    References_Filter_t<B, I>::Cell_Argument()              { DEFINE_VAR(String_t, "p_filter_cell_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Cell_Do_Negate_Variable()                { DEFINE_BOOL("p_filter_cell_do_negate"); }
-    template <typename B, typename I>
-    
-    inline V::String_Variable_t*    References_Filter_t<B, I>::Quest_Argument_Variable()                { DEFINE_STRING("p_filter_quest_argument"); }
-    template <typename B, typename I>
-    inline V::Bool_Variable_t*      References_Filter_t<B, I>::Quest_Do_Negate_Variable()               { DEFINE_BOOL("p_filter_quest_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      References_Filter_t<B, I>::Cell_Do_Negate()             { DEFINE_VAR(Bool_t, "p_filter_cell_do_negate"); }
     
     template <typename B, typename I>
-    inline V::Int_Variable_t*       References_Filter_t<B, I>::Interior_Exterior_Argument_Variable()    { DEFINE_INT("p_filter_interior_exterior_argument"); }
+    inline V::Variable_tt<String_t>&    References_Filter_t<B, I>::Quest_Argument()             { DEFINE_VAR(String_t, "p_filter_quest_argument"); }
     template <typename B, typename I>
-    inline V::Int_Variable_t*       References_Filter_t<B, I>::Alive_Dead_Argument_Variable()           { DEFINE_INT("p_filter_alive_dead_argument"); }
-    template <typename B, typename I>
-    inline V::Int_Variable_t*       References_Filter_t<B, I>::Is_Teammate_Argument_Variable()          { DEFINE_INT("p_filter_is_teammate_argument"); }
+    inline V::Variable_tt<Bool_t>&      References_Filter_t<B, I>::Quest_Do_Negate()            { DEFINE_VAR(Bool_t, "p_filter_quest_do_negate"); }
 
     template <typename B, typename I>
-    inline String_t References_Filter_t<B, I>::Reference_Argument()                         { return Reference_Argument_Variable()->Value(); }
+    inline V::Variable_tt<Binary_e>&    References_Filter_t<B, I>::Interior_Exterior_Argument() { DEFINE_VAR(Binary_e, "p_filter_interior_exterior_argument"); }
     template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Reference_Argument(String_t value)           { Reference_Argument_Variable()->Value(value); }
+    inline V::Variable_tt<Binary_e>&    References_Filter_t<B, I>::Alive_Dead_Argument()        { DEFINE_VAR(Binary_e, "p_filter_alive_dead_argument"); }
     template <typename B, typename I>
-    inline Bool_t   References_Filter_t<B, I>::Reference_Do_Negate()                        { return Reference_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Reference_Do_Negate(Bool_t value)            { Reference_Do_Negate_Variable()->Value(value); }
-    
-    template <typename B, typename I>
-    inline String_t References_Filter_t<B, I>::Worldspace_Argument()                        { return Worldspace_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Worldspace_Argument(String_t value)          { Worldspace_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t   References_Filter_t<B, I>::Worldspace_Do_Negate()                       { return Worldspace_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Worldspace_Do_Negate(Bool_t value)           { Worldspace_Do_Negate_Variable()->Value(value); }
-    
-    template <typename B, typename I>
-    inline String_t References_Filter_t<B, I>::Location_Argument()                          { return Location_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Location_Argument(String_t value)            { Location_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t   References_Filter_t<B, I>::Location_Do_Negate()                         { return Location_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Location_Do_Negate(Bool_t value)             { Location_Do_Negate_Variable()->Value(value); }
-    
-    template <typename B, typename I>
-    inline String_t References_Filter_t<B, I>::Cell_Argument()                              { return Cell_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Cell_Argument(String_t value)                { Cell_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t   References_Filter_t<B, I>::Cell_Do_Negate()                             { return Cell_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Cell_Do_Negate(Bool_t value)                 { Cell_Do_Negate_Variable()->Value(value); }
-    
-    template <typename B, typename I>
-    inline String_t References_Filter_t<B, I>::Quest_Argument()                             { return Quest_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Quest_Argument(String_t value)               { Quest_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t   References_Filter_t<B, I>::Quest_Do_Negate()                            { return Quest_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Quest_Do_Negate(Bool_t value)                { Quest_Do_Negate_Variable()->Value(value); }
-    
-    template <typename B, typename I>
-    inline Binary_e References_Filter_t<B, I>::Interior_Exterior_Argument()                 { return Interior_Exterior_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Interior_Exterior_Argument(Binary_e value)   { Interior_Exterior_Argument_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Binary_e References_Filter_t<B, I>::Alive_Dead_Argument()                        { return Alive_Dead_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Alive_Dead_Argument(Binary_e value)          { Alive_Dead_Argument_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Binary_e References_Filter_t<B, I>::Is_Teammate_Argument()                       { return Is_Teammate_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Filter_t<B, I>::Is_Teammate_Argument(Binary_e value)         { Is_Teammate_Argument_Variable()->Value(value); }
+    inline V::Variable_tt<Binary_e>&    References_Filter_t<B, I>::Is_Teammate_Argument()       { DEFINE_VAR(Binary_e, "p_filter_is_teammate_argument"); }
 
     template <typename B, typename I>
     inline void References_Filter_t<B, I>::Clear()
     {
         Bases_Filter_t<B, I>::Clear();
 
-        Reference_Argument("");
-        Reference_Do_Negate(false);
+        Reference_Argument() = "";
+        Reference_Do_Negate() = false;
 
-        Worldspace_Argument("");
-        Worldspace_Do_Negate(false);
+        Worldspace_Argument() = "";
+        Worldspace_Do_Negate() = false;
 
-        Location_Argument("");
-        Location_Do_Negate(false);
+        Location_Argument() = "";
+        Location_Do_Negate() = false;
 
-        Cell_Argument("");
-        Cell_Do_Negate(false);
+        Cell_Argument() = "";
+        Cell_Do_Negate() = false;
 
-        Quest_Argument("");
-        Quest_Do_Negate(false);
+        Quest_Argument() = "";
+        Quest_Do_Negate() = false;
 
-        Interior_Exterior_Argument(Binary_e::NONE);
-        Alive_Dead_Argument(Binary_e::NONE);
-        Is_Teammate_Argument(Binary_e::NONE);
+        Interior_Exterior_Argument() = Binary_e::NONE;
+        Alive_Dead_Argument() = Binary_e::NONE;
+        Is_Teammate_Argument() = Binary_e::NONE;
     }
 
     template <typename Base_t, typename Item_t>
@@ -492,93 +428,93 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Mod_Negate_Option()) {
             Bool_t value = Mod_Do_Negate();
-            Mod_Do_Negate(!value);
+            Mod_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Race_Negate_Option()) {
             Bool_t value = Race_Do_Negate();
-            Race_Do_Negate(!value);
+            Race_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Base_Negate_Option()) {
             Bool_t value = Base_Do_Negate();
-            Base_Do_Negate(!value);
+            Base_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Template_Negate_Option()) {
             Bool_t value = Template_Do_Negate();
-            Template_Do_Negate(!value);
+            Template_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Faction_Negate_Option()) {
             Bool_t value = Faction_Do_Negate();
-            Faction_Do_Negate(!value);
+            Faction_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Keyword_Negate_Option()) {
             Bool_t value = Keyword_Do_Negate();
-            Keyword_Do_Negate(!value);
+            Keyword_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Relation_Negate_Option()) {
             Bool_t value = Relation_Do_Negate();
-            Relation_Do_Negate(!value);
+            Relation_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Vitality_Negate_Option()) {
             Bool_t value = Vitality_Do_Negate();
-            Vitality_Do_Negate(!value);
+            Vitality_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Reference_Negate_Option()) {
             Bool_t value = Reference_Do_Negate();
-            Reference_Do_Negate(!value);
+            Reference_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Worldspace_Negate_Option()) {
             Bool_t value = Worldspace_Do_Negate();
-            Worldspace_Do_Negate(!value);
+            Worldspace_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Location_Negate_Option()) {
             Bool_t value = Location_Do_Negate();
-            Location_Do_Negate(!value);
+            Location_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Cell_Negate_Option()) {
             Bool_t value = Cell_Do_Negate();
-            Cell_Do_Negate(!value);
+            Cell_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Quest_Negate_Option()) {
             Bool_t value = Quest_Do_Negate();
-            Quest_Do_Negate(!value);
+            Quest_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Male_Option()) {
-            mcm->Toggle_Either(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
+            mcm->Toggle_Either(Male_Female_Argument(), option, option + 1, Binary_e::A);
         } else if (option == Female_Option()) {
-            mcm->Toggle_Either(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
+            mcm->Toggle_Either(Male_Female_Argument(), option - 1, option, Binary_e::B);
 
         } else if (option == Unique_Option()) {
-            mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
+            mcm->Toggle_Either(Unique_Generic_Argument(), option, option + 1, Binary_e::A);
         } else if (option == Generic_Option()) {
-            mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
+            mcm->Toggle_Either(Unique_Generic_Argument(), option - 1, option, Binary_e::B);
 
         } else if (option == Interior_Option()) {
-            mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option, option + 1, Binary_e::A);
+            mcm->Toggle_Either(Interior_Exterior_Argument(), option, option + 1, Binary_e::A);
         } else if (option == Exterior_Option()) {
-            mcm->Toggle_Either(Interior_Exterior_Argument_Variable(), option - 1, option, Binary_e::B);
+            mcm->Toggle_Either(Interior_Exterior_Argument(), option - 1, option, Binary_e::B);
 
         } else if (option == Alive_Option()) {
-            mcm->Toggle_Either(Alive_Dead_Argument_Variable(), option, option + 1, Binary_e::A);
+            mcm->Toggle_Either(Alive_Dead_Argument(), option, option + 1, Binary_e::A);
         } else if (option == Dead_Option()) {
-            mcm->Toggle_Either(Alive_Dead_Argument_Variable(), option - 1, option, Binary_e::B);
+            mcm->Toggle_Either(Alive_Dead_Argument(), option - 1, option, Binary_e::B);
 
         } else if (option == Is_Teammate_Option()) {
-            mcm->Toggle_Either(Is_Teammate_Argument_Variable(), option, option + 1, Binary_e::A);
+            mcm->Toggle_Either(Is_Teammate_Argument(), option, option + 1, Binary_e::A);
         } else if (option == Isnt_Teammate_Option()) {
-            mcm->Toggle_Either(Is_Teammate_Argument_Variable(), option - 1, option, Binary_e::B);
+            mcm->Toggle_Either(Is_Teammate_Argument(), option - 1, option, Binary_e::B);
 
         }
 
@@ -674,7 +610,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Mod_Argument(value);
+                Mod_Argument() = value;
                 mcm->Input_Option_Value(Mod_Search_Option(), value, true);
             }
 
@@ -687,7 +623,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Race_Argument(value);
+                Race_Argument() = value;
                 mcm->Input_Option_Value(Race_Search_Option(), value, true);
             }
 
@@ -700,7 +636,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Base_Argument(value);
+                Base_Argument() = value;
                 mcm->Input_Option_Value(Base_Search_Option(), value, true);
             }
 
@@ -713,7 +649,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Template_Argument(value);
+                Template_Argument() = value;
                 mcm->Input_Option_Value(Template_Search_Option(), value, true);
             }
 
@@ -726,7 +662,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Faction_Argument(value);
+                Faction_Argument() = value;
                 mcm->Input_Option_Value(Faction_Search_Option(), value, true);
             }
 
@@ -739,7 +675,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Keyword_Argument(value);
+                Keyword_Argument() = value;
                 mcm->Input_Option_Value(Keyword_Search_Option(), value, true);
             }
 
@@ -752,7 +688,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument(mcm->From_Relation_Key(value.data));
+                Relation_Argument() = mcm->From_Relation_Key(value.data);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -765,7 +701,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Vitality_Argument(mcm->From_Vitality_Key(value.data));
+                Vitality_Argument() = mcm->From_Vitality_Key(value.data);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -778,7 +714,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Reference_Argument(value);
+                Reference_Argument() = value;
                 mcm->Input_Option_Value(Reference_Search_Option(), value, true);
             }
 
@@ -791,7 +727,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Worldspace_Argument(value);
+                Worldspace_Argument() = value;
                 mcm->Input_Option_Value(Worldspace_Search_Option(), value, true);
             }
 
@@ -804,7 +740,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Location_Argument(value);
+                Location_Argument() = value;
                 mcm->Input_Option_Value(Location_Search_Option(), value, true);
             }
 
@@ -817,7 +753,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Cell_Argument(value);
+                Cell_Argument() = value;
                 mcm->Input_Option_Value(Cell_Search_Option(), value, true);
             }
 
@@ -830,7 +766,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Quest_Argument(value);
+                Quest_Argument() = value;
                 mcm->Input_Option_Value(Quest_Search_Option(), value, true);
             }
 
@@ -845,47 +781,47 @@ namespace doticu_npcl { namespace MCM {
         some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Search_Option()) {
-            Mod_Argument(value);
+            Mod_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Race_Search_Option()) {
-            Race_Argument(value);
+            Race_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Base_Search_Option()) {
-            Base_Argument(value);
+            Base_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Template_Search_Option()) {
-            Template_Argument(value);
+            Template_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Faction_Search_Option()) {
-            Faction_Argument(value);
+            Faction_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Keyword_Search_Option()) {
-            Keyword_Argument(value);
+            Keyword_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Reference_Search_Option()) {
-            Reference_Argument(value);
+            Reference_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Worldspace_Search_Option()) {
-            Worldspace_Argument(value);
+            Worldspace_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Location_Search_Option()) {
-            Location_Argument(value);
+            Location_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Cell_Search_Option()) {
-            Cell_Argument(value);
+            Cell_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Quest_Search_Option()) {
-            Quest_Argument(value);
+            Quest_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         }
@@ -1003,7 +939,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t References_Options_t<B, I>::Try_On_Load()
     {
-        if (!item_sections.Deserialize<References_Item_Section_e>(Item_Sections_Variable())) {
+        if (!item_sections.Deserialize<References_Item_Section_e>(Item_Sections())) {
             item_sections.Reset(Options()->Default_Item_Sections());
         }
         return true;
@@ -1012,7 +948,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t References_Options_t<B, I>::Try_On_Save()
     {
-        item_sections.Serialize<References_Item_Section_e>(Item_Sections_Variable());
+        item_sections.Serialize<References_Item_Section_e>(Item_Sections());
         return true;
     }
 
@@ -1203,40 +1139,15 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Cells_Variable()       { DEFINE_BOOL("p_item_do_show_cells"); }
+    inline V::Variable_tt<Bool_t>&  References_Item_t<B, I>::Do_Show_Cells()        { DEFINE_VAR(Bool_t, "p_item_do_show_cells"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Locations_Variable()   { DEFINE_BOOL("p_item_do_show_locations"); }
+    inline V::Variable_tt<Bool_t>&  References_Item_t<B, I>::Do_Show_Locations()    { DEFINE_VAR(Bool_t, "p_item_do_show_locations"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Quests_Variable()      { DEFINE_BOOL("p_item_do_show_quests"); }
+    inline V::Variable_tt<Bool_t>&  References_Item_t<B, I>::Do_Show_Quests()       { DEFINE_VAR(Bool_t, "p_item_do_show_quests"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_References_Variable()  { DEFINE_BOOL("p_item_do_show_references"); }
+    inline V::Variable_tt<Bool_t>&  References_Item_t<B, I>::Do_Show_References()   { DEFINE_VAR(Bool_t, "p_item_do_show_references"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*  References_Item_t<B, I>::Do_Show_Worldspaces_Variable() { DEFINE_BOOL("p_item_do_show_worldspaces"); }
-
-    template <typename B, typename I>
-    inline Bool_t   References_Item_t<B, I>::Do_Show_Cells()                    { return Do_Show_Cells_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Item_t<B, I>::Do_Show_Cells(Bool_t value)        { Do_Show_Cells_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   References_Item_t<B, I>::Do_Show_Locations()                { return Do_Show_Locations_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Item_t<B, I>::Do_Show_Locations(Bool_t value)    { Do_Show_Locations_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   References_Item_t<B, I>::Do_Show_Quests()                   { return Do_Show_Quests_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Item_t<B, I>::Do_Show_Quests(Bool_t value)       { Do_Show_Quests_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   References_Item_t<B, I>::Do_Show_References()               { return Do_Show_References_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Item_t<B, I>::Do_Show_References(Bool_t value)   { Do_Show_References_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   References_Item_t<B, I>::Do_Show_Worldspaces()              { return Do_Show_Worldspaces_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     References_Item_t<B, I>::Do_Show_Worldspaces(Bool_t value)  { Do_Show_Worldspaces_Variable()->Value(value); }
+    inline V::Variable_tt<Bool_t>&  References_Item_t<B, I>::Do_Show_Worldspaces()  { DEFINE_VAR(Bool_t, "p_item_do_show_worldspaces"); }
 
     template <typename B, typename I>
     inline void References_Item_t<B, I>::Build_Bases(Vector_t<Actor_Base_t*> actor_bases)
@@ -1260,7 +1171,7 @@ namespace doticu_npcl { namespace MCM {
                         );
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1296,7 +1207,7 @@ namespace doticu_npcl { namespace MCM {
                         mcm->Add_Text_Option(Main_t::IS_EXTERIOR, Main_t::_NONE_);
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1350,7 +1261,7 @@ namespace doticu_npcl { namespace MCM {
 
                     Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_); // 6
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1387,7 +1298,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1425,7 +1336,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1490,7 +1401,7 @@ namespace doticu_npcl { namespace MCM {
                         mcm->Add_Text_Option(Main_t::ISNT_TEAMMATE, Main_t::_NONE_);
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1527,7 +1438,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -1566,23 +1477,23 @@ namespace doticu_npcl { namespace MCM {
         some<Main_t*> mcm = Main_t::Self();
 
         if (option == show_cells_option || option == show_cells_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Cells_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Cells(), option, lcallback);
             return true;
 
         } else if (option == show_locations_option || option == show_locations_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Locations_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Locations(), option, lcallback);
             return true;
 
         } else if (option == show_quests_option || option == show_quests_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Quests_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Quests(), option, lcallback);
             return true;
 
         } else if (option == show_references_option || option == show_references_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_References_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_References(), option, lcallback);
             return true;
 
         } else if (option == show_worldspaces_option || option == show_worldspaces_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Worldspaces_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Worldspaces(), option, lcallback);
             return true;
 
         } else {
@@ -1645,7 +1556,3 @@ namespace doticu_npcl { namespace MCM {
     }
 
 }}
-
-#undef DEFINE_BOOL
-#undef DEFINE_INT
-#undef DEFINE_STRING

@@ -177,11 +177,11 @@ namespace doticu_npcl { namespace MCM {
 
     V::Object_t* Main_t::Object() { DEFINE_OBJECT(); }
 
-    V::String_Variable_t* Main_t::Current_Page_Variable() { DEFINE_STRING_VARIABLE("p_current_page"); }
+    V::Variable_tt<String_t>& Main_t::Current_Page_Variable() { DEFINE_VARIABLE_REFERENCE(String_t, "p_current_page"); }
 
     String_t Main_t::Current_Page()
     {
-        String_t current_page = Current_Page_Variable()->Value();
+        String_t current_page = Current_Page_Variable();
         if (!current_page) {
             current_page = DEFAULT_PAGE;
             Current_Page(current_page);
@@ -191,7 +191,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Main_t::Current_Page(String_t current_page)
     {
-        Current_Page_Variable()->Value(current_page);
+        Current_Page_Variable() = current_page;
     }
 
     Latent_Callback_i* Main_t::Create_Latent_Callback(V::Machine_t* machine, V::Stack_ID_t stack_id)
@@ -221,72 +221,66 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    void Main_t::Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle)
+    void Main_t::Toggle_Either(V::Variable_tt<Binary_e>& variable, Int_t option_a, Int_t option_b, Binary_e toggle)
     {
-        Binary_e value = variable->Value();
-
         if (toggle == Binary_e::A) {
-            if (value == Binary_e::A) {
-                value = Binary_e::NONE;
+            if (variable == Binary_e::A) {
+                variable = Binary_e::NONE;
             } else {
-                value = Binary_e::A;
+                variable = Binary_e::A;
             }
         } else if (toggle == Binary_e::B) {
-            if (value == Binary_e::B) {
-                value = Binary_e::NONE;
+            if (variable == Binary_e::B) {
+                variable = Binary_e::NONE;
             } else {
-                value = Binary_e::B;
+                variable = Binary_e::B;
             }
         }
 
-        variable->Value(value);
-        Toggle_Option_Value(option_a, value == Binary_e::A, false);
-        Toggle_Option_Value(option_b, value == Binary_e::B, true);
+        Toggle_Option_Value(option_a, variable == Binary_e::A, false);
+        Toggle_Option_Value(option_b, variable == Binary_e::B, true);
     }
 
-    void Main_t::Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle)
+    void Main_t::Toggle_Any(V::Variable_tt<Binary_e>& variable, Int_t option_a, Int_t option_b, Binary_e toggle)
     {
-        Binary_e value = variable->Value();
-
         if (toggle == Binary_e::A) {
-            if (value == Binary_e::NONE) {
-                value = Binary_e::A;
-            } else if (value == Binary_e::BOTH) {
-                value = Binary_e::B;
-            } else if (value == Binary_e::A) {
-                value = Binary_e::NONE;
-            } else if (value == Binary_e::B) {
-                value = Binary_e::BOTH;
+            if (variable == Binary_e::NONE) {
+                variable = Binary_e::A;
+            } else if (variable == Binary_e::BOTH) {
+                variable = Binary_e::B;
+            } else if (variable == Binary_e::A) {
+                variable = Binary_e::NONE;
+            } else if (variable == Binary_e::B) {
+                variable = Binary_e::BOTH;
             }
         } else if (toggle == Binary_e::B) {
-            if (value == Binary_e::NONE) {
-                value = Binary_e::B;
-            } else if (value == Binary_e::BOTH) {
-                value = Binary_e::A;
-            } else if (value == Binary_e::A) {
-                value = Binary_e::BOTH;
-            } else if (value == Binary_e::B) {
-                value = Binary_e::NONE;
+            if (variable == Binary_e::NONE) {
+                variable = Binary_e::B;
+            } else if (variable == Binary_e::BOTH) {
+                variable = Binary_e::A;
+            } else if (variable == Binary_e::A) {
+                variable = Binary_e::BOTH;
+            } else if (variable == Binary_e::B) {
+                variable = Binary_e::NONE;
             }
         }
 
-        variable->Value(value);
-        Toggle_Option_Value(option_a, value == Binary_e::A || value == Binary_e::BOTH, false);
-        Toggle_Option_Value(option_b, value == Binary_e::B || value == Binary_e::BOTH, true);
+        Toggle_Option_Value(option_a, variable == Binary_e::A || variable == Binary_e::BOTH, false);
+        Toggle_Option_Value(option_b, variable == Binary_e::B || variable == Binary_e::BOTH, true);
     }
 
-    void Main_t::Toggle_And_Reset(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback)
+    void Main_t::Toggle_And_Reset(V::Variable_tt<Bool_t>& variable, Int_t option, Latent_Callback_i* lcallback)
     {
         Disable_Option(option);
-        variable->Bool(!variable->Bool());
+        variable = !variable;
         Reset_Page();
         Destroy_Latent_Callback(lcallback);
     }
 
-    void Main_t::Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback)
+    void Main_t::Toggle_And_Update(V::Variable_tt<Bool_t>& variable, Int_t option, Latent_Callback_i* lcallback)
     {
-        Bool_t value = variable->Bool();
-        variable->Bool(!value);
+        Bool_t value = variable;
+        variable = !value;
         Toggle_Option_Value(option, !value);
         Destroy_Latent_Callback(lcallback);
     }
@@ -295,7 +289,7 @@ namespace doticu_npcl { namespace MCM {
     {
         SKYLIB_ASSERT_SOME(info_text);
 
-        Info_Text(info_text);
+        Current_Info_Text() = info_text;
         Destroy_Latent_Callback(lcallback);
     }
 
@@ -534,7 +528,7 @@ namespace doticu_npcl { namespace MCM {
         pages.push_back(SPAWNED_REFERENCES);
         pages.push_back(MARKED_REFERENCES);
         pages.push_back(GLOBAL_OPTIONS);
-        Pages(pages);
+        Pages() = pages;
 
         Static_Bases_t::Self()->On_Config_Open();
         Dynamic_Bases_t::Self()->On_Config_Open();
@@ -770,7 +764,7 @@ namespace doticu_npcl { namespace MCM {
 
     void Main_t::Update_1_1_1()
     {
-        Global_Options_t::Self()->Prioritize_MCM_Menu(true);
+        Global_Options_t::Self()->Prioritize_MCM_Menu() = true;
     }
 
     void Main_t::Register_Me(V::Machine_t* machine)

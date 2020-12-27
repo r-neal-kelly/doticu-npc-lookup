@@ -144,8 +144,8 @@ namespace doticu_npcl { namespace MCM {
 
         Reset_Option_Ints();
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Vector_t<Item_t>& items = Items();
         size_t item_count = items.size();
@@ -157,10 +157,10 @@ namespace doticu_npcl { namespace MCM {
             Int_t page_index = Page_Index();
             if (page_index < 0) {
                 page_index = 0;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             } else if (page_index >= page_count) {
                 page_index = page_count - 1;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             if (mcm->Should_Translate_Page_Titles()) {
@@ -238,7 +238,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index -= 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -258,7 +258,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index += 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -272,7 +272,7 @@ namespace doticu_npcl { namespace MCM {
                 Item_t item = items[item_index];
                 if (item && item->leveled && item->leveled->Is_Valid()) {
                     mcm->Disable_Option(option);
-                    Item()->Leveled_Form_ID(item->leveled->form_id);
+                    Item()->Leveled_Form_ID() = item->leveled->form_id;
                     Current_View(Bases_View_e::ITEM);
                     mcm->Reset_Page();
                 }
@@ -303,8 +303,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LEVELED_BASES, Main_t::SAFE_COMPONENT_FILTER));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Filters(Main_t::LEVELED_BASE);
 
@@ -327,8 +327,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LEVELED_BASES, Main_t::SAFE_COMPONENT_OPTIONS));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Header_Options();
         Build_General_Options();
@@ -341,10 +341,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Leveled_Bases_Item_t::Leveled_Form_ID_Variable()        { DEFINE_INT_VARIABLE("p_item_leveled_form_id"); }
-
-    Form_ID_t           Leveled_Bases_Item_t::Leveled_Form_ID()                 { return Leveled_Form_ID_Variable()->Value(); }
-    void                Leveled_Bases_Item_t::Leveled_Form_ID(Form_ID_t value)  { Leveled_Form_ID_Variable()->Value(value); }
+    V::Variable_tt<Form_ID_t>& Leveled_Bases_Item_t::Leveled_Form_ID() { DEFINE_VAR(Form_ID_t, "p_item_leveled_form_id"); }
 
     Item_t Leveled_Bases_Item_t::Current_Item()
     {
@@ -366,7 +363,7 @@ namespace doticu_npcl { namespace MCM {
     Bool_t Leveled_Bases_Item_t::Current_Item(Item_t item)
     {
         if (item && item->leveled && item->leveled->Is_Valid()) {
-            Leveled_Form_ID(item->leveled->form_id);
+            Leveled_Form_ID() = item->leveled->form_id;
             return true;
         } else {
             return false;
@@ -512,8 +509,8 @@ namespace doticu_npcl { namespace MCM {
                     );
                 }
 
-                mcm->Cursor_Position(0);
-                mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+                mcm->Current_Cursor_Position() = 0;
+                mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
                 Build_Header(spawn_option, Main_t::CENTER_SPAWN, List()->Items().size());
                 {
@@ -550,8 +547,8 @@ namespace doticu_npcl { namespace MCM {
 
         Item_t item = Current_Item();
         if (item && item->leveled && item->leveled->Is_Valid()) {
-            mcm->Cursor_Position(0);
-            mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+            mcm->Current_Cursor_Position() = 0;
+            mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
             Vector_t<some<Actor_Base_t*>> items = Nested_Items();
             size_t item_count = items.size();
@@ -563,10 +560,10 @@ namespace doticu_npcl { namespace MCM {
                 Int_t page_index = Nested_Index();
                 if (page_index < 0) {
                     page_index = 0;
-                    Nested_Index(page_index);
+                    Nested_Index() = page_index;
                 } else if (page_index >= page_count) {
                     page_index = page_count - 1;
-                    Nested_Index(page_index);
+                    Nested_Index() = page_index;
                 }
 
                 if (mcm->Should_Translate_Page_Titles()) {
@@ -639,8 +636,8 @@ namespace doticu_npcl { namespace MCM {
                         );
                     }
 
-                    mcm->Cursor_Position(0);
-                    mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+                    mcm->Current_Cursor_Position() = 0;
+                    mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
                     Build_Header(spawn_option, Main_t::CENTER_SPAWN, nested_items.size());
                     {
@@ -665,20 +662,20 @@ namespace doticu_npcl { namespace MCM {
                     }
                 } else {
                     Nested_View(Bases_Item_View_e::BASES);
-                    Nested_Form(0);
+                    Nested_Form() = 0;
                     mcm->Reset_Page();
                 }
             } else {
                 Nested_View(Bases_Item_View_e::BASES);
-                Nested_Form(0);
+                Nested_Form() = 0;
                 mcm->Reset_Page();
             }
         } else {
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);
             Nested_View(Bases_Item_View_e::ITEM);
-            Nested_Index(0);
-            Nested_Form(0);
+            Nested_Index() = 0;
+            Nested_Form() = 0;
             mcm->Reset_Page();
         }
 
@@ -701,7 +698,7 @@ namespace doticu_npcl { namespace MCM {
         if (option == view_nested_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::BASES);
-            Nested_Index(0);
+            Nested_Index() = 0;
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
 
@@ -721,7 +718,7 @@ namespace doticu_npcl { namespace MCM {
         if (option == back_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::ITEM);
-            Nested_Index(0);
+            Nested_Index() = 0;
             mcm->Reset_Page();
 
         } else if (option == previous_option) {
@@ -742,7 +739,7 @@ namespace doticu_npcl { namespace MCM {
                     } else {
                         page_index -= 1;
                     }
-                    Nested_Index(page_index);
+                    Nested_Index() = page_index;
                 }
             }
 
@@ -765,7 +762,7 @@ namespace doticu_npcl { namespace MCM {
                     } else {
                         page_index += 1;
                     }
-                    Nested_Index(page_index);
+                    Nested_Index() = page_index;
                 }
             }
 
@@ -782,7 +779,7 @@ namespace doticu_npcl { namespace MCM {
                     some<Actor_Base_t*> item = items[item_index];
                     if (item && item->Is_Valid()) {
                         mcm->Disable_Option(option);
-                        Item()->Nested_Form(item->form_id);
+                        Item()->Nested_Form() = item->form_id;
                         Nested_View(Bases_Item_View_e::BASES_ITEM);
                         mcm->Reset_Page();
                     }
@@ -800,7 +797,7 @@ namespace doticu_npcl { namespace MCM {
         if (option == back_option) {
             mcm->Disable_Option(option);
             Nested_View(Bases_Item_View_e::BASES);
-            Nested_Form(0);
+            Nested_Form() = 0;
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
 
@@ -812,10 +809,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             maybe<Actor_Base_t*> nested_item = Previous_Nested_Item();
             if (nested_item) {
-                Nested_Form(nested_item->form_id);
+                Nested_Form() = nested_item->form_id;
             } else {
                 Nested_View(Bases_Item_View_e::BASES);
-                Nested_Form(0);
+                Nested_Form() = 0;
             }
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);
@@ -824,10 +821,10 @@ namespace doticu_npcl { namespace MCM {
             mcm->Disable_Option(option);
             maybe<Actor_Base_t*> nested_item = Next_Nested_Item();
             if (nested_item) {
-                Nested_Form(nested_item->form_id);
+                Nested_Form() = nested_item->form_id;
             } else {
                 Nested_View(Bases_Item_View_e::BASES);
-                Nested_Form(0);
+                Nested_Form() = 0;
             }
             mcm->Reset_Page();
             mcm->Destroy_Latent_Callback(lcallback);

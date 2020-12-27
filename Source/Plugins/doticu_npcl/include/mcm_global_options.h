@@ -24,14 +24,8 @@ namespace doticu_npcl { namespace MCM {
         void    Reset_Option_Ints();
 
     public:
-        V::Bool_Variable_t* Prioritize_MCM_Menu_Variable();
-        V::Bool_Variable_t* Translate_Page_Titles_Variable();
-
-    public:
-        Bool_t  Prioritize_MCM_Menu();
-        void    Prioritize_MCM_Menu(Bool_t value);
-        Bool_t  Translate_Page_Titles();
-        void    Translate_Page_Titles(Bool_t value);
+        V::Variable_tt<Bool_t>& Prioritize_MCM_Menu();
+        V::Variable_tt<Bool_t>& Translate_Page_Titles();
 
     public:
         void Reset();

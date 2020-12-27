@@ -44,9 +44,9 @@ namespace doticu_npcl { namespace MCM {
         void                            Move_Lower(Item_Section_t section);
 
         template                        <typename Item_Section_e>
-        Bool_t                          Serialize(V::Array_Variable_t<String_t>* variable);
+        Bool_t                          Serialize(V::Variable_tt<Vector_t<String_t>>& variable);
         template                        <typename Item_Section_e>
-        Bool_t                          Deserialize(V::Array_Variable_t<String_t>* variable);
+        Bool_t                          Deserialize(V::Variable_tt<Vector_t<String_t>>& variable);
 
     private:
         Vector_t<Item_Section_t>        item_sections;
@@ -103,7 +103,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    ITEM_VIEW       = "item";
 
     public:
-        V::String_Variable_t* Current_View_Variable();
+        V::Variable_tt<String_t>& Current_View_Variable();
 
     public:
         Bases_View_e    Current_View();
@@ -153,14 +153,10 @@ namespace doticu_npcl { namespace MCM {
         void    Reset_Option_Ints();
 
     public:
-        V::Int_Variable_t* Page_Index_Variable();
+        V::Variable_tt<Int_t>& Page_Index();
 
     public:
-        Int_t   Page_Index();
-        void    Page_Index(Int_t value);
-
-    public:
-        void    Clear();
+        void Clear();
 
     public:
         void On_Init();
@@ -230,79 +226,32 @@ namespace doticu_npcl { namespace MCM {
         void    Reset_Option_Ints();
 
     public:
-        V::String_Variable_t*   Mod_Argument_Variable();
-        V::Bool_Variable_t*     Mod_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Mod_Argument();
+        V::Variable_tt<Bool_t>&     Mod_Do_Negate();
 
-        V::String_Variable_t*   Race_Argument_Variable();
-        V::Bool_Variable_t*     Race_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Race_Argument();
+        V::Variable_tt<Bool_t>&     Race_Do_Negate();
 
-        V::String_Variable_t*   Base_Argument_Variable();
-        V::Bool_Variable_t*     Base_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Base_Argument();
+        V::Variable_tt<Bool_t>&     Base_Do_Negate();
 
-        V::String_Variable_t*   Template_Argument_Variable();
-        V::Bool_Variable_t*     Template_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Template_Argument();
+        V::Variable_tt<Bool_t>&     Template_Do_Negate();
 
-        V::String_Variable_t*   Faction_Argument_Variable();
-        V::Bool_Variable_t*     Faction_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Faction_Argument();
+        V::Variable_tt<Bool_t>&     Faction_Do_Negate();
 
-        V::String_Variable_t*   Keyword_Argument_Variable();
-        V::Bool_Variable_t*     Keyword_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Keyword_Argument();
+        V::Variable_tt<Bool_t>&     Keyword_Do_Negate();
 
-        V::Int_Variable_t*      Relation_Argument_Variable();
-        V::Bool_Variable_t*     Relation_Do_Negate_Variable();
+        V::Variable_tt<Relation_e>& Relation_Argument();
+        V::Variable_tt<Bool_t>&     Relation_Do_Negate();
 
-        V::Int_Variable_t*      Vitality_Argument_Variable();
-        V::Bool_Variable_t*     Vitality_Do_Negate_Variable();
+        V::Variable_tt<Vitality_e>& Vitality_Argument();
+        V::Variable_tt<Bool_t>&     Vitality_Do_Negate();
 
-        V::Int_Variable_t*      Male_Female_Argument_Variable();
-        V::Int_Variable_t*      Unique_Generic_Argument_Variable();
-
-    public:
-        String_t    Mod_Argument();
-        void        Mod_Argument(String_t value);
-        Bool_t      Mod_Do_Negate();
-        void        Mod_Do_Negate(Bool_t value);
-
-        String_t    Race_Argument();
-        void        Race_Argument(String_t value);
-        Bool_t      Race_Do_Negate();
-        void        Race_Do_Negate(Bool_t value);
-
-        String_t    Base_Argument();
-        void        Base_Argument(String_t value);
-        Bool_t      Base_Do_Negate();
-        void        Base_Do_Negate(Bool_t value);
-
-        String_t    Template_Argument();
-        void        Template_Argument(String_t value);
-        Bool_t      Template_Do_Negate();
-        void        Template_Do_Negate(Bool_t value);
-
-        String_t    Faction_Argument();
-        void        Faction_Argument(String_t value);
-        Bool_t      Faction_Do_Negate();
-        void        Faction_Do_Negate(Bool_t value);
-
-        String_t    Keyword_Argument();
-        void        Keyword_Argument(String_t value);
-        Bool_t      Keyword_Do_Negate();
-        void        Keyword_Do_Negate(Bool_t value);
-
-        Relation_e  Relation_Argument();
-        void        Relation_Argument(Relation_e value);
-        Bool_t      Relation_Do_Negate();
-        void        Relation_Do_Negate(Bool_t value);
-
-        Vitality_e  Vitality_Argument();
-        void        Vitality_Argument(Vitality_e value);
-        Bool_t      Vitality_Do_Negate();
-        void        Vitality_Do_Negate(Bool_t value);
-
-        Binary_e    Male_Female_Argument();
-        void        Male_Female_Argument(Binary_e value);
-
-        Binary_e    Unique_Generic_Argument();
-        void        Unique_Generic_Argument(Binary_e value);
+        V::Variable_tt<Binary_e>&   Male_Female_Argument();
+        V::Variable_tt<Binary_e>&   Unique_Generic_Argument();
 
     public:
         void                    Clear();
@@ -382,34 +331,15 @@ namespace doticu_npcl { namespace MCM {
         void            Reset_Menu_Option_Ints();
 
     public:
-        V::Bool_Variable_t*             Do_Smart_Select_Variable();
-        V::Bool_Variable_t*             Do_Smart_Sections_Variable();
-        V::Bool_Variable_t*             Do_Uncombative_Spawns_Variable();
-        V::Bool_Variable_t*             Do_Persistent_Spawns_Variable();
-        V::Bool_Variable_t*             Do_Static_Spawns_Variable();
-        V::Bool_Variable_t*             Do_Verify_Spawns_Variable();
-
-        V::Array_Variable_t<String_t>*  Item_Sections_Variable();
+        V::Variable_tt<Bool_t>&             Do_Smart_Select();
+        V::Variable_tt<Bool_t>&             Do_Smart_Sections();
+        V::Variable_tt<Bool_t>&             Do_Uncombative_Spawns();
+        V::Variable_tt<Bool_t>&             Do_Persistent_Spawns();
+        V::Variable_tt<Bool_t>&             Do_Static_Spawns();
+        V::Variable_tt<Bool_t>&             Do_Verify_Spawns();
+        V::Variable_tt<Vector_t<String_t>>& Item_Sections();
 
     public:
-        Bool_t  Do_Smart_Select();
-        void    Do_Smart_Select(Bool_t value);
-
-        Bool_t  Do_Smart_Sections();
-        void    Do_Smart_Sections(Bool_t value);
-
-        Bool_t  Do_Uncombative_Spawns();
-        void    Do_Uncombative_Spawns(Bool_t value);
-
-        Bool_t  Do_Persistent_Spawns();
-        void    Do_Persistent_Spawns(Bool_t value);
-
-        Bool_t  Do_Static_Spawns();
-        void    Do_Static_Spawns(Bool_t value);
-
-        Bool_t  Do_Verify_Spawns();
-        void    Do_Verify_Spawns(Bool_t value);
-
         void    Reset();
 
     public:
@@ -520,40 +450,21 @@ namespace doticu_npcl { namespace MCM {
         void            Reset_Option_Ints();
 
     public:
-        V::String_Variable_t*   Nested_View_Variable();
-        V::Int_Variable_t*      Nested_Index_Variable();
-        V::Int_Variable_t*      Nested_Form_Variable();
+        V::Variable_tt<String_t>&   Nested_View_Variable();
+        V::Variable_tt<Int_t>&      Nested_Index();
+        V::Variable_tt<Form_ID_t>&  Nested_Form();
 
-        V::Bool_Variable_t*     Do_Show_Bases_Variable();
-        V::Bool_Variable_t*     Do_Show_Commands_Variable();
-        V::Bool_Variable_t*     Do_Show_Factions_Variable();
-        V::Bool_Variable_t*     Do_Show_Keywords_Variable();
-        V::Bool_Variable_t*     Do_Show_Mods_Variable();
-        V::Bool_Variable_t*     Do_Show_Races_Variable();
-        V::Bool_Variable_t*     Do_Show_Templates_Variable();
+        V::Variable_tt<Bool_t>&     Do_Show_Bases();
+        V::Variable_tt<Bool_t>&     Do_Show_Commands();
+        V::Variable_tt<Bool_t>&     Do_Show_Factions();
+        V::Variable_tt<Bool_t>&     Do_Show_Keywords();
+        V::Variable_tt<Bool_t>&     Do_Show_Mods();
+        V::Variable_tt<Bool_t>&     Do_Show_Races();
+        V::Variable_tt<Bool_t>&     Do_Show_Templates();
 
     public:
         Bases_Item_View_e   Nested_View();
         void                Nested_View(Bases_Item_View_e value);
-        Int_t               Nested_Index();
-        void                Nested_Index(Int_t value);
-        Form_ID_t           Nested_Form();
-        void                Nested_Form(Form_ID_t value);
-
-        Bool_t              Do_Show_Bases();
-        void                Do_Show_Bases(Bool_t value);
-        Bool_t              Do_Show_Commands();
-        void                Do_Show_Commands(Bool_t value);
-        Bool_t              Do_Show_Factions();
-        void                Do_Show_Factions(Bool_t value);
-        Bool_t              Do_Show_Keywords();
-        void                Do_Show_Keywords(Bool_t value);
-        Bool_t              Do_Show_Mods();
-        void                Do_Show_Mods(Bool_t value);
-        Bool_t              Do_Show_Races();
-        void                Do_Show_Races(Bool_t value);
-        Bool_t              Do_Show_Templates();
-        void                Do_Show_Templates(Bool_t value);
 
     public:
         void        Build_Sections(Vector_t<Buildable_i*> buildables);

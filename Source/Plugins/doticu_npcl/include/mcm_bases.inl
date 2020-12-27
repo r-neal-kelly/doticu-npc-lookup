@@ -13,14 +13,12 @@
 #include "mcm_selectables.h"
 #include "mcm_bases.h"
 
-#define DEFINE_BOOL     DEFINE_BOOL_VARIABLE
-#define DEFINE_INT      DEFINE_INT_VARIABLE
-#define DEFINE_STRING   DEFINE_STRING_VARIABLE
+#define DEFINE_VAR DEFINE_VARIABLE_REFERENCE
 
 namespace doticu_npcl { namespace MCM {
 
     template <typename Item_Section_e>
-    Bool_t Item_Sections_t::Serialize(V::Array_Variable_t<String_t>* variable)
+    Bool_t Item_Sections_t::Serialize(V::Variable_tt<Vector_t<String_t>>& variable)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
@@ -34,7 +32,7 @@ namespace doticu_npcl { namespace MCM {
                 strs.push_back(str());
             }
 
-            variable->Values(strs);
+            variable = strs;
 
             return true;
         } else {
@@ -43,11 +41,11 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename Item_Section_e>
-    Bool_t Item_Sections_t::Deserialize(V::Array_Variable_t<String_t>* variable)
+    Bool_t Item_Sections_t::Deserialize(V::Variable_tt<Vector_t<String_t>>& variable)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        V::Array_t* arr = variable->Value();
+        V::Array_t* arr = variable.Array();
         if (arr) {
             item_sections.clear();
             item_sections.reserve(arr->count);
@@ -76,12 +74,12 @@ namespace doticu_npcl { namespace MCM {
 namespace doticu_npcl { namespace MCM {
 
     template <typename B, typename I>
-    inline V::String_Variable_t* Bases_t<B, I>::Current_View_Variable() { DEFINE_STRING("p_current_view"); }
+    inline V::Variable_tt<String_t>& Bases_t<B, I>::Current_View_Variable() { DEFINE_VAR(String_t, "p_current_view"); }
 
     template <typename B, typename I>
     inline Bases_View_e Bases_t<B, I>::Current_View()
     {
-        String_t current_view = Current_View_Variable()->Value();
+        String_t current_view = Current_View_Variable();
         if (CString_t::Is_Same(current_view, LIST_VIEW, true)) {
             return Bases_View_e::LIST;
         } else if (CString_t::Is_Same(current_view, FILTER_VIEW, true)) {
@@ -91,7 +89,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (CString_t::Is_Same(current_view, ITEM_VIEW, true)) {
             return Bases_View_e::ITEM;
         } else {
-            Current_View_Variable()->Value(LIST_VIEW);
+            Current_View_Variable() = LIST_VIEW;
             return Bases_View_e::LIST;
         }
     }
@@ -100,15 +98,15 @@ namespace doticu_npcl { namespace MCM {
     inline void Bases_t<B, I>::Current_View(Bases_View_e value)
     {
         if (value == Bases_View_e::LIST) {
-            Current_View_Variable()->Value(LIST_VIEW);
+            Current_View_Variable() = LIST_VIEW;
         } else if (value == Bases_View_e::FILTER) {
-            Current_View_Variable()->Value(FILTER_VIEW);
+            Current_View_Variable() = FILTER_VIEW;
         } else if (value == Bases_View_e::OPTIONS) {
-            Current_View_Variable()->Value(OPTIONS_VIEW);
+            Current_View_Variable() = OPTIONS_VIEW;
         } else if (value == Bases_View_e::ITEM) {
-            Current_View_Variable()->Value(ITEM_VIEW);
+            Current_View_Variable() = ITEM_VIEW;
         } else {
-            Current_View_Variable()->Value(LIST_VIEW);
+            Current_View_Variable() = LIST_VIEW;
         }
     }
 
@@ -299,12 +297,7 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::Int_Variable_t*   Bases_List_t<B, I>::Page_Index_Variable()   { DEFINE_INT("p_list_page_index"); }
-
-    template <typename B, typename I>
-    inline Int_t    Bases_List_t<B, I>::Page_Index()            { return Page_Index_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_List_t<B, I>::Page_Index(Int_t value) { Page_Index_Variable()->Value(value); }
+    inline V::Variable_tt<Int_t>& Bases_List_t<B, I>::Page_Index() { DEFINE_VAR(Int_t, "p_list_page_index"); }
 
     template <typename B, typename I>
     inline void Bases_List_t<B, I>::Clear()
@@ -509,161 +502,79 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Mod_Argument_Variable()               { DEFINE_STRING("p_filter_mod_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Mod_Argument()            { DEFINE_VAR(String_t, "p_filter_mod_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Mod_Do_Negate_Variable()              { DEFINE_BOOL("p_filter_mod_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Mod_Do_Negate()           { DEFINE_VAR(Bool_t, "p_filter_mod_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Race_Argument_Variable()              { DEFINE_STRING("p_filter_race_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Race_Argument()           { DEFINE_VAR(String_t, "p_filter_race_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Race_Do_Negate_Variable()             { DEFINE_BOOL("p_filter_race_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Race_Do_Negate()          { DEFINE_VAR(Bool_t, "p_filter_race_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Base_Argument_Variable()              { DEFINE_STRING("p_filter_base_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Base_Argument()           { DEFINE_VAR(String_t, "p_filter_base_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Base_Do_Negate_Variable()             { DEFINE_BOOL("p_filter_base_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Base_Do_Negate()          { DEFINE_VAR(Bool_t, "p_filter_base_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Template_Argument_Variable()          { DEFINE_STRING("p_filter_template_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Template_Argument()       { DEFINE_VAR(String_t, "p_filter_template_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Template_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_template_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Template_Do_Negate()      { DEFINE_VAR(Bool_t, "p_filter_template_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Faction_Argument_Variable()           { DEFINE_STRING("p_filter_faction_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Faction_Argument()        { DEFINE_VAR(String_t, "p_filter_faction_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Faction_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_faction_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Faction_Do_Negate()       { DEFINE_VAR(Bool_t, "p_filter_faction_do_negate"); }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Filter_t<B, I>::Keyword_Argument_Variable()           { DEFINE_STRING("p_filter_keyword_argument"); }
+    inline V::Variable_tt<String_t>&    Bases_Filter_t<B, I>::Keyword_Argument()        { DEFINE_VAR(String_t, "p_filter_keyword_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Keyword_Do_Negate_Variable()          { DEFINE_BOOL("p_filter_keyword_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Keyword_Do_Negate()       { DEFINE_VAR(Bool_t, "p_filter_keyword_do_negate"); }
 
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Relation_Argument_Variable()          { DEFINE_INT("p_filter_relation_argument"); }
+    inline V::Variable_tt<Relation_e>&  Bases_Filter_t<B, I>::Relation_Argument()       { DEFINE_VAR(Relation_e, "p_filter_relation_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Relation_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_relation_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Relation_Do_Negate()      { DEFINE_VAR(Bool_t, "p_filter_relation_do_negate"); }
 
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Vitality_Argument_Variable()          { DEFINE_INT("p_filter_vitality_argument"); }
+    inline V::Variable_tt<Vitality_e>&  Bases_Filter_t<B, I>::Vitality_Argument()       { DEFINE_VAR(Vitality_e, "p_filter_vitality_argument"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Filter_t<B, I>::Vitality_Do_Negate_Variable()         { DEFINE_BOOL("p_filter_vitality_do_negate"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Filter_t<B, I>::Vitality_Do_Negate()      { DEFINE_VAR(Bool_t, "p_filter_vitality_do_negate"); }
 
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Male_Female_Argument_Variable()       { DEFINE_INT("p_filter_male_female_argument"); }
+    inline V::Variable_tt<Binary_e>&    Bases_Filter_t<B, I>::Male_Female_Argument()    { DEFINE_VAR(Binary_e, "p_filter_male_female_argument"); }
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Filter_t<B, I>::Unique_Generic_Argument_Variable()    { DEFINE_INT("p_filter_unique_generic_argument"); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Mod_Argument()                            { return Mod_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Mod_Argument(String_t value)              { Mod_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Mod_Do_Negate()                           { return Mod_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Mod_Do_Negate(Bool_t value)               { Mod_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Race_Argument()                           { return Race_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Race_Argument(String_t value)             { Race_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Race_Do_Negate()                          { return Race_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Race_Do_Negate(Bool_t value)              { Race_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Base_Argument()                           { return Base_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Base_Argument(String_t value)             { Base_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Base_Do_Negate()                          { return Base_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Base_Do_Negate(Bool_t value)              { Base_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Template_Argument()                       { return Template_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Template_Argument(String_t value)         { Template_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Template_Do_Negate()                      { return Template_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Template_Do_Negate(Bool_t value)          { Template_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Faction_Argument()                        { return Faction_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Faction_Argument(String_t value)          { Faction_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Faction_Do_Negate()                       { return Faction_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Faction_Do_Negate(Bool_t value)           { Faction_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline String_t     Bases_Filter_t<B, I>::Keyword_Argument()                        { return Keyword_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Keyword_Argument(String_t value)          { Keyword_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Keyword_Do_Negate()                       { return Keyword_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Keyword_Do_Negate(Bool_t value)           { Keyword_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Relation_e   Bases_Filter_t<B, I>::Relation_Argument()                       { return Relation_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Relation_Argument(Relation_e value)       { Relation_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Relation_Do_Negate()                      { return Relation_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Relation_Do_Negate(Bool_t value)          { Relation_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Vitality_e   Bases_Filter_t<B, I>::Vitality_Argument()                       { return Vitality_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Vitality_Argument(Vitality_e value)       { Vitality_Argument_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Bool_t       Bases_Filter_t<B, I>::Vitality_Do_Negate()                      { return Vitality_Do_Negate_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Vitality_Do_Negate(Bool_t value)          { Vitality_Do_Negate_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Binary_e     Bases_Filter_t<B, I>::Male_Female_Argument()                    { return Male_Female_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Male_Female_Argument(Binary_e value)      { Male_Female_Argument_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Binary_e     Bases_Filter_t<B, I>::Unique_Generic_Argument()                 { return Unique_Generic_Argument_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Filter_t<B, I>::Unique_Generic_Argument(Binary_e value)   { Unique_Generic_Argument_Variable()->Value(value); }
+    inline V::Variable_tt<Binary_e>&    Bases_Filter_t<B, I>::Unique_Generic_Argument() { DEFINE_VAR(Binary_e, "p_filter_unique_generic_argument"); }
 
     template <typename B, typename I>
     inline void Bases_Filter_t<B, I>::Clear()
     {
-        Mod_Argument("");
-        Mod_Do_Negate(false);
+        Mod_Argument() = "";
+        Mod_Do_Negate() = false;
 
-        Race_Argument("");
-        Race_Do_Negate(false);
+        Race_Argument() = "";
+        Race_Do_Negate() = false;
 
-        Base_Argument("");
-        Base_Do_Negate(false);
+        Base_Argument() = "";
+        Base_Do_Negate() = false;
 
-        Template_Argument("");
-        Template_Do_Negate(false);
+        Template_Argument() = "";
+        Template_Do_Negate() = false;
 
-        Faction_Argument("");
-        Faction_Do_Negate(false);
+        Faction_Argument() = "";
+        Faction_Do_Negate() = false;
 
-        Keyword_Argument("");
-        Keyword_Do_Negate(false);
+        Keyword_Argument() = "";
+        Keyword_Do_Negate() = false;
 
-        Relation_Argument(Relation_e::NONE);
-        Relation_Do_Negate(false);
+        Relation_Argument() = Relation_e::NONE;
+        Relation_Do_Negate() = false;
 
-        Vitality_Argument(Vitality_e::NONE);
-        Vitality_Do_Negate(false);
+        Vitality_Argument() = Vitality_e::NONE;
+        Vitality_Do_Negate() = false;
 
-        Male_Female_Argument(Binary_e::NONE);
-        Unique_Generic_Argument(Binary_e::NONE);
+        Male_Female_Argument() = Binary_e::NONE;
+        Unique_Generic_Argument() = Binary_e::NONE;
     }
 
     template <typename B, typename I>
@@ -997,67 +908,67 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Mod_Negate_Option()) {
             Bool_t value = Mod_Do_Negate();
-            Mod_Do_Negate(!value);
+            Mod_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Race_Negate_Option()) {
             Bool_t value = Race_Do_Negate();
-            Race_Do_Negate(!value);
+            Race_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Base_Negate_Option()) {
             Bool_t value = Base_Do_Negate();
-            Base_Do_Negate(!value);
+            Base_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Template_Negate_Option()) {
             Bool_t value = Template_Do_Negate();
-            Template_Do_Negate(!value);
+            Template_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Faction_Negate_Option()) {
             Bool_t value = Faction_Do_Negate();
-            Faction_Do_Negate(!value);
+            Faction_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Keyword_Negate_Option()) {
             Bool_t value = Keyword_Do_Negate();
-            Keyword_Do_Negate(!value);
+            Keyword_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Relation_Negate_Option()) {
             Bool_t value = Relation_Do_Negate();
-            Relation_Do_Negate(!value);
+            Relation_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else if (option == Vitality_Negate_Option()) {
             Bool_t value = Vitality_Do_Negate();
-            Vitality_Do_Negate(!value);
+            Vitality_Do_Negate() = !value;
             mcm->Toggle_Option_Value(option, !value);
 
         } else {
             if (Filter()->Toggle_Type() == Toggle_Type_e::EITHER) {
                 if (option == Male_Option()) {
-                    mcm->Toggle_Either(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
+                    mcm->Toggle_Either(Male_Female_Argument(), option, option + 1, Binary_e::A);
                 } else if (option == Female_Option()) {
-                    mcm->Toggle_Either(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
+                    mcm->Toggle_Either(Male_Female_Argument(), option - 1, option, Binary_e::B);
 
                 } else if (option == Unique_Option()) {
-                    mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
+                    mcm->Toggle_Either(Unique_Generic_Argument(), option, option + 1, Binary_e::A);
                 } else if (option == Generic_Option()) {
-                    mcm->Toggle_Either(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
+                    mcm->Toggle_Either(Unique_Generic_Argument(), option - 1, option, Binary_e::B);
 
                 }
             } else if (Filter()->Toggle_Type() == Toggle_Type_e::ANY) {
                 if (option == Male_Option()) {
-                    mcm->Toggle_Any(Male_Female_Argument_Variable(), option, option + 1, Binary_e::A);
+                    mcm->Toggle_Any(Male_Female_Argument(), option, option + 1, Binary_e::A);
                 } else if (option == Female_Option()) {
-                    mcm->Toggle_Any(Male_Female_Argument_Variable(), option - 1, option, Binary_e::B);
+                    mcm->Toggle_Any(Male_Female_Argument(), option - 1, option, Binary_e::B);
 
                 } else if (option == Unique_Option()) {
-                    mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option, option + 1, Binary_e::A);
+                    mcm->Toggle_Any(Unique_Generic_Argument(), option, option + 1, Binary_e::A);
                 } else if (option == Generic_Option()) {
-                    mcm->Toggle_Any(Unique_Generic_Argument_Variable(), option - 1, option, Binary_e::B);
+                    mcm->Toggle_Any(Unique_Generic_Argument(), option - 1, option, Binary_e::B);
 
                 }
             }
@@ -1130,7 +1041,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Mod_Argument(value);
+                Mod_Argument() = value;
                 mcm->Input_Option_Value(Mod_Search_Option(), value, true);
             }
 
@@ -1143,7 +1054,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Race_Argument(value);
+                Race_Argument() = value;
                 mcm->Input_Option_Value(Race_Search_Option(), value, true);
             }
 
@@ -1156,7 +1067,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Base_Argument(value);
+                Base_Argument() = value;
                 mcm->Input_Option_Value(Base_Search_Option(), value, true);
             }
 
@@ -1169,7 +1080,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Template_Argument(value);
+                Template_Argument() = value;
                 mcm->Input_Option_Value(Template_Search_Option(), value, true);
             }
 
@@ -1182,7 +1093,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Faction_Argument(value);
+                Faction_Argument() = value;
                 mcm->Input_Option_Value(Faction_Search_Option(), value, true);
             }
 
@@ -1195,7 +1106,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Keyword_Argument(value);
+                Keyword_Argument() = value;
                 mcm->Input_Option_Value(Keyword_Search_Option(), value, true);
             }
 
@@ -1208,7 +1119,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument(mcm->From_Relation_Key(value.data));
+                Relation_Argument() = mcm->From_Relation_Key(value.data);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -1221,7 +1132,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Vitality_Argument(mcm->From_Vitality_Key(value.data));
+                Vitality_Argument() = mcm->From_Vitality_Key(value.data);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -1248,27 +1159,27 @@ namespace doticu_npcl { namespace MCM {
         some<Main_t*> mcm = Main_t::Self();
 
         if (option == Mod_Search_Option()) {
-            Mod_Argument(value);
+            Mod_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Race_Search_Option()) {
-            Race_Argument(value);
+            Race_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Base_Search_Option()) {
-            Base_Argument(value);
+            Base_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Template_Search_Option()) {
-            Template_Argument(value);
+            Template_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Faction_Search_Option()) {
-            Faction_Argument(value);
+            Faction_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         } else if (option == Keyword_Search_Option()) {
-            Keyword_Argument(value);
+            Keyword_Argument() = value;
             mcm->Input_Option_Value(option, value, true);
 
         }
@@ -1302,37 +1213,37 @@ namespace doticu_npcl { namespace MCM {
     Item_Sections_t Bases_Options_t<B, I>::item_sections;
 
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::back_option              = -1;
+    Int_t   Bases_Options_t<B, I>::back_option                  = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::reset_option             = -1;
+    Int_t   Bases_Options_t<B, I>::reset_option                 = -1;
 
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::do_smart_select_option = -1;
+    Int_t   Bases_Options_t<B, I>::do_smart_select_option       = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::do_smart_sections_option = -1;
+    Int_t   Bases_Options_t<B, I>::do_smart_sections_option     = -1;
     template <typename B, typename I>
     Int_t   Bases_Options_t<B, I>::do_uncombative_spawns_option = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::do_persistent_spawns_option = -1;
+    Int_t   Bases_Options_t<B, I>::do_persistent_spawns_option  = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::do_static_spawns_option = -1;
+    Int_t   Bases_Options_t<B, I>::do_static_spawns_option      = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::do_verify_spawns_option  = -1;
+    Int_t   Bases_Options_t<B, I>::do_verify_spawns_option      = -1;
 
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::bases_section_option     = -1;
+    Int_t   Bases_Options_t<B, I>::bases_section_option         = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::commands_section_option  = -1;
+    Int_t   Bases_Options_t<B, I>::commands_section_option      = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::factions_section_option  = -1;
+    Int_t   Bases_Options_t<B, I>::factions_section_option      = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::keywords_section_option  = -1;
+    Int_t   Bases_Options_t<B, I>::keywords_section_option      = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::mods_section_option      = -1;
+    Int_t   Bases_Options_t<B, I>::mods_section_option          = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::races_section_option     = -1;
+    Int_t   Bases_Options_t<B, I>::races_section_option         = -1;
     template <typename B, typename I>
-    Int_t   Bases_Options_t<B, I>::templates_section_option = -1;
+    Int_t   Bases_Options_t<B, I>::templates_section_option     = -1;
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Reset_Option_Ints()
@@ -1372,60 +1283,29 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Smart_Select_Variable()       { DEFINE_BOOL("p_options_do_smart_select"); }
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Smart_Select()        { DEFINE_VAR(Bool_t, "p_options_do_smart_select"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Smart_Sections_Variable()     { DEFINE_BOOL("p_options_do_smart_sections"); }
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Smart_Sections()      { DEFINE_VAR(Bool_t, "p_options_do_smart_sections"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Uncombative_Spawns_Variable() { DEFINE_BOOL("p_options_do_uncombative_spawns"); }
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Uncombative_Spawns()  { DEFINE_VAR(Bool_t, "p_options_do_uncombative_spawns"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Persistent_Spawns_Variable()  { DEFINE_BOOL("p_options_do_persistent_spawns"); }
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Persistent_Spawns()   { DEFINE_VAR(Bool_t, "p_options_do_persistent_spawns"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Static_Spawns_Variable()      { DEFINE_BOOL("p_options_do_static_spawns"); }
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Static_Spawns()       { DEFINE_VAR(Bool_t, "p_options_do_static_spawns"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*              Bases_Options_t<B, I>::Do_Verify_Spawns_Variable()      { DEFINE_BOOL("p_options_do_verify_spawns"); }
-
+    inline V::Variable_tt<Bool_t>&              Bases_Options_t<B, I>::Do_Verify_Spawns()       { DEFINE_VAR(Bool_t, "p_options_do_verify_spawns"); }
     template <typename B, typename I>
-    inline V::Array_Variable_t<String_t>*   Bases_Options_t<B, I>::Item_Sections_Variable()         { DEFINE_ARRAY_VARIABLE(String_t, "p_options_item_sections"); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Select()                    { return Do_Smart_Select_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Smart_Select(Bool_t value)        { Do_Smart_Select_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Smart_Sections()                  { return Do_Smart_Sections_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Smart_Sections(Bool_t value)      { Do_Smart_Sections_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Uncombative_Spawns()              { return Do_Uncombative_Spawns_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Uncombative_Spawns(Bool_t value)  { Do_Uncombative_Spawns_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Persistent_Spawns()               { return Do_Persistent_Spawns_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Persistent_Spawns(Bool_t value)   { Do_Persistent_Spawns_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Static_Spawns()                   { return Do_Static_Spawns_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Static_Spawns(Bool_t value)       { Do_Static_Spawns_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t   Bases_Options_t<B, I>::Do_Verify_Spawns()                   { return Do_Verify_Spawns_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void     Bases_Options_t<B, I>::Do_Verify_Spawns(Bool_t value)       { Do_Verify_Spawns_Variable()->Value(value); }
+    inline V::Variable_tt<Vector_t<String_t>>&  Bases_Options_t<B, I>::Item_Sections()          { DEFINE_VAR(Vector_t<String_t>, "p_options_item_sections"); }
 
     template <typename B, typename I>
     inline void Bases_Options_t<B, I>::Reset()
     {
-        Do_Smart_Select(true);
-        Do_Smart_Sections(true);
-        Do_Uncombative_Spawns(true);
-        Do_Persistent_Spawns(true);
-        Do_Static_Spawns(true);
-        Do_Verify_Spawns(true);
+        Do_Smart_Select() = true;
+        Do_Smart_Sections() = true;
+        Do_Uncombative_Spawns() = true;
+        Do_Persistent_Spawns() = true;
+        Do_Static_Spawns() = true;
+        Do_Verify_Spawns() = true;
 
         item_sections.Reset(Options()->Default_Item_Sections());
     }
@@ -1452,7 +1332,7 @@ namespace doticu_npcl { namespace MCM {
     {
         some<Main_t*> mcm = Main_t::Self();
 
-        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+        if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
             mcm->Add_Empty_Option();
         }
 
@@ -1465,7 +1345,7 @@ namespace doticu_npcl { namespace MCM {
     {
         some<Main_t*> mcm = Main_t::Self();
 
-        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+        if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
             mcm->Add_Empty_Option();
         }
 
@@ -1485,7 +1365,7 @@ namespace doticu_npcl { namespace MCM {
     {
         some<Main_t*> mcm = Main_t::Self();
 
-        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+        if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
             mcm->Add_Empty_Option();
         }
 
@@ -1494,7 +1374,7 @@ namespace doticu_npcl { namespace MCM {
 
         Options()->Build_Section_Options_Impl();
 
-        if (skylib::Is_Odd(mcm->Cursor_Position())) {
+        if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
             mcm->Add_Empty_Option();
         }
     }
@@ -1620,7 +1500,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t Bases_Options_t<B, I>::Try_On_Load()
     {
-        if (!item_sections.Deserialize<Bases_Item_Section_e>(Item_Sections_Variable())) {
+        if (!item_sections.Deserialize<Bases_Item_Section_e>(Item_Sections())) {
             item_sections.Reset(Options()->Default_Item_Sections());
         }
         return true;
@@ -1629,7 +1509,7 @@ namespace doticu_npcl { namespace MCM {
     template <typename B, typename I>
     inline Bool_t Bases_Options_t<B, I>::Try_On_Save()
     {
-        item_sections.Serialize<Bases_Item_Section_e>(Item_Sections_Variable());
+        item_sections.Serialize<Bases_Item_Section_e>(Item_Sections());
         return true;
     }
 
@@ -1654,27 +1534,27 @@ namespace doticu_npcl { namespace MCM {
             return true;
 
         } else if (option == do_smart_select_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Smart_Select_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Smart_Select(), option, lcallback);
             return true;
 
         } else if (option == do_smart_sections_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Smart_Sections_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Smart_Sections(), option, lcallback);
             return true;
 
         } else if (option == do_uncombative_spawns_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Uncombative_Spawns_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Uncombative_Spawns(), option, lcallback);
             return true;
 
         } else if (option == do_persistent_spawns_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Persistent_Spawns_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Persistent_Spawns(), option, lcallback);
             return true;
 
         } else if (option == do_static_spawns_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Static_Spawns_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Static_Spawns(), option, lcallback);
             return true;
 
         } else if (option == do_verify_spawns_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Verify_Spawns_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Verify_Spawns(), option, lcallback);
             return true;
 
         } else if (option == bases_section_option) {
@@ -2009,31 +1889,31 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline V::String_Variable_t*    Bases_Item_t<B, I>::Nested_View_Variable()          { DEFINE_STRING("p_item_nested_view"); }
+    inline V::Variable_tt<String_t>&    Bases_Item_t<B, I>::Nested_View_Variable()  { DEFINE_VAR(String_t, "p_item_nested_view"); }
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Index_Variable()         { DEFINE_INT("p_item_nested_index"); }
+    inline V::Variable_tt<Int_t>&       Bases_Item_t<B, I>::Nested_Index()          { DEFINE_VAR(Int_t, "p_item_nested_index"); }
     template <typename B, typename I>
-    inline V::Int_Variable_t*       Bases_Item_t<B, I>::Nested_Form_Variable()          { DEFINE_INT("p_item_nested_form"); }
+    inline V::Variable_tt<Form_ID_t>&   Bases_Item_t<B, I>::Nested_Form()           { DEFINE_VAR(Form_ID_t, "p_item_nested_form"); }
 
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Bases_Variable()        { DEFINE_BOOL("p_item_do_show_bases"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Bases()         { DEFINE_VAR(Bool_t, "p_item_do_show_bases"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Commands_Variable()     { DEFINE_BOOL("p_item_do_show_commands"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Commands()      { DEFINE_VAR(Bool_t, "p_item_do_show_commands"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Factions_Variable()     { DEFINE_BOOL("p_item_do_show_factions"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Factions()      { DEFINE_VAR(Bool_t, "p_item_do_show_factions"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Keywords_Variable()     { DEFINE_BOOL("p_item_do_show_keywords"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Keywords()      { DEFINE_VAR(Bool_t, "p_item_do_show_keywords"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Mods_Variable()         { DEFINE_BOOL("p_item_do_show_mods"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Mods()          { DEFINE_VAR(Bool_t, "p_item_do_show_mods"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Races_Variable()        { DEFINE_BOOL("p_item_do_show_races"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Races()         { DEFINE_VAR(Bool_t, "p_item_do_show_races"); }
     template <typename B, typename I>
-    inline V::Bool_Variable_t*      Bases_Item_t<B, I>::Do_Show_Templates_Variable()    { DEFINE_BOOL("p_item_do_show_templates"); }
+    inline V::Variable_tt<Bool_t>&      Bases_Item_t<B, I>::Do_Show_Templates()     { DEFINE_VAR(Bool_t, "p_item_do_show_templates"); }
 
     template <typename B, typename I>
     inline Bases_Item_View_e Bases_Item_t<B, I>::Nested_View()
     {
-        String_t nested_view = Nested_View_Variable()->Value();
+        String_t nested_view = Nested_View_Variable();
         if (CString_t::Is_Same(nested_view, ITEM_VIEW, true)) {
             return Bases_Item_View_e::ITEM;
         } else if (CString_t::Is_Same(nested_view, BASES_VIEW, true)) {
@@ -2041,7 +1921,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (CString_t::Is_Same(nested_view, BASES_ITEM_VIEW, true)) {
             return Bases_Item_View_e::BASES_ITEM;
         } else {
-            Nested_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable() = ITEM_VIEW;
             return Bases_Item_View_e::ITEM;
         }
     }
@@ -2050,59 +1930,15 @@ namespace doticu_npcl { namespace MCM {
     inline void Bases_Item_t<B, I>::Nested_View(Bases_Item_View_e value)
     {
         if (value == Bases_Item_View_e::ITEM) {
-            Nested_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable() = ITEM_VIEW;
         } else if (value == Bases_Item_View_e::BASES) {
-            Nested_View_Variable()->Value(BASES_VIEW);
+            Nested_View_Variable() = BASES_VIEW;
         } else if (value == Bases_Item_View_e::BASES_ITEM) {
-            Nested_View_Variable()->Value(BASES_ITEM_VIEW);
+            Nested_View_Variable() = BASES_ITEM_VIEW;
         } else {
-            Nested_View_Variable()->Value(ITEM_VIEW);
+            Nested_View_Variable() = ITEM_VIEW;
         }
     }
-
-    template <typename B, typename I>
-    inline Int_t        Bases_Item_t<B, I>::Nested_Index()                  { return Nested_Index_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Nested_Index(Int_t value)       { Nested_Index_Variable()->Value(value); }
-    template <typename B, typename I>
-    inline Form_ID_t    Bases_Item_t<B, I>::Nested_Form()                   { return Nested_Form_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Nested_Form(Form_ID_t value)    { Nested_Form_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Bases()                 { return Do_Show_Bases_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Bases(Bool_t value)     { Do_Show_Bases_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Commands()              { return Do_Show_Commands_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Commands(Bool_t value)  { Do_Show_Commands_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Factions()              { return Do_Show_Factions_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Factions(Bool_t value)  { Do_Show_Factions_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Keywords()              { return Do_Show_Keywords_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Keywords(Bool_t value)  { Do_Show_Keywords_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Mods()                  { return Do_Show_Mods_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Mods(Bool_t value)      { Do_Show_Mods_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Races()                 { return Do_Show_Races_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Races(Bool_t value)     { Do_Show_Races_Variable()->Value(value); }
-
-    template <typename B, typename I>
-    inline Bool_t       Bases_Item_t<B, I>::Do_Show_Templates()             { return Do_Show_Templates_Variable()->Value(); }
-    template <typename B, typename I>
-    inline void         Bases_Item_t<B, I>::Do_Show_Templates(Bool_t value) { Do_Show_Templates_Variable()->Value(value); }
 
     template <typename B, typename I>
     inline void Bases_Item_t<B, I>::Build_Sections(Vector_t<Buildable_i*> buildables)
@@ -2210,7 +2046,7 @@ namespace doticu_npcl { namespace MCM {
                         mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2255,7 +2091,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2311,7 +2147,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2346,7 +2182,7 @@ namespace doticu_npcl { namespace MCM {
                     view_nested_option = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_); // 3
                     mcm->Add_Empty_Option(); // 4
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2383,7 +2219,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2415,7 +2251,7 @@ namespace doticu_npcl { namespace MCM {
                     race_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_); // 1
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_); // 2
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2455,7 +2291,7 @@ namespace doticu_npcl { namespace MCM {
                         );
                     }
 
-                    if (skylib::Is_Odd(mcm->Cursor_Position())) {
+                    if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
                     }
                 }
@@ -2610,31 +2446,31 @@ namespace doticu_npcl { namespace MCM {
             return true;
 
         } else if (option == show_bases_option || option == show_bases_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Bases_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Bases(), option, lcallback);
             return true;
 
         } else if (option == show_commands_option || option == show_commands_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Commands_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Commands(), option, lcallback);
             return true;
 
         } else if (option == show_factions_option || option == show_factions_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Factions_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Factions(), option, lcallback);
             return true;
 
         } else if (option == show_keywords_option || option == show_keywords_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Keywords_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Keywords(), option, lcallback);
             return true;
 
         } else if (option == show_mods_option || option == show_mods_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Mods_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Mods(), option, lcallback);
             return true;
 
         } else if (option == show_races_option || option == show_races_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Races_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Races(), option, lcallback);
             return true;
 
         } else if (option == show_templates_option || option == show_templates_option - 1) {
-            mcm->Toggle_And_Reset(Do_Show_Templates_Variable(), option, lcallback);
+            mcm->Toggle_And_Reset(Do_Show_Templates(), option, lcallback);
             return true;
 
         } else {
@@ -2759,7 +2595,3 @@ namespace doticu_npcl { namespace MCM {
     }
 
 }}
-
-#undef DEFINE_BOOL
-#undef DEFINE_INT
-#undef DEFINE_STRING

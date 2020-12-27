@@ -30,18 +30,13 @@ namespace doticu_npcl { namespace MCM {
         Translate_Page_Titles_Option()  = -1;
     }
 
-    V::Bool_Variable_t* Global_Options_t::Prioritize_MCM_Menu_Variable()        { DEFINE_BOOL_VARIABLE("p_prioritize_mcm_menu"); }
-    V::Bool_Variable_t* Global_Options_t::Translate_Page_Titles_Variable()      { DEFINE_BOOL_VARIABLE("p_translate_page_titles"); }
-
-    Bool_t              Global_Options_t::Prioritize_MCM_Menu()                 { return Prioritize_MCM_Menu_Variable()->Value(); }
-    void                Global_Options_t::Prioritize_MCM_Menu(Bool_t value)     { Prioritize_MCM_Menu_Variable()->Value(value); Update_MCM_Menu_Name(); }
-    Bool_t              Global_Options_t::Translate_Page_Titles()               { return Translate_Page_Titles_Variable()->Value(); }
-    void                Global_Options_t::Translate_Page_Titles(Bool_t value)   { Translate_Page_Titles_Variable()->Value(value); }
+    V::Variable_tt<Bool_t>& Global_Options_t::Prioritize_MCM_Menu()     { DEFINE_VARIABLE_REFERENCE(Bool_t, "p_prioritize_mcm_menu"); }
+    V::Variable_tt<Bool_t>& Global_Options_t::Translate_Page_Titles()   { DEFINE_VARIABLE_REFERENCE(Bool_t, "p_translate_page_titles"); }
 
     void Global_Options_t::Reset()
     {
-        Prioritize_MCM_Menu(false);
-        Translate_Page_Titles(false);
+        Prioritize_MCM_Menu() = false;
+        Translate_Page_Titles() = false;
     }
 
     void Global_Options_t::Update_MCM_Menu_Name()
@@ -55,10 +50,10 @@ namespace doticu_npcl { namespace MCM {
 
     void Global_Options_t::On_Init()
     {
-        Main_t::Self()->Mod_Name(Main_t::UNPRIORITIZED_MOD_NAME);
+        Main_t::Self()->Mod_Name() = Main_t::UNPRIORITIZED_MOD_NAME;
 
         if (skylib::Translations_t::Are_English()) {
-            Translate_Page_Titles(false);
+            Translate_Page_Titles() = false;
         }
     }
 
@@ -67,7 +62,7 @@ namespace doticu_npcl { namespace MCM {
         Update_MCM_Menu_Name();
 
         if (skylib::Translations_t::Are_English()) {
-            Translate_Page_Titles(false);
+            Translate_Page_Titles() = false;
         }
     }
 
@@ -89,8 +84,8 @@ namespace doticu_npcl { namespace MCM {
 
         Reset_Option_Ints();
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         mcm->Title_Text(Main_t::GLOBAL_OPTIONS);
 
@@ -118,7 +113,7 @@ namespace doticu_npcl { namespace MCM {
 
         } else if (option == Prioritize_MCM_Menu_Option()) {
             Bool_t value = Prioritize_MCM_Menu();
-            Prioritize_MCM_Menu(!value);
+            Prioritize_MCM_Menu() = !value;
             mcm->Toggle_Option_Value(option, !value);
             mcm->Destroy_Latent_Callback(lcallback);
 
@@ -148,7 +143,7 @@ namespace doticu_npcl { namespace MCM {
                 );
             } else {
                 Bool_t value = Translate_Page_Titles();
-                Translate_Page_Titles(!value);
+                Translate_Page_Titles() = !value;
                 mcm->Toggle_Option_Value(option, !value);
                 mcm->Destroy_Latent_Callback(lcallback);
             }
@@ -198,12 +193,12 @@ namespace doticu_npcl { namespace MCM {
         some<Main_t*> mcm = Main_t::Self();
 
         if (option == Reset_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_RESET_OPTIONS);
+            mcm->Current_Info_Text() = Main_t::HIGHLIGHT_RESET_OPTIONS;
 
         } else if (option == Prioritize_MCM_Menu_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_PRIORITIZE_MCM_MENU);
+            mcm->Current_Info_Text() = Main_t::HIGHLIGHT_PRIORITIZE_MCM_MENU;
         } else if (option == Translate_Page_Titles_Option()) {
-            mcm->Info_Text(Main_t::HIGHLIGHT_TRANSLATE_PAGE_TITLES);
+            mcm->Current_Info_Text() = Main_t::HIGHLIGHT_TRANSLATE_PAGE_TITLES;
         }
 
         mcm->Destroy_Latent_Callback(lcallback);

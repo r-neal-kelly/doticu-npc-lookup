@@ -101,8 +101,8 @@ namespace doticu_npcl { namespace MCM {
 
         Reset_Option_Ints();
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Vector_t<Item_t>& loaded_actors = Items();
         size_t loaded_actor_count = loaded_actors.size();
@@ -114,10 +114,10 @@ namespace doticu_npcl { namespace MCM {
             Int_t page_index = Page_Index();
             if (page_index < 0) {
                 page_index = 0;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             } else if (page_index >= page_count) {
                 page_index = page_count - 1;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             if (mcm->Should_Translate_Page_Titles()) {
@@ -195,7 +195,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index -= 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -215,7 +215,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index += 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -229,7 +229,7 @@ namespace doticu_npcl { namespace MCM {
                 Item_t item = items[item_index];
                 if (item && item->Is_Valid()) {
                     mcm->Disable_Option(option);
-                    Item()->Actor_Form_ID(item->form_id);
+                    Item()->Actor_Form_ID() = item->form_id;
                     Current_View(Bases_View_e::ITEM);
                     mcm->Reset_Page();
                 }
@@ -260,8 +260,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_FILTER));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Filters(Main_t::LOADED_REFERENCE);
 
@@ -284,8 +284,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_LOADED_REFERENCES, Main_t::SAFE_COMPONENT_OPTIONS));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Header_Options();
         Build_General_Options();
@@ -298,10 +298,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Loaded_References_Item_t::Actor_Form_ID_Variable()          { DEFINE_INT_VARIABLE("p_item_actor_form_id"); }
-
-    Form_ID_t           Loaded_References_Item_t::Actor_Form_ID()                   { return Actor_Form_ID_Variable()->Value(); }
-    void                Loaded_References_Item_t::Actor_Form_ID(Form_ID_t value)    { Actor_Form_ID_Variable()->Value(value); }
+    V::Variable_tt<Form_ID_t>& Loaded_References_Item_t::Actor_Form_ID() { DEFINE_VAR(Form_ID_t, "p_item_actor_form_id"); }
 
     Item_t Loaded_References_Item_t::Current_Item()
     {
@@ -316,7 +313,7 @@ namespace doticu_npcl { namespace MCM {
     Bool_t Loaded_References_Item_t::Current_Item(Item_t item)
     {
         if (item && item->Is_Valid()) {
-            Actor_Form_ID(item->form_id);
+            Actor_Form_ID() = item->form_id;
             return true;
         } else {
             return false;
@@ -386,8 +383,8 @@ namespace doticu_npcl { namespace MCM {
                     );
                 }
 
-                mcm->Cursor_Position(0);
-                mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+                mcm->Current_Cursor_Position() = 0;
+                mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
                 Int_t unused_option;
                 Build_Header(unused_option, Main_t::_NONE_, List()->Items().size());

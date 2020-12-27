@@ -15,14 +15,12 @@ namespace doticu_npcl { namespace MCM {
     class Selectable_Data_t
     {
     public:
-        using Filter_t              = std::remove_pointer_t<decltype(Base_t::Self()->Filter()())>;
+        using Filter_t      = std::remove_pointer_t<decltype(Base_t::Self()->Filter()())>;
 
-        using Smart_Get_f           = String_t(Filter_t::*)();
-        using Smart_Set_f           = void(Filter_t::*)(String_t);
-        using Smart_Get_Relation_f  = Relation_e(Filter_t::*)();
-        using Smart_Set_Relation_f  = void(Filter_t::*)(Relation_e);
-        using Smart_Get_Vitality_f  = Vitality_e(Filter_t::*)();
-        using Smart_Set_Vitality_f  = void(Filter_t::*)(Vitality_e);
+        using String_f      = V::Variable_tt<String_t>&(Filter_t::*)();
+        using Relation_f    = V::Variable_tt<Relation_e>&(Filter_t::*)();
+        using Vitality_f    = V::Variable_tt<Vitality_e>& (Filter_t::*)();
+        using Binary_f      = V::Variable_tt<Binary_e>&(Filter_t::*)();
 
         using Select_f          = void(*)(Item_t, Vector_t<String_t>&);
         using Select_Relation_f = void(*)(Item_t, Actor_Base_t*, Vector_t<String_t>&);
@@ -32,55 +30,36 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<String_t>  buffer;
         Vector_t<String_t>  results;
 
-        Selectable_Data_t(Smart_Get_f smart_get_f,
-                          Smart_Set_f smart_set_f,
-                          Select_f select_f)
+        Selectable_Data_t(String_f string_f, Select_f select_f)
         {
-            Init(smart_get_f, smart_set_f);
+            Init<String_f, String_t>(string_f, "");
             Select(select_f);
             Sort();
         }
 
-        Selectable_Data_t(Smart_Get_Relation_f smart_get_f,
-                          Smart_Set_Relation_f smart_set_f,
-                          Select_Relation_f select_f,
-                          Actor_Base_t* base_to_compare)
+        Selectable_Data_t(Relation_f relation_f, Select_Relation_f select_f, Actor_Base_t* base_to_compare)
         {
-            Init(smart_get_f, smart_set_f);
+            Init<Relation_f, Relation_e>(relation_f, Relation_e::NONE);
             Select(select_f, base_to_compare);
             Sort();
         }
 
-        Selectable_Data_t(Smart_Get_Vitality_f smart_get_f,
-                          Smart_Set_Vitality_f smart_set_f,
-                          Select_f select_f)
+        Selectable_Data_t(Vitality_f vitality_f, Select_f select_f)
         {
-            Init(smart_get_f, smart_set_f);
+            Init<Vitality_f, Vitality_e>(vitality_f, Vitality_e::NONE);
             Select(select_f);
             Sort();
         }
 
-        inline void Init(Smart_Get_f smart_get_f, Smart_Set_f smart_set_f)
+        Selectable_Data_t(Binary_f binary_f, Select_f select_f)
         {
-            auto self = Base_t::Self();
-            auto list = self->List();
-            auto filter = self->Filter();
-            auto options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                String_t current = (filter()->*smart_get_f)();
-                (filter()->*smart_set_f)("");
-                list->do_update_items = true;
-                items = list->Items();
-                (filter()->*smart_set_f)(current);
-            } else {
-                items = list->Default_Items();
-            }
-
-            Reserve();
+            Init<Binary_f, Binary_e>(binary_f, Binary_e::NONE);
+            Select(select_f);
+            Sort();
         }
 
-        inline void Init(Smart_Get_Relation_f smart_get_f, Smart_Set_Relation_f smart_set_f)
+        template <typename Smart_f, typename Value_t>
+        inline void Init(Smart_f smart_f, Value_t temp_value)
         {
             auto self = Base_t::Self();
             auto list = self->List();
@@ -88,31 +67,11 @@ namespace doticu_npcl { namespace MCM {
             auto options = self->Options();
 
             if (options->Do_Smart_Select()) {
-                Relation_e current = (filter()->*smart_get_f)();
-                (filter()->*smart_set_f)(Relation_e::NONE);
+                Value_t current = (filter()->*smart_f)();
+                (filter()->*smart_f)() = temp_value;
                 list->do_update_items = true;
                 items = list->Items();
-                (filter()->*smart_set_f)(current);
-            } else {
-                items = list->Default_Items();
-            }
-
-            Reserve();
-        }
-
-        inline void Init(Smart_Get_Vitality_f smart_get_f, Smart_Set_Vitality_f smart_set_f)
-        {
-            auto self = Base_t::Self();
-            auto list = self->List();
-            auto filter = self->Filter();
-            auto options = self->Options();
-
-            if (options->Do_Smart_Select()) {
-                Vitality_e current = (filter()->*smart_get_f)();
-                (filter()->*smart_set_f)(Vitality_e::NONE);
-                list->do_update_items = true;
-                items = list->Items();
-                (filter()->*smart_set_f)(current);
+                (filter()->*smart_f)() = current;
             } else {
                 items = list->Default_Items();
             }
@@ -192,7 +151,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Mods_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Mod_Argument, &Filter_t::Mod_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Mod_Argument, select_f)
         {
         }
     };
@@ -285,7 +244,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Races_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Race_Argument, &Filter_t::Race_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Race_Argument, select_f)
         {
         }
     };
@@ -363,7 +322,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Bases_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Base_Argument, &Filter_t::Base_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Base_Argument, select_f)
         {
         }
     };
@@ -436,7 +395,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Templates_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Template_Argument, &Filter_t::Template_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Template_Argument, select_f)
         {
         }
     };
@@ -521,7 +480,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Factions_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Faction_Argument, &Filter_t::Faction_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Faction_Argument, select_f)
         {
         }
     };
@@ -630,7 +589,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Keywords_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Keyword_Argument, &Filter_t::Keyword_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Keyword_Argument, select_f)
         {
         }
     };
@@ -719,7 +678,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_References_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Reference_Argument, &Filter_t::Reference_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Reference_Argument, select_f)
         {
         }
     };
@@ -756,7 +715,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Worldspaces_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Worldspace_Argument, &Filter_t::Worldspace_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Worldspace_Argument, select_f)
         {
         }
     };
@@ -816,7 +775,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Locations_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Location_Argument, &Filter_t::Location_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Location_Argument, select_f)
         {
         }
     };
@@ -873,7 +832,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Cells_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Cell_Argument, &Filter_t::Cell_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Cell_Argument, select_f)
         {
         }
     };
@@ -930,7 +889,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Quests_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Quest_Argument, &Filter_t::Quest_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Quest_Argument, select_f)
         {
         }
     };
@@ -993,7 +952,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Relations_i(Select_Relation_f select_f, Actor_Base_t* base_to_compare) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Relation_Argument, &Filter_t::Relation_Argument, select_f, base_to_compare)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Relation_Argument, select_f, base_to_compare)
         {
         }
     };
@@ -1074,7 +1033,7 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Selectable_Vitalities_i(Select_f select_f) :
-            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Vitality_Argument, &Filter_t::Vitality_Argument, select_f)
+            Selectable_Data_t<Base_t, Item_t>(&Filter_t::Vitality_Argument, select_f)
         {
         }
     };

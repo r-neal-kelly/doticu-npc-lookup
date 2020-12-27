@@ -319,8 +319,8 @@ namespace doticu_npcl { namespace MCM {
     {
         some<Main_t*> mcm = Main_t::Self();
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Int_t marked_count = Marked_Count();
         if (marked_count > 0) {

@@ -94,10 +94,7 @@ namespace doticu_npcl {
         using Variable_t        = skylib::Virtual::Variable_t;
 
         template <typename T>
-        using Array_Variable_t  = skylib::Virtual::Array_Variable_t<T>;
-        using Bool_Variable_t   = skylib::Virtual::Bool_Variable_t;
-        using Int_Variable_t    = skylib::Virtual::Int_Variable_t;
-        using String_Variable_t = skylib::Virtual::String_Variable_t;
+        using Variable_tt       = skylib::Virtual::Variable_tt<T>;
 
     }
 

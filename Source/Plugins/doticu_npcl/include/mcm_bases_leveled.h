@@ -96,11 +96,7 @@ namespace doticu_npcl { namespace MCM {
     class Leveled_Bases_Item_t : public Bases_Item_t<Leveled_Bases_Base_t, Leveled_Bases_Base_t::Item_t>
     {
     public:
-        V::Int_Variable_t* Leveled_Form_ID_Variable();
-
-    public:
-        Form_ID_t   Leveled_Form_ID();
-        void        Leveled_Form_ID(Form_ID_t value);
+        V::Variable_tt<Form_ID_t>& Leveled_Form_ID();
 
     public:
         Item_t                          Current_Item();

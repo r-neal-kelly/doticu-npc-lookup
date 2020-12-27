@@ -86,11 +86,7 @@ namespace doticu_npcl { namespace MCM {
     class Static_Bases_Item_t : public Bases_Item_t<Static_Bases_Base_t, Static_Bases_Base_t::Item_t>
     {
     public:
-        V::Int_Variable_t* Static_Form_ID_Variable();
-
-    public:
-        Form_ID_t   Static_Form_ID();
-        void        Static_Form_ID(Form_ID_t value);
+        V::Variable_tt<Form_ID_t>& Static_Form_ID();
 
     public:
         Item_t  Current_Item();

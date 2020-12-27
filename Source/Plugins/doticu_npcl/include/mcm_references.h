@@ -87,59 +87,24 @@ namespace doticu_npcl { namespace MCM {
         void    Reset_Option_Ints();
 
     public:
-        V::String_Variable_t*   Reference_Argument_Variable();
-        V::Bool_Variable_t*     Reference_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Reference_Argument();
+        V::Variable_tt<Bool_t>&     Reference_Do_Negate();
 
-        V::String_Variable_t*   Worldspace_Argument_Variable();
-        V::Bool_Variable_t*     Worldspace_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Worldspace_Argument();
+        V::Variable_tt<Bool_t>&     Worldspace_Do_Negate();
 
-        V::String_Variable_t*   Location_Argument_Variable();
-        V::Bool_Variable_t*     Location_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Location_Argument();
+        V::Variable_tt<Bool_t>&     Location_Do_Negate();
 
-        V::String_Variable_t*   Cell_Argument_Variable();
-        V::Bool_Variable_t*     Cell_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Cell_Argument();
+        V::Variable_tt<Bool_t>&     Cell_Do_Negate();
 
-        V::String_Variable_t*   Quest_Argument_Variable();
-        V::Bool_Variable_t*     Quest_Do_Negate_Variable();
+        V::Variable_tt<String_t>&   Quest_Argument();
+        V::Variable_tt<Bool_t>&     Quest_Do_Negate();
 
-        V::Int_Variable_t*      Interior_Exterior_Argument_Variable();
-        V::Int_Variable_t*      Alive_Dead_Argument_Variable();
-        V::Int_Variable_t*      Is_Teammate_Argument_Variable();
-
-    public:
-        String_t    Reference_Argument();
-        void        Reference_Argument(String_t value);
-        Bool_t      Reference_Do_Negate();
-        void        Reference_Do_Negate(Bool_t value);
-
-        String_t    Worldspace_Argument();
-        void        Worldspace_Argument(String_t value);
-        Bool_t      Worldspace_Do_Negate();
-        void        Worldspace_Do_Negate(Bool_t value);
-
-        String_t    Location_Argument();
-        void        Location_Argument(String_t value);
-        Bool_t      Location_Do_Negate();
-        void        Location_Do_Negate(Bool_t value);
-
-        String_t    Cell_Argument();
-        void        Cell_Argument(String_t value);
-        Bool_t      Cell_Do_Negate();
-        void        Cell_Do_Negate(Bool_t value);
-
-        String_t    Quest_Argument();
-        void        Quest_Argument(String_t value);
-        Bool_t      Quest_Do_Negate();
-        void        Quest_Do_Negate(Bool_t value);
-
-        Binary_e    Interior_Exterior_Argument();
-        void        Interior_Exterior_Argument(Binary_e value);
-
-        Binary_e    Alive_Dead_Argument();
-        void        Alive_Dead_Argument(Binary_e value);
-
-        Binary_e    Is_Teammate_Argument();
-        void        Is_Teammate_Argument(Binary_e value);
+        V::Variable_tt<Binary_e>&   Interior_Exterior_Argument();
+        V::Variable_tt<Binary_e>&   Alive_Dead_Argument();
+        V::Variable_tt<Binary_e>&   Is_Teammate_Argument();
 
     public:
         void                    Clear();
@@ -220,23 +185,11 @@ namespace doticu_npcl { namespace MCM {
         void    Reset_Option_Ints();
 
     public:
-        V::Bool_Variable_t* Do_Show_Cells_Variable();
-        V::Bool_Variable_t* Do_Show_Locations_Variable();
-        V::Bool_Variable_t* Do_Show_Quests_Variable();
-        V::Bool_Variable_t* Do_Show_References_Variable();
-        V::Bool_Variable_t* Do_Show_Worldspaces_Variable();
-
-    public:
-        Bool_t  Do_Show_Cells();
-        void    Do_Show_Cells(Bool_t value);
-        Bool_t  Do_Show_Locations();
-        void    Do_Show_Locations(Bool_t value);
-        Bool_t  Do_Show_Quests();
-        void    Do_Show_Quests(Bool_t value);
-        Bool_t  Do_Show_References();
-        void    Do_Show_References(Bool_t value);
-        Bool_t  Do_Show_Worldspaces();
-        void    Do_Show_Worldspaces(Bool_t value);
+        V::Variable_tt<Bool_t>& Do_Show_Cells();
+        V::Variable_tt<Bool_t>& Do_Show_Locations();
+        V::Variable_tt<Bool_t>& Do_Show_Quests();
+        V::Variable_tt<Bool_t>& Do_Show_References();
+        V::Variable_tt<Bool_t>& Do_Show_Worldspaces();
 
     public:
         void    Build_Bases(Vector_t<Actor_Base_t*> actor_bases);

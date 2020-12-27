@@ -45,26 +45,10 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Array_Variable_t<Int_t>*     Spawned_References_List_t::Actor_IDs_Variable()             { DEFINE_ARRAY_VARIABLE(Int_t, "p_actor_ids"); }
-    V::Array_Variable_t<String_t>*  Spawned_References_List_t::Actor_Mod_Names_Variable()       { DEFINE_ARRAY_VARIABLE(String_t, "p_actor_mod_names"); }
-    V::Array_Variable_t<Int_t>*     Spawned_References_List_t::Actor_Base_IDs_Variable()        { DEFINE_ARRAY_VARIABLE(Int_t, "p_actor_base_ids"); }
-    V::Array_Variable_t<String_t>*  Spawned_References_List_t::Actor_Base_Mod_Names_Variable()  { DEFINE_ARRAY_VARIABLE(String_t, "p_actor_base_mod_names"); }
-
-    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_IDs()                                      { return Actor_IDs_Variable()->Unpack<Vector_t<Form_ID_t>>(); }
-    void                Spawned_References_List_t::Actor_IDs(Vector_t<Form_ID_t> values)            { Actor_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
-    V::Array_t*         Spawned_References_List_t::Actor_IDs_Array()                                { return Actor_IDs_Variable()->Value(); }
-
-    Vector_t<String_t>  Spawned_References_List_t::Actor_Mod_Names()                                { return Actor_Mod_Names_Variable()->Unpack<Vector_t<String_t>>(); }
-    void                Spawned_References_List_t::Actor_Mod_Names(Vector_t<String_t> values)       { Actor_Mod_Names_Variable()->Values(values); }
-    V::Array_t*         Spawned_References_List_t::Actor_Mod_Names_Array()                          { return Actor_Mod_Names_Variable()->Value(); }
-
-    Vector_t<Form_ID_t> Spawned_References_List_t::Actor_Base_IDs()                                 { return Actor_Base_IDs_Variable()->Unpack<Vector_t<Form_ID_t>>(); }
-    void                Spawned_References_List_t::Actor_Base_IDs(Vector_t<Form_ID_t> values)       { Actor_Base_IDs_Variable()->Values(reinterpret_cast<Vector_t<Int_t>&>(values)); }
-    V::Array_t*         Spawned_References_List_t::Actor_Base_IDs_Array()                           { return Actor_Base_IDs_Variable()->Value(); }
-
-    Vector_t<String_t>  Spawned_References_List_t::Actor_Base_Mod_Names()                           { return Actor_Base_Mod_Names_Variable()->Unpack<Vector_t<String_t>>(); }
-    void                Spawned_References_List_t::Actor_Base_Mod_Names(Vector_t<String_t> values)  { Actor_Base_Mod_Names_Variable()->Values(values); }
-    V::Array_t*         Spawned_References_List_t::Actor_Base_Mod_Names_Array()                     { return Actor_Base_Mod_Names_Variable()->Value(); }
+    V::Variable_tt<Vector_t<Form_ID_t>>&    Spawned_References_List_t::Actor_IDs()              { DEFINE_VAR(Vector_t<Form_ID_t>, "p_actor_ids"); }
+    V::Variable_tt<Vector_t<String_t>>&     Spawned_References_List_t::Actor_Mod_Names()        { DEFINE_VAR(Vector_t<String_t>, "p_actor_mod_names"); }
+    V::Variable_tt<Vector_t<Form_ID_t>>&    Spawned_References_List_t::Actor_Base_IDs()         { DEFINE_VAR(Vector_t<Form_ID_t>, "p_actor_base_ids"); }
+    V::Variable_tt<Vector_t<String_t>>&     Spawned_References_List_t::Actor_Base_Mod_Names()   { DEFINE_VAR(Vector_t<String_t>, "p_actor_base_mod_names"); }
 
     Vector_t<Item_t>& Spawned_References_List_t::Items()
     {
@@ -124,10 +108,10 @@ namespace doticu_npcl { namespace MCM {
         Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
         spawned.Clear();
 
-        V::Array_t* actor_ids = Actor_IDs_Array();
-        V::Array_t* actor_mod_names = Actor_Mod_Names_Array();
-        V::Array_t* actor_base_ids = Actor_Base_IDs_Array();
-        V::Array_t* actor_base_mod_names = Actor_Base_Mod_Names_Array();
+        V::Array_t* actor_ids = Actor_IDs().Array();
+        V::Array_t* actor_mod_names = Actor_Mod_Names().Array();
+        V::Array_t* actor_base_ids = Actor_Base_IDs().Array();
+        V::Array_t* actor_base_mod_names = Actor_Base_Mod_Names().Array();
         if (actor_ids && actor_mod_names && actor_base_ids && actor_base_mod_names) {
             if (actor_mod_names->count == actor_ids->count &&
                 actor_base_ids->count == actor_ids->count &&
@@ -156,10 +140,10 @@ namespace doticu_npcl { namespace MCM {
 
         Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
 
-        Actor_IDs(spawned.actor_ids);
-        Actor_Mod_Names(spawned.actor_mod_names);
-        Actor_Base_IDs(spawned.actor_base_ids);
-        Actor_Base_Mod_Names(spawned.actor_base_mod_names);
+        Actor_IDs() = spawned.actor_ids;
+        Actor_Mod_Names() = spawned.actor_mod_names;
+        Actor_Base_IDs() = spawned.actor_base_ids;
+        Actor_Base_Mod_Names() = spawned.actor_base_mod_names;
     }
 
     void Spawned_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
@@ -172,8 +156,8 @@ namespace doticu_npcl { namespace MCM {
 
         Reset_Option_Ints();
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Vector_t<Item_t>& items = Items();
         size_t item_count = items.size();
@@ -185,10 +169,10 @@ namespace doticu_npcl { namespace MCM {
             Int_t page_index = Page_Index();
             if (page_index < 0) {
                 page_index = 0;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             } else if (page_index >= page_count) {
                 page_index = page_count - 1;
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             if (mcm->Should_Translate_Page_Titles()) {
@@ -266,7 +250,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index -= 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -286,7 +270,7 @@ namespace doticu_npcl { namespace MCM {
                 } else {
                     page_index += 1;
                 }
-                Page_Index(page_index);
+                Page_Index() = page_index;
             }
 
             mcm->Reset_Page();
@@ -300,7 +284,7 @@ namespace doticu_npcl { namespace MCM {
                 Item_t item = items[item_index];
                 if (item && item->Is_Valid()) {
                     mcm->Disable_Option(option);
-                    Item()->Actor_Form_ID(item->form_id);
+                    Item()->Actor_Form_ID() = item->form_id;
                     Current_View(Bases_View_e::ITEM);
                     mcm->Reset_Page();
                 }
@@ -331,8 +315,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_SPAWNED_REFERENCES, Main_t::SAFE_COMPONENT_FILTER));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Filters(Main_t::SPAWNED_REFERENCE);
 
@@ -352,14 +336,11 @@ namespace doticu_npcl { namespace MCM {
         References_Options_t<Base_t, Item_t>::Reset_Option_Ints();
     }
 
-    V::Bool_Variable_t* Spawned_References_Options_t::Do_Verify_Unspawns_Variable()     { DEFINE_BOOL_VARIABLE("p_options_do_verify_unspawns"); }
-
-    inline Bool_t       Spawned_References_Options_t::Do_Verify_Unspawns()              { return Do_Verify_Unspawns_Variable()->Value(); }
-    inline void         Spawned_References_Options_t::Do_Verify_Unspawns(Bool_t value)  { Do_Verify_Unspawns_Variable()->Value(value); }
+    V::Variable_tt<Bool_t>& Spawned_References_Options_t::Do_Verify_Unspawns() { DEFINE_VAR(Bool_t, "p_options_do_verify_unspawns"); }
 
     void Spawned_References_Options_t::Reset()
     {
-        Do_Verify_Unspawns(true);
+        Do_Verify_Unspawns() = true;
 
         References_Options_t<Base_t, Item_t>::Reset();
     }
@@ -367,7 +348,7 @@ namespace doticu_npcl { namespace MCM {
     Bool_t Spawned_References_Options_t::Try_On_Option_Select(Int_t option, Latent_Callback_i* lcallback)
     {
         if (option == do_verify_unspawns_option) {
-            Main_t::Self()->Toggle_And_Update(Do_Verify_Unspawns_Variable(), option, lcallback);
+            Main_t::Self()->Toggle_And_Update(Do_Verify_Unspawns(), option, lcallback);
             return true;
 
         } else if (References_Options_t<Base_t, Item_t>::Try_On_Option_Select(option, lcallback)) {
@@ -410,8 +391,8 @@ namespace doticu_npcl { namespace MCM {
             mcm->Title_Text(mcm->Plural_Title(Main_t::SAFE_COMPONENT_SPAWNED_REFERENCES, Main_t::SAFE_COMPONENT_OPTIONS));
         }
 
-        mcm->Cursor_Position(0);
-        mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+        mcm->Current_Cursor_Position() = 0;
+        mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
         Build_Header_Options();
         Build_General_Options();
@@ -425,10 +406,7 @@ namespace doticu_npcl { namespace MCM {
 
 namespace doticu_npcl { namespace MCM {
 
-    V::Int_Variable_t*  Spawned_References_Item_t::Actor_Form_ID_Variable()         { DEFINE_INT_VARIABLE("p_item_actor_form_id"); }
-
-    Form_ID_t           Spawned_References_Item_t::Actor_Form_ID()                  { return Actor_Form_ID_Variable()->Value(); }
-    void                Spawned_References_Item_t::Actor_Form_ID(Form_ID_t value)   { Actor_Form_ID_Variable()->Value(value); }
+    V::Variable_tt<Form_ID_t>& Spawned_References_Item_t::Actor_Form_ID() { DEFINE_VAR(Form_ID_t, "p_item_actor_form_id"); }
 
     Item_t Spawned_References_Item_t::Current_Item()
     {
@@ -443,7 +421,7 @@ namespace doticu_npcl { namespace MCM {
     Bool_t Spawned_References_Item_t::Current_Item(Item_t item)
     {
         if (item && item->Is_Valid()) {
-            Actor_Form_ID(item->form_id);
+            Actor_Form_ID() = item->form_id;
             return true;
         } else {
             return false;
@@ -586,8 +564,8 @@ namespace doticu_npcl { namespace MCM {
                     );
                 }
 
-                mcm->Cursor_Position(0);
-                mcm->Cursor_Fill_Mode(Cursor_e::LEFT_TO_RIGHT);
+                mcm->Current_Cursor_Position() = 0;
+                mcm->Current_Cursor_Mode() = Cursor_e::LEFT_TO_RIGHT;
 
                 Build_Header(unspawn_option, Main_t::CENTER_UNSPAWN, List()->Items().size());
                 {

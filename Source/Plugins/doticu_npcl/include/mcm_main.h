@@ -280,7 +280,7 @@ namespace doticu_npcl { namespace MCM {
         V::Object_t* Object();
 
     public:
-        V::String_Variable_t* Current_Page_Variable();
+        V::Variable_tt<String_t>& Current_Page_Variable();
 
     public:
         String_t            Current_Page();
@@ -289,11 +289,11 @@ namespace doticu_npcl { namespace MCM {
         Latent_Callback_i*  Create_Latent_Callback(V::Machine_t* machine, V::Stack_ID_t stack_id);
         void                Destroy_Latent_Callback(Latent_Callback_i* lcallback);
 
-        void                Toggle_Either(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
-        void                Toggle_Any(V::Int_Variable_t* variable, Int_t option_a, Int_t option_b, Binary_e toggle);
+        void                Toggle_Either(V::Variable_tt<Binary_e>& variable, Int_t option_a, Int_t option_b, Binary_e toggle);
+        void                Toggle_Any(V::Variable_tt<Binary_e>& variable, Int_t option_a, Int_t option_b, Binary_e toggle);
 
-        void                Toggle_And_Reset(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
-        void                Toggle_And_Update(V::Variable_t* variable, Int_t option, Latent_Callback_i* lcallback);
+        void                Toggle_And_Reset(V::Variable_tt<Bool_t>& variable, Int_t option, Latent_Callback_i* lcallback);
+        void                Toggle_And_Update(V::Variable_tt<Bool_t>& variable, Int_t option, Latent_Callback_i* lcallback);
         void                Highlight(String_t info_text, Latent_Callback_i* lcallback);
 
         Bool_t              Should_Translate_Page_Titles();

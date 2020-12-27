@@ -47,27 +47,10 @@ namespace doticu_npcl { namespace MCM {
     class Spawned_References_List_t : public References_List_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
     public:
-        V::Array_Variable_t<Int_t>*     Actor_IDs_Variable();
-        V::Array_Variable_t<String_t>*  Actor_Mod_Names_Variable();
-        V::Array_Variable_t<Int_t>*     Actor_Base_IDs_Variable();
-        V::Array_Variable_t<String_t>*  Actor_Base_Mod_Names_Variable();
-
-    public:
-        Vector_t<Form_ID_t> Actor_IDs();
-        void                Actor_IDs(Vector_t<Form_ID_t> values);
-        V::Array_t*         Actor_IDs_Array();
-
-        Vector_t<String_t>  Actor_Mod_Names();
-        void                Actor_Mod_Names(Vector_t<String_t> values);
-        V::Array_t*         Actor_Mod_Names_Array();
-
-        Vector_t<Form_ID_t> Actor_Base_IDs();
-        void                Actor_Base_IDs(Vector_t<Form_ID_t> values);
-        V::Array_t*         Actor_Base_IDs_Array();
-
-        Vector_t<String_t>  Actor_Base_Mod_Names();
-        void                Actor_Base_Mod_Names(Vector_t<String_t> values);
-        V::Array_t*         Actor_Base_Mod_Names_Array();
+        V::Variable_tt<Vector_t<Form_ID_t>>&    Actor_IDs();
+        V::Variable_tt<Vector_t<String_t>>&     Actor_Mod_Names();
+        V::Variable_tt<Vector_t<Form_ID_t>>&    Actor_Base_IDs();
+        V::Variable_tt<Vector_t<String_t>>&     Actor_Base_Mod_Names();
 
     public:
         Vector_t<Item_t>&   Items();
@@ -106,12 +89,9 @@ namespace doticu_npcl { namespace MCM {
         void            Reset_Option_Ints();
 
     public:
-        V::Bool_Variable_t* Do_Verify_Unspawns_Variable();
+        V::Variable_tt<Bool_t>& Do_Verify_Unspawns();
 
     public:
-        Bool_t  Do_Verify_Unspawns();
-        void    Do_Verify_Unspawns(Bool_t value);
-
         void    Reset();
 
     public:
@@ -128,11 +108,7 @@ namespace doticu_npcl { namespace MCM {
     class Spawned_References_Item_t : public References_Item_t<Spawned_References_Base_t, Spawned_References_Base_t::Item_t>
     {
     public:
-        V::Int_Variable_t*  Actor_Form_ID_Variable();
-
-    public:
-        Form_ID_t   Actor_Form_ID();
-        void        Actor_Form_ID(Form_ID_t value);
+        V::Variable_tt<Form_ID_t>& Actor_Form_ID();
 
     public:
         Item_t  Current_Item();

@@ -8,15 +8,7 @@
 
 #include "intrinsic.h"
 
-namespace doticu_skylib { namespace Virtual {
-
-    class Machine_t;
-
-}}
-
 namespace doticu_npcl {
-
-    using Quest_t = skylib::Quest_t;
 
     class Main_t
     {

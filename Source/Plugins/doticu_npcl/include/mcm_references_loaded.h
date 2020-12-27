@@ -86,11 +86,7 @@ namespace doticu_npcl { namespace MCM {
     class Loaded_References_Item_t : public References_Item_t<Loaded_References_Base_t, Loaded_References_Base_t::Item_t>
     {
     public:
-        V::Int_Variable_t*  Actor_Form_ID_Variable();
-
-    public:
-        Form_ID_t   Actor_Form_ID();
-        void        Actor_Form_ID(Form_ID_t value);
+        V::Variable_tt<Form_ID_t>& Actor_Form_ID();
 
     public:
         Item_t  Current_Item();
