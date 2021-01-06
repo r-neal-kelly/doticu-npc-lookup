@@ -56,7 +56,7 @@ namespace doticu_npcl { namespace MCM {
     class Bases_Item_Section_e : public Enum_t<Item_Section_t>
     {
     public:
-        enum : _TYPE_
+        enum : value_type
         {
             NONE = -1,
 

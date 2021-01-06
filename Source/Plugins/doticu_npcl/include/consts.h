@@ -8,7 +8,8 @@
 
 namespace doticu_npcl {
 
-    class Consts_t {
+    class Consts_t
+    {
     public:
         static constexpr const char* SKYRIM_ESM_NAME    = "Skyrim.esm";
         static constexpr const char* NPCL_ESP_NAME      = "doticu_npc_lookup.esp";

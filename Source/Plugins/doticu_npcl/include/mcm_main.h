@@ -286,7 +286,7 @@ namespace doticu_npcl { namespace MCM {
         String_t            Current_Page();
         void                Current_Page(String_t current_page);
 
-        Latent_Callback_i*  Create_Latent_Callback(V::Machine_t* machine, V::Stack_ID_t stack_id);
+        Latent_Callback_i*  Create_Latent_Callback(V::Stack_ID_t stack_id);
         void                Destroy_Latent_Callback(Latent_Callback_i* lcallback);
 
         void                Toggle_Either(V::Variable_tt<Binary_e>& variable, Int_t option_a, Int_t option_b, Binary_e toggle);
@@ -322,18 +322,18 @@ namespace doticu_npcl { namespace MCM {
         void On_Init();
         void On_Load();
         void On_Save();
-        Bool_t On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id);
-        Bool_t On_Config_Close(V::Machine_t* machine, V::Stack_ID_t stack_id);
-        Bool_t On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page);
-        Bool_t On_Option_Select(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
-        Bool_t On_Option_Menu_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
-        Bool_t On_Option_Menu_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t idx);
-        Bool_t On_Option_Slider_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
-        Bool_t On_Option_Slider_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Float_t value);
-        Bool_t On_Option_Input_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, String_t value);
-        Bool_t On_Option_Keymap_Change(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod);
-        Bool_t On_Option_Default(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
-        Bool_t On_Option_Highlight(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option);
+        Bool_t On_Config_Open(V::Stack_ID_t stack_id);
+        Bool_t On_Config_Close(V::Stack_ID_t stack_id);
+        Bool_t On_Page_Open(V::Stack_ID_t stack_id, String_t current_page);
+        Bool_t On_Option_Select(V::Stack_ID_t stack_id, Int_t option);
+        Bool_t On_Option_Menu_Open(V::Stack_ID_t stack_id, Int_t option);
+        Bool_t On_Option_Menu_Accept(V::Stack_ID_t stack_id, Int_t option, Int_t idx);
+        Bool_t On_Option_Slider_Open(V::Stack_ID_t stack_id, Int_t option);
+        Bool_t On_Option_Slider_Accept(V::Stack_ID_t stack_id, Int_t option, Float_t value);
+        Bool_t On_Option_Input_Accept(V::Stack_ID_t stack_id, Int_t option, String_t value);
+        Bool_t On_Option_Keymap_Change(V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod);
+        Bool_t On_Option_Default(V::Stack_ID_t stack_id, Int_t option);
+        Bool_t On_Option_Highlight(V::Stack_ID_t stack_id, Int_t option);
 
     public:
         void Update_1_1_1();

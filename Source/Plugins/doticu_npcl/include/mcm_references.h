@@ -11,7 +11,7 @@ namespace doticu_npcl { namespace MCM {
     class References_Item_Section_e : public Bases_Item_Section_e
     {
     public:
-        enum : _TYPE_
+        enum : value_type
         {
             CELLS = Bases_Item_Section_e::_END_,
             LOCATIONS,

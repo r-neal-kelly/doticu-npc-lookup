@@ -194,23 +194,22 @@ namespace doticu_npcl { namespace MCM {
         Current_Page_Variable() = current_page;
     }
 
-    Latent_Callback_i* Main_t::Create_Latent_Callback(V::Machine_t* machine, V::Stack_ID_t stack_id)
+    Latent_Callback_i* Main_t::Create_Latent_Callback(V::Stack_ID_t stack_id)
     {
         struct Callback : public Latent_Callback_i
         {
-            V::Machine_t* machine;
             V::Stack_ID_t stack_id;
-            Callback(V::Machine_t* machine, V::Stack_ID_t stack_id) :
-                machine(machine), stack_id(stack_id)
+            Callback(V::Stack_ID_t stack_id) :
+                stack_id(stack_id)
             {
             }
             void operator()()
             {
                 V::Variable_t none;
-                machine->Return_Latent_Function(stack_id, &none);
+                V::Machine_t::Self()->Return_Latent_Function(stack_id, &none);
             }
         };
-        return new Callback(machine, stack_id);
+        return new Callback(stack_id);
     }
 
     void Main_t::Destroy_Latent_Callback(Latent_Callback_i* lcallback)
@@ -513,11 +512,11 @@ namespace doticu_npcl { namespace MCM {
         Global_Options_t::Self()->On_Save();
     }
 
-    Bool_t Main_t::On_Config_Open(V::Machine_t* machine, V::Stack_ID_t stack_id)
+    Bool_t Main_t::On_Config_Open(V::Stack_ID_t stack_id)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
         Vector_t<String_t> pages;
         pages.reserve(7);
@@ -543,11 +542,11 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Config_Close(V::Machine_t* machine, V::Stack_ID_t stack_id)
+    Bool_t Main_t::On_Config_Close(V::Stack_ID_t stack_id)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
         Static_Bases_t::Self()->On_Config_Close();
         Dynamic_Bases_t::Self()->On_Config_Close();
@@ -562,7 +561,7 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Page_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, String_t current_page)
+    Bool_t Main_t::On_Page_Open(V::Stack_ID_t stack_id, String_t current_page)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
@@ -577,7 +576,7 @@ namespace doticu_npcl { namespace MCM {
         }
 
         String_t page = current_page;
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Page_Open(is_refresh, lcallback);
@@ -591,12 +590,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Select(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Select(V::Stack_ID_t stack_id, Int_t option)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Select(option, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Select(option, lcallback);
@@ -610,12 +609,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Menu_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Menu_Open(V::Stack_ID_t stack_id, Int_t option)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Menu_Open(option, lcallback);
@@ -629,12 +628,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Menu_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t idx)
+    Bool_t Main_t::On_Option_Menu_Accept(V::Stack_ID_t stack_id, Int_t option, Int_t idx)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Menu_Accept(option, idx, lcallback);
@@ -648,12 +647,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Slider_Open(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Slider_Open(V::Stack_ID_t stack_id, Int_t option)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Slider_Open(option, lcallback);
@@ -667,12 +666,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Slider_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Float_t value)
+    Bool_t Main_t::On_Option_Slider_Accept(V::Stack_ID_t stack_id, Int_t option, Float_t value)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Slider_Accept(option, value, lcallback);
@@ -686,12 +685,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Input_Accept(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, String_t value)
+    Bool_t Main_t::On_Option_Input_Accept(V::Stack_ID_t stack_id, Int_t option, String_t value)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Input_Accept(option, value, lcallback);
@@ -705,12 +704,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Keymap_Change(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
+    Bool_t Main_t::On_Option_Keymap_Change(V::Stack_ID_t stack_id, Int_t option, Int_t key, String_t conflict, String_t mod)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Keymap_Change(option, key, conflict, mod, lcallback);
@@ -724,12 +723,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Default(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Default(V::Stack_ID_t stack_id, Int_t option)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Default(option, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Default(option, lcallback);
@@ -743,12 +742,12 @@ namespace doticu_npcl { namespace MCM {
         return true;
     }
 
-    Bool_t Main_t::On_Option_Highlight(V::Machine_t* machine, V::Stack_ID_t stack_id, Int_t option)
+    Bool_t Main_t::On_Option_Highlight(V::Stack_ID_t stack_id, Int_t option)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
         String_t page = Current_Page();
-        Latent_Callback_i* lcallback = Create_Latent_Callback(machine, stack_id);
+        Latent_Callback_i* lcallback = Create_Latent_Callback(stack_id);
 
              if (Is_Same(page, STATIC_BASES))       Static_Bases_t::Self()->On_Option_Highlight(option, lcallback);
         else if (Is_Same(page, DYNAMIC_BASES))      Dynamic_Bases_t::Self()->On_Option_Highlight(option, lcallback);
@@ -771,27 +770,28 @@ namespace doticu_npcl { namespace MCM {
     {
         Config_Base_t::Register_Me(machine);
 
-        #define LMETHOD(FUNC_NAME_, ARG_COUNT_, RETURN_TYPE_, METHOD_, ...) \
-        SKYLIB_M                                                            \
-            BIND_LATENT_METHOD(machine, Class_Name(), Main_t,               \
-                               FUNC_NAME_, ARG_COUNT_,                      \
-                               RETURN_TYPE_, METHOD_, __VA_ARGS__);         \
+        String_t class_name = Class_Name();
+
+        #define METHOD(NAME_, RETURN_, METHOD_, ...)            \
+        SKYLIB_M                                                \
+            BIND_METHOD(machine, class_name, Main_t,            \
+                        NAME_, RETURN_, METHOD_, __VA_ARGS__);  \
         SKYLIB_W
 
-        LMETHOD("OnConfigOpen", 0, void, On_Config_Open);
-        LMETHOD("OnConfigClose", 0, void, On_Config_Close);
-        LMETHOD("OnPageReset", 1, void, On_Page_Open, String_t);
-        LMETHOD("OnOptionSelect", 1, void, On_Option_Select, Int_t);
-        LMETHOD("OnOptionMenuOpen", 1, void, On_Option_Menu_Open, Int_t);
-        LMETHOD("OnOptionMenuAccept", 2, void, On_Option_Menu_Accept, Int_t, Int_t);
-        LMETHOD("OnOptionSliderOpen", 1, void, On_Option_Slider_Open, Int_t);
-        LMETHOD("OnOptionSliderAccept", 2, void, On_Option_Slider_Accept, Int_t, Float_t);
-        LMETHOD("OnOptionInputAccept", 2, void, On_Option_Input_Accept, Int_t, String_t);
-        LMETHOD("OnOptionKeymapChange", 4, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        LMETHOD("OnOptionDefault", 1, void, On_Option_Default, Int_t);
-        LMETHOD("OnOptionHighlight", 1, void, On_Option_Highlight, Int_t);
+        METHOD("OnConfigOpen", void, On_Config_Open);
+        METHOD("OnConfigClose", void, On_Config_Close);
+        METHOD("OnPageReset", void, On_Page_Open, String_t);
+        METHOD("OnOptionSelect", void, On_Option_Select, Int_t);
+        METHOD("OnOptionMenuOpen", void, On_Option_Menu_Open, Int_t);
+        METHOD("OnOptionMenuAccept", void, On_Option_Menu_Accept, Int_t, Int_t);
+        METHOD("OnOptionSliderOpen", void, On_Option_Slider_Open, Int_t);
+        METHOD("OnOptionSliderAccept", void, On_Option_Slider_Accept, Int_t, Float_t);
+        METHOD("OnOptionInputAccept", void, On_Option_Input_Accept, Int_t, String_t);
+        METHOD("OnOptionKeymapChange", void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
+        METHOD("OnOptionDefault", void, On_Option_Default, Int_t);
+        METHOD("OnOptionHighlight", void, On_Option_Highlight, Int_t);
 
-        #undef LMETHOD
+        #undef METHOD
     }
 
 }}
