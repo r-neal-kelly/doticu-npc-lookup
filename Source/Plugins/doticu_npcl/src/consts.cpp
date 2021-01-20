@@ -29,6 +29,6 @@ namespace doticu_npcl {
     some<Quest_t*>      Consts_t::NPCL_MCM_Quest()              { DEFINE_FORM(NPCL_Mod(),   Quest_t,        0x000D62); }
 
     const Version_t<u8> Consts_t::Skyrim_Required_Version()     { DEFINE_VERSION(u8, 1, 5, 97, 0); }
-    const Version_t<u8> Consts_t::NPCL_Version()                { DEFINE_VERSION(u8, 2, 0, 0); }
+    const Version_t<u8> Consts_t::NPCL_Version()                { DEFINE_VERSION(u8, 2, 0, 1); }
 
 }
