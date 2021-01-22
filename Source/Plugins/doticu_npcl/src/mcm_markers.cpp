@@ -25,7 +25,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t            Markers_t::Class_Name() { DEFINE_CLASS_NAME("doticu_npcl_mcm_markers"); }
     V::Class_t*         Markers_t::Class()      { DEFINE_CLASS(); }
-    V::Object_t*        Markers_t::Object()     { DEFINE_OBJECT(); }
+    V::Object_t*        Markers_t::Object()     { DEFINE_OBJECT_METHOD(); }
     some<Markers_t*>    Markers_t::Self()       { return static_cast<some<Markers_t*>>(Consts_t::NPCL_MCM_Quest()); }
 
     class Mark_Callback_t : public V::Callback_t

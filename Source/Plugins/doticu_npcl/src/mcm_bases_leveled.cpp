@@ -27,7 +27,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t                        Leveled_Bases_Base_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_leveled"); }
     V::Class_t*                     Leveled_Bases_Base_t::Class()       { DEFINE_CLASS(); }
-    V::Object_t*                    Leveled_Bases_Base_t::Object()      { DEFINE_OBJECT(); }
+    V::Object_t*                    Leveled_Bases_Base_t::Object()      { DEFINE_OBJECT_METHOD(); }
 
     some<Leveled_Bases_t*>          Leveled_Bases_Base_t::Self()        { return static_cast<some<Leveled_Bases_t*>>(Consts_t::NPCL_MCM_Quest()); }
     some<Leveled_Bases_List_t*>     Leveled_Bases_Base_t::List()        { return reinterpret_cast<Leveled_Bases_List_t*>(this); }

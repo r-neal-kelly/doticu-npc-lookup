@@ -27,7 +27,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t                            Spawned_References_Base_t::Class_Name() { DEFINE_CLASS_NAME("doticu_npcl_mcm_references_spawned"); }
     V::Class_t*                         Spawned_References_Base_t::Class()      { DEFINE_CLASS(); }
-    V::Object_t*                        Spawned_References_Base_t::Object()     { DEFINE_OBJECT(); }
+    V::Object_t*                        Spawned_References_Base_t::Object()     { DEFINE_OBJECT_METHOD(); }
 
     some<Spawned_References_t*>         Spawned_References_Base_t::Self()       { return static_cast<some<Spawned_References_t*>>(Consts_t::NPCL_MCM_Quest()); }
     some<Spawned_References_List_t*>    Spawned_References_Base_t::List()       { return reinterpret_cast<Spawned_References_List_t*>(this); }

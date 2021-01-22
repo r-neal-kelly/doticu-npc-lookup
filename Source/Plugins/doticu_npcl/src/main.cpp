@@ -273,6 +273,9 @@ namespace doticu_npcl {
 
 extern "C" {
 
+    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Query(const SKSEInterface*, PluginInfo*);
+    _declspec(dllexport) skylib::Bool_t SKSEPlugin_Load(const SKSEInterface*);
+
     skylib::Bool_t SKSEPlugin_Query(const SKSEInterface* skse, PluginInfo* info)
     {
         return doticu_npcl::Main_t::SKSE_Query_Plugin(skse, info);

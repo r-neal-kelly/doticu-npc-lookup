@@ -25,7 +25,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t                        Static_Bases_Base_t::Class_Name()   { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_static"); }
     V::Class_t*                     Static_Bases_Base_t::Class()        { DEFINE_CLASS(); }
-    V::Object_t*                    Static_Bases_Base_t::Object()       { DEFINE_OBJECT(); }
+    V::Object_t*                    Static_Bases_Base_t::Object()       { DEFINE_OBJECT_METHOD(); }
 
     some<Static_Bases_t*>           Static_Bases_Base_t::Self()         { return static_cast<some<Static_Bases_t*>>(Consts_t::NPCL_MCM_Quest()); }
     some<Static_Bases_List_t*>      Static_Bases_Base_t::List()         { return reinterpret_cast<Static_Bases_List_t*>(this); }

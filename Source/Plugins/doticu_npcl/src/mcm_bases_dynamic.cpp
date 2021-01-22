@@ -26,7 +26,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t                        Dynamic_Bases_Base_t::Class_Name()  { DEFINE_CLASS_NAME("doticu_npcl_mcm_bases_dynamic"); }
     V::Class_t*                     Dynamic_Bases_Base_t::Class()       { DEFINE_CLASS(); }
-    V::Object_t*                    Dynamic_Bases_Base_t::Object()      { DEFINE_OBJECT(); }
+    V::Object_t*                    Dynamic_Bases_Base_t::Object()      { DEFINE_OBJECT_METHOD(); }
 
     some<Dynamic_Bases_t*>          Dynamic_Bases_Base_t::Self()        { return static_cast<some<Dynamic_Bases_t*>>(Consts_t::NPCL_MCM_Quest()); }
     some<Dynamic_Bases_List_t*>     Dynamic_Bases_Base_t::List()        { return reinterpret_cast<Dynamic_Bases_List_t*>(this); }

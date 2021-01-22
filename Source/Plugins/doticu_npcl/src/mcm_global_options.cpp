@@ -16,7 +16,7 @@ namespace doticu_npcl { namespace MCM {
 
     String_t                Global_Options_t::Class_Name()                          { DEFINE_CLASS_NAME("doticu_npcl_mcm_global_options"); }
     V::Class_t*             Global_Options_t::Class()                               { DEFINE_CLASS(); }
-    V::Object_t*            Global_Options_t::Object()                              { DEFINE_OBJECT(); }
+    V::Object_t*            Global_Options_t::Object()                              { DEFINE_OBJECT_METHOD(); }
     some<Global_Options_t*> Global_Options_t::Self()                                { return static_cast<some<Global_Options_t*>>(Consts_t::NPCL_MCM_Quest()); }
 
     Int_t&                  Global_Options_t::Reset_Option()                        { DEFINE_OPTION(); }

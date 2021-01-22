@@ -175,7 +175,7 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    V::Object_t* Main_t::Object() { DEFINE_OBJECT(); }
+    V::Object_t* Main_t::Object() { DEFINE_OBJECT_METHOD(); }
 
     V::Variable_tt<String_t>& Main_t::Current_Page_Variable() { DEFINE_VARIABLE_REFERENCE(String_t, "p_current_page"); }
 
