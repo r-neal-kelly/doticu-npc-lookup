@@ -190,9 +190,9 @@ namespace doticu_npcl {
                     Consts_t::NPCL_Is_Installed_Global()->Bool(true);
 
                     const Version_t<u8>& npcl_version = Consts_t::NPCL_Version();
-                    Consts_t::NPCL_Major_Version_Global()->Long(npcl_version.major);
-                    Consts_t::NPCL_Minor_Version_Global()->Long(npcl_version.minor);
-                    Consts_t::NPCL_Patch_Version_Global()->Long(npcl_version.patch);
+                    Consts_t::NPCL_Major_Version_Global()->Int(npcl_version.major);
+                    Consts_t::NPCL_Minor_Version_Global()->Int(npcl_version.minor);
+                    Consts_t::NPCL_Patch_Version_Global()->Int(npcl_version.patch);
 
                     MCM::Main_t::Self()->On_Init();
                 } else {
@@ -245,18 +245,18 @@ namespace doticu_npcl {
     Bool_t Main_t::Try_To_Update()
     {
         const Version_t<u8>& current = Consts_t::NPCL_Version();
-        const Version_t<u8> saved(Consts_t::NPCL_Major_Version_Global()->Long(),
-                                  Consts_t::NPCL_Minor_Version_Global()->Long(),
-                                  Consts_t::NPCL_Patch_Version_Global()->Long());
+        const Version_t<u8> saved(Consts_t::NPCL_Major_Version_Global()->Int(),
+                                  Consts_t::NPCL_Minor_Version_Global()->Int(),
+                                  Consts_t::NPCL_Patch_Version_Global()->Int());
 
         if (saved < current) {
             if (saved < Version_t<u8>(1, 1, 1)) {
                 Update_1_1_1();
             }
 
-            Consts_t::NPCL_Major_Version_Global()->Long(current.major);
-            Consts_t::NPCL_Minor_Version_Global()->Long(current.minor);
-            Consts_t::NPCL_Patch_Version_Global()->Long(current.patch);
+            Consts_t::NPCL_Major_Version_Global()->Int(current.major);
+            Consts_t::NPCL_Minor_Version_Global()->Int(current.minor);
+            Consts_t::NPCL_Patch_Version_Global()->Int(current.patch);
 
             return true;
         } else {
