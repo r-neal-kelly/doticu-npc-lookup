@@ -8,11 +8,6 @@
 
 namespace doticu_npcl {
 
-    using Actor_Base_t          = skylib::Actor_Base_t;
-    using Leveled_Actor_Base_t  = skylib::Leveled_Actor_Base_t;
-    using Race_t                = skylib::Race_t;
-    using Relation_e            = skylib::Relation_e;
-
     class Cached_Leveled_t
     {
     public:

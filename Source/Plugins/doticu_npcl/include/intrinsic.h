@@ -69,7 +69,7 @@ namespace doticu_npcl {
     using Faction_t             = skylib::Faction_t;
     using Faction_And_Rank_t    = skylib::Faction_And_Rank_t;
     using Form_t                = skylib::Form_t;
-    using Form_ID_t             = skylib::Form_ID_t;
+    using Form_ID_t             = skylib::Raw_Form_ID_t; // Form_ID_t
     using Game_t                = skylib::Game_t;
     using Global_t              = skylib::Global_t;
     using Keyword_t             = skylib::Keyword_t;
@@ -79,6 +79,7 @@ namespace doticu_npcl {
     using Player_t              = skylib::Player_t;
     using Quest_t               = skylib::Quest_t;
     using Race_t                = skylib::Race_t;
+    using Raw_Form_ID_t         = skylib::Raw_Form_ID_t;
     using Reference_t           = skylib::Reference_t;
     using Translations_t        = skylib::Translations_t;
     using Worldspace_t          = skylib::Worldspace_t;

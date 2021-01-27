@@ -778,18 +778,18 @@ namespace doticu_npcl { namespace MCM {
                         NAME_, WAITS_FOR_FRAME_, RETURN_, METHOD_, __VA_ARGS__);    \
         SKYLIB_W
 
-        METHOD("OnConfigOpen", false, void, On_Config_Open);
-        METHOD("OnConfigClose", false, void, On_Config_Close);
-        METHOD("OnPageReset", false, void, On_Page_Open, String_t);
-        METHOD("OnOptionSelect", false, void, On_Option_Select, Int_t);
-        METHOD("OnOptionMenuOpen", false, void, On_Option_Menu_Open, Int_t);
-        METHOD("OnOptionMenuAccept", false, void, On_Option_Menu_Accept, Int_t, Int_t);
-        METHOD("OnOptionSliderOpen", false, void, On_Option_Slider_Open, Int_t);
-        METHOD("OnOptionSliderAccept", false, void, On_Option_Slider_Accept, Int_t, Float_t);
-        METHOD("OnOptionInputAccept", false, void, On_Option_Input_Accept, Int_t, String_t);
-        METHOD("OnOptionKeymapChange", false, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
-        METHOD("OnOptionDefault", false, void, On_Option_Default, Int_t);
-        METHOD("OnOptionHighlight", false, void, On_Option_Highlight, Int_t);
+        METHOD("OnConfigOpen", true, void, On_Config_Open);
+        METHOD("OnConfigClose", true, void, On_Config_Close);
+        METHOD("OnPageReset", true, void, On_Page_Open, String_t);
+        METHOD("OnOptionSelect", true, void, On_Option_Select, Int_t);
+        METHOD("OnOptionMenuOpen", true, void, On_Option_Menu_Open, Int_t);
+        METHOD("OnOptionMenuAccept", true, void, On_Option_Menu_Accept, Int_t, Int_t);
+        METHOD("OnOptionSliderOpen", true, void, On_Option_Slider_Open, Int_t);
+        METHOD("OnOptionSliderAccept", true, void, On_Option_Slider_Accept, Int_t, Float_t);
+        METHOD("OnOptionInputAccept", true, void, On_Option_Input_Accept, Int_t, String_t);
+        METHOD("OnOptionKeymapChange", true, void, On_Option_Keymap_Change, Int_t, Int_t, String_t, String_t);
+        METHOD("OnOptionDefault", true, void, On_Option_Default, Int_t);
+        METHOD("OnOptionHighlight", true, void, On_Option_Highlight, Int_t);
 
         #undef METHOD
     }

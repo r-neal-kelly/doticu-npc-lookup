@@ -114,7 +114,7 @@ namespace doticu_npcl {
         self->actor_base_ids.push_back(actor_base->form_id);
         self->actor_base_mod_names.push_back(actor_base_mod_name);
 
-        Mod_t* actor_mod = actor->Indexed_Mod();
+        maybe<Mod_t*> actor_mod = actor->Indexed_Mod();
         if (actor_mod) {
             String_t actor_mod_name = actor_mod->Name();
             if (actor_mod_name) {
@@ -134,7 +134,7 @@ namespace doticu_npcl {
         if (actor->Is_Valid() && !Has(actor)) {
             Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
             if (actor_base && actor_base->Is_Valid()) {
-                Mod_t* actor_base_mod = actor_base->Indexed_Mod();
+                maybe<Mod_t*> actor_base_mod = actor_base->Indexed_Mod();
                 if (actor_base_mod) {
                     String_t actor_base_mod_name = actor_base_mod->Name();
                     if (actor_base_mod_name) {
@@ -154,19 +154,17 @@ namespace doticu_npcl {
         }
     }
 
-    Bool_t Spawned_Actors_t::Add(Form_ID_t actor_id, String_t actor_mod_name, Form_ID_t actor_base_id, String_t actor_base_mod_name)
+    Bool_t Spawned_Actors_t::Add(skylib::Form_ID_t actor_id, String_t actor_mod_name, skylib::Form_ID_t actor_base_id, String_t actor_base_mod_name)
     {
         if (actor_base_mod_name) {
             maybe<Mod_t*> actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name.data);
             if (actor_base_mod) {
-                actor_base_id = Form_t::Reindex(actor_base_id, actor_base_mod());
-                if (actor_base_id > 0) {
-                    if (Form_t::Is_Static(actor_id)) {
+                if (actor_base_id.Mod(actor_base_mod) && actor_base_id) {
+                    if (actor_id.Is_Static()) {
                         if (actor_mod_name) {
                             maybe<Mod_t*> actor_mod = Mod_t::Active_Mod(actor_mod_name.data);
                             if (actor_mod) {
-                                actor_id = Form_t::Reindex(actor_id, actor_mod());
-                                if (actor_id == 0) {
+                                if (!actor_id.Mod(actor_mod) || !actor_id) {
                                     return false;
                                 }
                             } else {
