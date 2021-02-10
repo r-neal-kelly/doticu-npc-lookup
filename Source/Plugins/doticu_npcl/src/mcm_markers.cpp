@@ -99,11 +99,11 @@ namespace doticu_npcl { namespace MCM {
             skylib::Reference_Handle_t reference_handle = promoted_references.entries[idx];
             Reference_t* reference = Reference_t::From_Handle(reference_handle);
             if (reference && reference->Is_Valid()) {
-                skylib::Aliases_x* xaliases = reference->xlist.Get<skylib::Aliases_x>();
+                maybe<skylib::Extra_Aliases_t*> xaliases = reference->x_list.Get<skylib::Extra_Aliases_t>();
                 if (xaliases) {
                     skylib::Read_Locker_t locker(xaliases->lock);
                     for (Index_t idx = 0, end = xaliases->instances.count; idx < end; idx += 1) {
-                        skylib::Aliases_x::Instance_t* instance = xaliases->instances.entries[idx];
+                        skylib::Extra_Aliases_t::Instance_t* instance = xaliases->instances.entries[idx];
                         if (instance && instance->quest == this && instance->alias_base) {
                             Index_t marker_idx = instance->alias_base->id - 1;
                             if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
