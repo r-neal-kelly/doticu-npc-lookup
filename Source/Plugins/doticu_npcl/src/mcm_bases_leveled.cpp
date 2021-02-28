@@ -10,7 +10,7 @@
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
-#include "doticu_skylib/relation.h"
+#include "doticu_skylib/enum_relation.h"
 #include "doticu_skylib/reference.h"
 
 #include "consts.h"

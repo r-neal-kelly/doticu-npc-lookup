@@ -1317,7 +1317,7 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Quests(Vector_t<Quest_t*> quests)
+    inline void References_Item_t<B, I>::Build_Quests(Vector_t<some<Quest_t*>> quests)
     {
         some<Main_t*> mcm = Main_t::Self();
 
@@ -1330,8 +1330,8 @@ namespace doticu_npcl { namespace MCM {
 
                     quests.Sort(Quest_t::Compare_Any_Names);
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
-                        Quest_t* quest = quests[idx];
-                        if (quest && quest->Is_Valid()) {
+                        some<Quest_t*> quest = quests[idx];
+                        if (quest->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name().data, Main_t::_NONE_);
                         }
                     }
@@ -1368,7 +1368,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_); // 1
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_); // 2
 
-                    Actor_Base_t* actor_base = actor->Actor_Base();
+                    maybe<Actor_Base_t*> actor_base = actor->Actor_Base();
                     if (actor_base && actor_base->Is_Valid()) {
                         if (actor_base->Is_Male()) { // 3
                             mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
@@ -1384,10 +1384,8 @@ namespace doticu_npcl { namespace MCM {
                         if (vitality != Vitality_e::NONE) {
                             mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
                         }
-                        Relation_e relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()()); // 6
-                        if (relation != Relation_e::NONE) {
-                            mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
-                        }
+                        some<Relation_e> relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                        mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation())(), Main_t::_NONE_);
                     }
 
                     if (actor->Is_Alive()) { // 7

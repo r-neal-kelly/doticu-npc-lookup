@@ -397,7 +397,7 @@ namespace doticu_npcl { namespace MCM {
                     Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, item->Factions_And_Ranks());
                     Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, item->Keywords());
                     Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->Mods());
-                    Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race());
+                    Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race()());
 
                     Buildable_Cell_t<Base_t, Item_t> buildable_cell(this, item->Cell());
                     Buildable_Locations_t<Base_t, Item_t> buildable_locations(this, item->Locations());

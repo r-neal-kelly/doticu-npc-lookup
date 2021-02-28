@@ -3,8 +3,8 @@
 */
 
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/interface.inl"
 #include "doticu_skylib/translations.h"
-
 #include "doticu_skylib/virtual_function.h"
 #include "doticu_skylib/virtual_machine.h"
 #include "doticu_skylib/virtual_macros.h"
@@ -101,7 +101,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (CString_t::Is_Same(ARCHNEMESIS, relation_key(), false)) {
             return Relation_e::ARCHNEMESIS;
         } else {
-            return Relation_e::NONE;
+            return Relation_e::ACQUAINTANCE;
         }
     }
 

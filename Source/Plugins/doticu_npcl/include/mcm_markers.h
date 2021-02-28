@@ -15,10 +15,11 @@ namespace doticu_npcl { namespace MCM {
     class Alias_Actor_t
     {
     public:
-        some<Alias_Base_t*> alias;
-        maybe<Actor_t*>     actor;
+        some<Alias_Reference_t*>    alias;
+        maybe<Actor_t*>             actor;
 
-        Alias_Actor_t(some<Alias_Base_t*> alias, maybe<Actor_t*> actor) :
+    public:
+        Alias_Actor_t(some<Alias_Reference_t*> alias, maybe<Actor_t*> actor) :
             alias(alias), actor(actor)
         {
         }

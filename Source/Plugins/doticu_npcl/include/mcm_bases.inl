@@ -567,7 +567,7 @@ namespace doticu_npcl { namespace MCM {
         Keyword_Argument() = "";
         Keyword_Do_Negate() = false;
 
-        Relation_Argument() = Relation_e::NONE;
+        Relation_Argument() = Relation_e::_NONE_;
         Relation_Do_Negate() = false;
 
         Vitality_Argument() = Vitality_e::NONE;
@@ -2041,10 +2041,8 @@ namespace doticu_npcl { namespace MCM {
                     if (vitality != Vitality_e::NONE) {
                         mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
                     }
-                    Relation_e relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()()); // 6
-                    if (relation != Relation_e::NONE) {
-                        mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation)(), Main_t::_NONE_);
-                    }
+                    some<Relation_e> relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
+                    mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation())(), Main_t::_NONE_);
 
                     if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
@@ -2079,8 +2077,8 @@ namespace doticu_npcl { namespace MCM {
                     factions.Sort(Faction_And_Rank_t::Compare_Editor_Or_Form_IDs);
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         Faction_And_Rank_t& faction_and_rank = factions[idx];
-                        Faction_t* faction = faction_and_rank.faction;
-                        skylib::Faction_Rank_t rank = faction_and_rank.rank;
+                        maybe<Faction_t*> faction = faction_and_rank.faction;
+                        skylib::Raw_Faction_Rank_t rank = faction_and_rank.rank;
                         if (faction && faction->Is_Valid()) {
                             std::string label =
                                 std::string(Main_t::_SPACE_) +
@@ -2381,7 +2379,7 @@ namespace doticu_npcl { namespace MCM {
     inline void Bases_Item_t<B, I>::Select_Spawn_Option(Actor_t* item, Int_t option, Latent_Callback_i* lcallback)
     {
         if (item && item->Is_Valid()) {
-            Select_Spawn_Option(item->Actor_Base(), option, lcallback);
+            Select_Spawn_Option(item->Actor_Base()(), option, lcallback);
         }
     }
 
@@ -2390,7 +2388,7 @@ namespace doticu_npcl { namespace MCM {
     inline void Bases_Item_t<B, I>::Highlight_Race_Option(Raceable_t* raceable, Latent_Callback_i* lcallback)
     {
         if (raceable && raceable->Is_Valid()) {
-            Race_t* race = raceable->Race();
+            maybe<Race_t*> race = raceable->Race();
             if (race && race->Is_Valid()) {
                 const char* name = race->Name();
                 const char* editor_id = race->Get_Editor_ID();

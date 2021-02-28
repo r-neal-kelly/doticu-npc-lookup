@@ -64,6 +64,7 @@ namespace doticu_npcl {
     using Actor_t               = skylib::Actor_t;
     using Actor_Base_t          = skylib::Actor_Base_t;
     using Alias_Base_t          = skylib::Alias_Base_t;
+    using Alias_Reference_t     = skylib::Alias_Reference_t;
     using Cell_t                = skylib::Cell_t;
     using CString_t             = skylib::CString_t;
     using Faction_t             = skylib::Faction_t;

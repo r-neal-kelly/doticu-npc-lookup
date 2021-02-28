@@ -196,7 +196,7 @@ namespace doticu_npcl { namespace MCM {
         void    Build_Cell(Cell_t* cell);
         void    Build_Commands(Actor_t* actor);
         void    Build_Locations(Vector_t<Location_t*> locations);
-        void    Build_Quests(Vector_t<Quest_t*> quests);
+        void    Build_Quests(Vector_t<some<Quest_t*>> quests);
         void    Build_Reference(Actor_t* actor, const char* type_name);
         void    Build_Worldspaces(Vector_t<some<Worldspace_t*>> worldspaces);
 
@@ -284,9 +284,9 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         References_Item_t<Base_t, Item_t>*  builder;
-        Vector_t<Quest_t*>                  quests;
+        Vector_t<some<Quest_t*>>            quests;
 
-        Buildable_Quests_t(References_Item_t<Base_t, Item_t>* builder, Vector_t<Quest_t*>&& quests) :
+        Buildable_Quests_t(References_Item_t<Base_t, Item_t>* builder, Vector_t<some<Quest_t*>>&& quests) :
             builder(builder), quests(std::move(quests))
         {
         }

@@ -2,8 +2,8 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/interface.inl"
 #include "doticu_skylib/translations.h"
-
 #include "doticu_skylib/virtual_macros.h"
 
 #include "doticu_mcmlib/config_base_macros.h"

@@ -132,13 +132,13 @@ namespace doticu_npcl {
         SKYLIB_ASSERT_SOME(actor);
 
         if (actor->Is_Valid() && !Has(actor)) {
-            Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
+            maybe<Actor_Base_t*> actor_base = actor->Actor_Base_Highest_Static_Template();
             if (actor_base && actor_base->Is_Valid()) {
                 maybe<Mod_t*> actor_base_mod = actor_base->Indexed_Mod();
                 if (actor_base_mod) {
                     String_t actor_base_mod_name = actor_base_mod->Name();
                     if (actor_base_mod_name) {
-                        Add_Impl(this, actor(), actor_base, actor_base_mod_name);
+                        Add_Impl(this, actor(), actor_base(), actor_base_mod_name);
                         return true;
                     } else {
                         return false;
@@ -176,9 +176,9 @@ namespace doticu_npcl {
                     }
                     maybe<Actor_t*> actor = static_cast<maybe<Actor_t*>>(Game_t::Form(actor_id));
                     if (actor && actor->Is_Valid()) {
-                        Actor_Base_t* actor_base = actor->Highest_Static_Actor_Base();
+                        maybe<Actor_Base_t*> actor_base = actor->Actor_Base_Highest_Static_Template();
                         if (actor_base && actor_base->Is_Valid() && actor_base->form_id == actor_base_id) {
-                            Add_Impl(this, actor(), actor_base, actor_base_mod_name);
+                            Add_Impl(this, actor(), actor_base(), actor_base_mod_name);
                             return true;
                         } else {
                             return false;

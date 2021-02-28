@@ -15,7 +15,7 @@
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/race.h"
-#include "doticu_skylib/relation.h"
+#include "doticu_skylib/enum_relation.h"
 #include "doticu_skylib/vitality.h"
 #include "doticu_skylib/worldspace.h"
 
@@ -117,7 +117,7 @@ namespace doticu_npcl {
                           Filter_e(*Compare)(Item_t, some<Actor_Base_t*>, Relation_e)) :
             Filter_i<Item_t>(state)
         {
-            if (relation != Relation_e::NONE) {
+            if (relation) {
                 if (do_negate) {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
                         Item_t item = state.read->at(idx);
@@ -248,7 +248,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                Item_t highest_static = item->Highest_Static();
+                Item_t highest_static = item->Highest_Static_Template()();
                 if (highest_static) {
                     return Mod_Filter_t<Form_t*>::Compare(highest_static, string);
                 } else {
@@ -414,7 +414,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Race_Filter_t<Race_t*>::Compare(item->Race(), string);
+                return Race_Filter_t<Race_t*>::Compare(item->Race()(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -509,7 +509,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Base_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), string);
+                return Base_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -538,8 +538,8 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                for (Actor_Base_t* it = item->template_list; it != nullptr; it = it->template_list) {
-                    if (Base_Filter_t<Actor_Base_t*>::Compare(it, string) == Filter_e::IS_MATCH) {
+                for (maybe<Actor_Base_t*> it = item->template_base; it; it = it->template_base) {
+                    if (Base_Filter_t<Actor_Base_t*>::Compare(it(), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -593,7 +593,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Template_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), string);
+                return Template_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -663,7 +663,7 @@ namespace doticu_npcl {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
                     Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
-                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction, string) == Filter_e::IS_MATCH) {
+                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction(), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -720,7 +720,7 @@ namespace doticu_npcl {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
                     Faction_And_Rank_t& faction_and_rank = factions_and_ranks[idx];
-                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction, string) == Filter_e::IS_MATCH) {
+                    if (Faction_Filter_t<Faction_t*>::Compare(faction_and_rank.faction(), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -845,7 +845,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Keyword_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), string);
+                return Keyword_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1169,9 +1169,9 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                Vector_t<Quest_t*> quests = item->Quests();
+                Vector_t<some<Quest_t*>> quests = item->Quests();
                 for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
-                    if (Quest_Filter_t<Quest_t*>::Compare(quests[idx], string) == Filter_e::IS_MATCH) {
+                    if (Quest_Filter_t<Quest_t*>::Compare(quests[idx](), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }
                 }
@@ -1204,7 +1204,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, some<Actor_Base_t*> base_to_compare, Relation_e relation)
         {
             if (item) {
-                if (Relation_e::Between(item, base_to_compare()) == relation) {
+                if (Relation_e::Between(item, base_to_compare) == relation) {
                     return Filter_e::IS_MATCH;
                 } else {
                     return Filter_e::ISNT_MATCH;
@@ -1258,7 +1258,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, some<Actor_Base_t*> base_to_compare, Relation_e relation)
         {
             if (item && item->Is_Valid()) {
-                return Relation_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), base_to_compare, relation);
+                return Relation_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), base_to_compare, relation);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1363,7 +1363,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, Vitality_e vitality)
         {
             if (item && item->Is_Valid()) {
-                return Vitality_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), vitality);
+                return Vitality_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), vitality);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1462,7 +1462,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, Binary_e binary)
         {
             if (item && item->Is_Valid()) {
-                return Male_Female_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), binary);
+                return Male_Female_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), binary);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1561,7 +1561,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, Binary_e binary)
         {
             if (item && item->Is_Valid()) {
-                return Unique_Generic_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base(), binary);
+                return Unique_Generic_Filter_t<Actor_Base_t*>::Compare(item->Actor_Base()(), binary);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1711,7 +1711,7 @@ namespace doticu_npcl {
         {
             if (item && item->Is_Valid()) {
                 if (binary == Binary_e::BOTH) {
-                    if (item->Is_Player_Teammate() || item->Isnt_Player_Teammate()) {
+                    if (item->Is_Player_Teammate() || !item->Is_Player_Teammate()) {
                         return Filter_e::IS_MATCH;
                     } else {
                         return Filter_e::ISNT_MATCH;
@@ -1723,7 +1723,7 @@ namespace doticu_npcl {
                         return Filter_e::ISNT_MATCH;
                     }
                 } else if (binary == Binary_e::B) {
-                    if (item->Isnt_Player_Teammate()) {
+                    if (!item->Is_Player_Teammate()) {
                         return Filter_e::IS_MATCH;
                     } else {
                         return Filter_e::ISNT_MATCH;

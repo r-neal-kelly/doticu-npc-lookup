@@ -39,7 +39,7 @@ namespace doticu_npcl { namespace MCM {
 
         Selectable_Data_t(Relation_f relation_f, Select_Relation_f select_f, Actor_Base_t* base_to_compare)
         {
-            Init<Relation_f, Relation_e>(relation_f, Relation_e::NONE);
+            Init<Relation_f, Relation_e>(relation_f, Relation_e::_NONE_);
             Select(select_f, base_to_compare);
             Sort();
         }
@@ -310,7 +310,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Races_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+                Selectable_Races_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), output);
             }
         }
     };
@@ -383,7 +383,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Bases_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+                Selectable_Bases_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), output);
             }
         }
     };
@@ -420,7 +420,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                for (Actor_Base_t* it = item->template_list; it != nullptr && it->Is_Valid(); it = it->template_list) {
+                for (maybe<Actor_Base_t*> it = item->template_base; it && it->Is_Valid(); it = it->template_base) {
                     String_t name = it->Any_Name();
                     if (name && !output.Has(name)) {
                         output.push_back(name);
@@ -468,7 +468,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+                Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), output);
             }
         }
     };
@@ -530,7 +530,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->Is_Valid()) {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
-                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction, output);
+                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction(), output);
                 }
             }
         }
@@ -576,7 +576,7 @@ namespace doticu_npcl { namespace MCM {
             if (item && item->Is_Valid()) {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
                 for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
-                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction, output);
+                    Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction(), output);
                 }
             }
         }
@@ -666,7 +666,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+                Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), output);
             }
         }
     };
@@ -937,9 +937,9 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Vector_t<Quest_t*> quests = item->Quests();
+                Vector_t<some<Quest_t*>> quests = item->Quests();
                 for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
-                    Selectable_Quests_t<Base_t, Quest_t*>::Select(quests[idx], output);
+                    Selectable_Quests_t<Base_t, Quest_t*>::Select(quests[idx](), output);
                 }
             }
         }
@@ -976,9 +976,9 @@ namespace doticu_npcl { namespace MCM {
 
         static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
         {
-            Relation_e relation = Relation_e::Between(item, base_to_compare);
-            if (relation != Relation_e::NONE) {
-                output.push_back(Main_t::To_Relation_Key(relation)());
+            if (item && base_to_compare) {
+                some<Relation_e> relation = Relation_e::Between(item, base_to_compare);
+                output.push_back(Main_t::To_Relation_Key(relation())());
             }
         }
     };
@@ -1021,7 +1021,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Actor_Base_t* base_to_compare, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), base_to_compare, output);
+                Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), base_to_compare, output);
             }
         }
     };
@@ -1104,7 +1104,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base(), output);
+                Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(item->Actor_Base()(), output);
             }
         }
     };

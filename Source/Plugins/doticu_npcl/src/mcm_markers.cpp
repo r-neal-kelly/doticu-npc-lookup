@@ -2,10 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
+#include "doticu_skylib/dynamic_array.inl"
 #include "doticu_skylib/forward_list.inl"
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/alias_reference.h"
 #include "doticu_skylib/player.h"
 #include "doticu_skylib/quest_objective.h"
 
@@ -90,20 +92,30 @@ namespace doticu_npcl { namespace MCM {
 
         alias_actors.Clear();
         for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
-            alias_actors.Push(
-                Alias_Actor_t(aliases.entries[idx + 1], none<Actor_t*>())
-            );
+            maybe<Alias_Base_t*> alias_base = this->aliases[idx + 1];
+            if (alias_base) {
+                maybe<Alias_Reference_t*> alias_reference = alias_base->As_Alias_Reference();
+                if (alias_reference) {
+                    alias_actors.Push(
+                        Alias_Actor_t(alias_reference(), none<Actor_t*>())
+                    );
+                } else {
+                    SKYLIB_ASSERT(false);
+                }
+            } else {
+                SKYLIB_ASSERT(false);
+            }
         }
 
-        for (Index_t idx = 0, end = promoted_references.count; idx < end; idx += 1) {
-            skylib::Reference_Handle_t reference_handle = promoted_references.entries[idx];
+        for (Index_t idx = 0, end = promoted_references.Count(); idx < end; idx += 1) {
+            skylib::Reference_Handle_t reference_handle = promoted_references[idx];
             Reference_t* reference = Reference_t::From_Handle(reference_handle);
             if (reference && reference->Is_Valid()) {
                 maybe<skylib::Extra_Aliases_t*> xaliases = reference->x_list.Get<skylib::Extra_Aliases_t>();
                 if (xaliases) {
                     skylib::Read_Locker_t locker(xaliases->lock);
-                    for (Index_t idx = 0, end = xaliases->instances.count; idx < end; idx += 1) {
-                        skylib::Extra_Aliases_t::Instance_t* instance = xaliases->instances.entries[idx];
+                    for (Index_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
+                        maybe<skylib::Extra_Aliases_t::Instance_t*> instance = xaliases->instances[idx];
                         if (instance && instance->quest == this && instance->alias_base) {
                             Index_t marker_idx = instance->alias_base->id - 1;
                             if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
@@ -126,8 +138,8 @@ namespace doticu_npcl { namespace MCM {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
         some<Player_t*> player = Player_t::Self();
-        for (Index_t idx = 0, end = player->objectives.count; idx < end; idx += 1) {
-            auto& player_objective = player->objectives.entries[idx];
+        for (Index_t idx = 0, end = player->objectives.Count(); idx < end; idx += 1) {
+            auto& player_objective = player->objectives[idx];
             auto* objective = player_objective.objective;
             if (objective && objective->quest == this) {
                 Index_t marker_idx = objective->index;
