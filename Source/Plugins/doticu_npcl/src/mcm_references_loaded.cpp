@@ -8,7 +8,8 @@
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/worldspace.h"
 
-#include "doticu_skylib/virtual_utils.h"
+#include "doticu_skylib/virtual_input.h"
+#include "doticu_skylib/virtual_utility.h"
 
 #include "consts.h"
 #include "filter.h"
@@ -478,7 +479,7 @@ namespace doticu_npcl { namespace MCM {
                         }
                     }
                 };
-                skylib::Virtual::Utils_t::Close_Menus(new Callback_t(item));
+                V::Input_t::Close_Menus(new Callback_t(item));
             } else {
                 mcm->Enable_Option(option);
             }

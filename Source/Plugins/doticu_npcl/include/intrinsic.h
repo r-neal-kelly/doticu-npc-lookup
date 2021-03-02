@@ -90,9 +90,11 @@ namespace doticu_npcl {
         using Array_t           = skylib::Virtual::Array_t;
         using Callback_t        = skylib::Virtual::Callback_t;
         using Class_t           = skylib::Virtual::Class_t;
+        using Input_t           = skylib::Virtual::Input_t;
         using Machine_t         = skylib::Virtual::Machine_t;
         using Object_t          = skylib::Virtual::Object_t;
         using Stack_ID_t        = skylib::Virtual::Stack_ID_t;
+        using Utility_t         = skylib::Virtual::Utility_t;
         using Variable_t        = skylib::Virtual::Variable_t;
 
         template <typename T>

@@ -30,6 +30,7 @@
 
 //temp
 #include "doticu_skylib/armor.h"
+#include "doticu_skylib/cell.h"
 #include "doticu_skylib/console_log.h"
 #include "doticu_skylib/container_changes.h"
 #include "doticu_skylib/container_changes_entry.h"
@@ -42,7 +43,7 @@
 #include "doticu_skylib/script.h"
 #include "doticu_skylib/unique.h"
 #include "doticu_skylib/virtual_callback.h"
-#include "doticu_skylib/virtual_utils.h"
+#include "doticu_skylib/virtual_utility.h"
 //
 
 namespace doticu_npcl {
@@ -272,10 +273,10 @@ namespace doticu_npcl {
                         actor->Is_In_Dialogue_With_Player(new Callback(actor()));
                     }
                 }
-                skylib::Virtual::Utils_t::Wait_Out_Of_Menu(1.0f, new Waiter_t());
+                skylib::Virtual::Utility_t::Wait_Out_Of_Menu(1.0f, new Waiter_t());
             }
         };
-        skylib::Virtual::Utils_t::Wait_Out_Of_Menu(5.0f, new Waiter_t());
+        skylib::Virtual::Utility_t::Wait_Out_Of_Menu(5.0f, new Waiter_t());
 
         some<Actor_t*> player_actor = Consts_t::Skyrim_Player_Actor();
         some<skylib::Faction_t*> player_faction = static_cast<skylib::Faction_t*>(Game_t::Form(0x00000DB1)());
@@ -291,6 +292,11 @@ namespace doticu_npcl {
                 actor->Crime_Faction(player_faction());
                 actor->Is_Player_Teammate(true);
                 actor->Ignores_Ally_Hits(true);
+            }
+            reference->Log_Extra_List();
+            skylib::Reference_Container_t container(reference);
+            if (container.Is_Valid()) {
+                container.Log();
             }
         }
 
