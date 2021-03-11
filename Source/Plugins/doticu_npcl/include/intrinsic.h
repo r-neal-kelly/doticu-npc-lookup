@@ -83,11 +83,13 @@ namespace doticu_npcl {
     using Raw_Form_ID_t         = skylib::Raw_Form_ID_t;
     using Reference_t           = skylib::Reference_t;
     using Translations_t        = skylib::Translations_t;
+    using Voice_Type_t          = skylib::Voice_Type_t;
     using Worldspace_t          = skylib::Worldspace_t;
 
     namespace V {
 
         using Array_t           = skylib::Virtual::Array_t;
+        using Callback_i        = skylib::Virtual::Callback_i;
         using Callback_t        = skylib::Virtual::Callback_t;
         using Class_t           = skylib::Virtual::Class_t;
         using Input_t           = skylib::Virtual::Input_t;

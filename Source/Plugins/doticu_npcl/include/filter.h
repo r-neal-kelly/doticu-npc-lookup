@@ -538,7 +538,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                for (maybe<Actor_Base_t*> it = item->template_base; it; it = it->template_base) {
+                for (maybe<Actor_Base_t*> it = item->face_template; it; it = it->face_template) {
                     if (Base_Filter_t<Actor_Base_t*>::Compare(it(), string) == Filter_e::IS_MATCH) {
                         return Filter_e::IS_MATCH;
                     }

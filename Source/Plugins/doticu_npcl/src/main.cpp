@@ -2,49 +2,29 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include <fstream>
 #include <ShlObj.h>
 
 #include "skse64_common/skse_version.h"
 
-#include "doticu_skylib/interface.inl"
-#include "doticu_skylib/intrinsic.h"
-#include "doticu_skylib/math.h"
-
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/extra_aliases.h"
+#include "doticu_skylib/extra_list.inl"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/global.h"
+#include "doticu_skylib/interface.inl"
+#include "doticu_skylib/intrinsic.h"
+#include "doticu_skylib/main.h"
+#include "doticu_skylib/math.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/ui.h"
-
-#include "doticu_skylib/extra_aliases.h"
-#include "doticu_skylib/extra_list.inl"
 
 #include "consts.h"
 #include "main.h"
 #include "spawned_actors.h"
 #include "mcm_main.h"
-
-//temp
-#include "doticu_skylib/armor.h"
-#include "doticu_skylib/cell.h"
-#include "doticu_skylib/console_log.h"
-#include "doticu_skylib/container_changes.h"
-#include "doticu_skylib/container_changes_entry.h"
-#include "doticu_skylib/faction.h"
-#include "doticu_skylib/form_factory.h"
-#include "doticu_skylib/interface.h"
-#include "doticu_skylib/package_dialogue.h"
-#include "doticu_skylib/player.h"
-#include "doticu_skylib/reference_container.h"
-#include "doticu_skylib/script.h"
-#include "doticu_skylib/unique.h"
-#include "doticu_skylib/virtual_callback.h"
-#include "doticu_skylib/virtual_utility.h"
-//
 
 namespace doticu_npcl {
 
@@ -201,6 +181,8 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(!Is_Installed());
 
+        skylib::Main_t::Initialize();
+
         class Start_Quests_Callback_t : public Callback_i<Bool_t>
         {
             void operator()(Bool_t did_start_all)
@@ -241,119 +223,11 @@ namespace doticu_npcl {
         Quest_t::Start(Quests(), new Start_Quests_Callback_t());
     }
 
-    static void Temp()
-    {
-        class Waiter_t :
-            public skylib::Virtual::Callback_t
-        {
-        public:
-            void operator ()(skylib::Virtual::Variable_t*)
-            {
-                Vector_t<some<Reference_t*>> references = Reference_t::Loaded_Grid_References();
-                for (size_t idx = 0, end = references.size(); idx < end; idx += 1) {
-                    some<Reference_t*> reference = references[idx];
-                    maybe<Actor_t*> actor = reference->As_Actor();
-                    if (actor) {
-                        class Callback :
-                            public skylib::Callback_i<Bool_t>
-                        {
-                        public:
-                            some<Actor_t*> actor;
-                            Callback(some<Actor_t*> actor) :
-                                actor(actor)
-                            {
-                            }
-                            virtual void operator () (Bool_t result) override
-                            {
-                                if (result) {
-                                    _MESSAGE("%s", actor->Any_Name());
-                                }
-                            }
-                        };
-                        actor->Is_In_Dialogue_With_Player(new Callback(actor()));
-                    }
-                }
-                skylib::Virtual::Utility_t::Wait_Out_Of_Menu(1.0f, new Waiter_t());
-            }
-        };
-        skylib::Virtual::Utility_t::Wait_Out_Of_Menu(5.0f, new Waiter_t());
-
-        some<Actor_t*> player_actor = Consts_t::Skyrim_Player_Actor();
-        some<skylib::Faction_t*> player_faction = static_cast<skylib::Faction_t*>(Game_t::Form(0x00000DB1)());
-        some<skylib::Faction_t*> current_follower_faction = static_cast<skylib::Faction_t*>(Game_t::Form(0x0005C84E)());
-
-        Vector_t<some<Reference_t*>> references = Reference_t::Loaded_References();
-        for (size_t idx = 0, end = references.size(); idx < end; idx += 1) {
-            some<Reference_t*> reference = references[idx];
-            maybe<Actor_t*> actor = reference->As_Actor();
-            if (actor) {
-                actor->Base_Relation(Consts_t::Skyrim_Player_Actor_Base(), skylib::Relation_e::ALLY);
-                actor->Faction_Rank(current_follower_faction, 0);
-                actor->Crime_Faction(player_faction());
-                actor->Is_Player_Teammate(true);
-                actor->Ignores_Ally_Hits(true);
-            }
-            reference->Log_Extra_List();
-            skylib::Reference_Container_t container(reference);
-            if (container.Is_Valid()) {
-                container.Log();
-            }
-        }
-
-        /*
-        some<skylib::Bound_Object_t*> gold = static_cast<maybe<skylib::Bound_Object_t*>>(Game_t::Form(0xF))();
-        some<skylib::Armor_t*> silver_ring = static_cast<maybe<skylib::Armor_t*>>(Game_t::Form(0x0003B97C))();
-
-        for (size_t idx = 0, end = references.size(); idx < end; idx += 1) {
-            Reference_t* reference = references[idx];
-            if (reference) {
-                skylib::Reference_Container_t container(reference);
-                if (container.Is_Valid()) {
-                    //container.Log();
-                    for (size_t idx = 0, end = container.entries.size(); idx < end; idx += 1) {
-                        skylib::Reference_Container_Entry_t& entry = container.entries[idx];
-                        if (!entry.Is_Leveled_Item()) {
-                            entry.Decrement_Count(&container, std::numeric_limits<skylib::s32>::max());
-                            Vector_t<some<skylib::Extra_List_t*>> x_lists = entry.Some_Extra_Lists();
-                            for (size_t idx = 0, end = x_lists.size(); idx < end; idx += 1) {
-                                some<skylib::Extra_List_t*> x_list = x_lists[idx];
-                                entry.Remove_And_Destroy(x_list);
-                            }
-                        }
-                    }
-                    maybe<Actor_t*> actor = reference->As_Actor();
-                    if (actor) {
-                        maybe<Actor_Base_t*> actor_base = actor->Actor_Base();
-                        if (actor_base) {
-                            maybe<skylib::Outfit_t*> outfit = actor_base->Default_Outfit();
-                            if (outfit) {
-                                some<skylib::Extra_List_t*> x_list = skylib::Extra_List_t::Create();
-                                x_list->Increment_Count(2);
-                                x_list->Outfit(outfit);
-                                container.Add(silver_ring, x_list);
-
-                                some<skylib::Extra_List_t*> other_x_list = skylib::Extra_List_t::Create();
-                                other_x_list->Increment_Count(3);
-                                other_x_list->Decrement_Count(1);
-                                other_x_list->Outfit(outfit);
-                                container.Try_To_Consume(silver_ring, other_x_list);
-
-                                container.Log();
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-    }
-
     void Main_t::After_Load()
     {
-        //temp
-        //Temp();
-        //
-
         SKYLIB_ASSERT(Is_Installed());
+
+        skylib::Main_t::After_Load();
 
         if (Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Load();
@@ -367,6 +241,8 @@ namespace doticu_npcl {
     void Main_t::Before_Save()
     {
         SKYLIB_ASSERT(Is_Installed());
+
+        skylib::Main_t::Before_Save();
 
         MCM::Main_t::Self()->On_Save();
     }

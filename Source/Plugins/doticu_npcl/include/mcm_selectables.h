@@ -420,7 +420,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                for (maybe<Actor_Base_t*> it = item->template_base; it && it->Is_Valid(); it = it->template_base) {
+                for (maybe<Actor_Base_t*> it = item->face_template; it && it->Is_Valid(); it = it->face_template) {
                     String_t name = it->Any_Name();
                     if (name && !output.Has(name)) {
                         output.push_back(name);
