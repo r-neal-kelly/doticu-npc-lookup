@@ -50,7 +50,7 @@ namespace doticu_npcl {
 
     using CString_t             = skylib::CString_t;
 
-    using Actor_Value_e         = skylib::Actor_Value_e;
+    using Actor_Value_Type_e    = skylib::Actor_Value_Type_e;
     using Binary_e              = skylib::Binary_e;
     using Comparator_e          = skylib::Comparator_e;
     using Cursor_e              = mcmlib::Cursor_e;
