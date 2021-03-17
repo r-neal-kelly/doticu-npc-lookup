@@ -54,7 +54,7 @@ namespace doticu_npcl { namespace MCM {
                     self->Refresh_Menu();
                 }
             };
-            self->Display_Objective(marker_index, true, new Display_Callback_t(self));
+            self->Do_Display_Objective(marker_index, true, true, new Display_Callback_t(self));
         }
     };
 
@@ -82,7 +82,7 @@ namespace doticu_npcl { namespace MCM {
                     self->Refresh_Menu();
                 }
             };
-            self->Undisplay_Objective(marker_index, false, new Undisplay_Callback_t(self));
+            self->Do_Display_Objective(marker_index, false, false, new Undisplay_Callback_t(self));
         }
     };
 
@@ -116,7 +116,7 @@ namespace doticu_npcl { namespace MCM {
                     skylib::Read_Locker_t locker(xaliases->lock);
                     for (Index_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
                         maybe<skylib::Extra_Aliases_t::Instance_t*> instance = xaliases->instances[idx];
-                        if (instance && instance->quest == this && instance->alias_base) {
+                        if (instance && instance->quest == some<Quest_t*>(this) && instance->alias_base) {
                             Index_t marker_idx = instance->alias_base->id - 1;
                             if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
                                 Actor_t* actor = static_cast<Actor_t*>(reference);
@@ -147,7 +147,7 @@ namespace doticu_npcl { namespace MCM {
                     maybe<Actor_t*> actor = alias_actors[marker_idx].actor;
                     if (actor) {
                         objective->state = skylib::Quest_Objective_State_e::DISPLAYED;
-                        objective->display_text = std::string("NPC Lookup: ") + actor->Any_Name().data;
+                        objective->display_text = std::string("NPC Lookup: ") + actor->Any_Name();
                     } else {
                         objective->state = skylib::Quest_Objective_State_e::DORMANT;
                     }
@@ -215,7 +215,7 @@ namespace doticu_npcl { namespace MCM {
                 if (!alias_actor.actor) {
                     maybe<skylib::Quest_Objective_t**> objective = objectives.Point(idx);
                     if (objective && *objective) {
-                        (*objective)->display_text = std::string("NPC Lookup: ") + actor->Any_Name().data;
+                        (*objective)->display_text = std::string("NPC Lookup: ") + actor->Any_Name();
                     }
                     alias_actor.alias->Fill(actor, new Mark_Callback_t(this, idx));
                     alias_actor.actor = actor();

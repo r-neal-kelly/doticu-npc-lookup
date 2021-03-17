@@ -131,8 +131,8 @@ namespace doticu_npcl { namespace MCM {
             static auto comparator = [](String_t* str_a, String_t* str_b)->Int_t
             {
                 return Main_t::String_Comparator(
-                    str_a ? str_a->data : "",
-                    str_b ? str_b->data : ""
+                    str_a ? *str_a : "",
+                    str_b ? *str_b : ""
                 );
             };
             results.Sort(comparator, 1);

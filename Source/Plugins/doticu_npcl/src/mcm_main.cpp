@@ -205,8 +205,7 @@ namespace doticu_npcl { namespace MCM {
             }
             void operator()()
             {
-                V::Variable_t none;
-                V::Machine_t::Self()->Return_Latent_Function(stack_id, &none);
+                V::Machine_t::Self()->Return_Latent_Function(stack_id, V::Variable_t());
             }
         };
         return new Callback(stack_id);

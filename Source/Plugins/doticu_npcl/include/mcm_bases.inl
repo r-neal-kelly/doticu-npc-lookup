@@ -55,7 +55,7 @@ namespace doticu_npcl { namespace MCM {
                 if (var && var->Is_String()) {
                     String_t str = var->String();
                     if (str) {
-                        Item_Section_e item_section = Item_Section_e::From_String(str.data);
+                        Item_Section_e item_section = Item_Section_e::From_String(str);
                         if (item_section > Item_Section_e::NONE && item_section < Item_Section_e::_END_) {
                             item_sections.push_back(item_section);
                         }
@@ -1119,7 +1119,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument() = mcm->From_Relation_Key(value.data);
+                Relation_Argument() = mcm->From_Relation_Key(value);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -1132,7 +1132,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Vitality_Argument() = mcm->From_Vitality_Key(value.data);
+                Vitality_Argument() = mcm->From_Vitality_Key(value);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -2025,7 +2025,7 @@ namespace doticu_npcl { namespace MCM {
                     show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Name(), Main_t::_NONE_); // 1
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String().data, Main_t::_NONE_); // 2
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + base->Form_ID_String(), Main_t::_NONE_); // 2
 
                     if (base->Is_Male()) { // 3
                         mcm->Add_Text_Option(Main_t::IS_MALE, Main_t::_NONE_);
@@ -2082,7 +2082,7 @@ namespace doticu_npcl { namespace MCM {
                         if (faction && faction->Is_Valid()) {
                             std::string label =
                                 std::string(Main_t::_SPACE_) +
-                                faction->Editor_Or_Form_ID().data +
+                                faction->Editor_Or_Form_ID() +
                                 Main_t::_COLON_SPACE_ +
                                 std::to_string(rank);
                             mcm->Add_Text_Option(label, Main_t::_NONE_);
@@ -2141,7 +2141,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         Keyword_t* keyword = keywords[idx];
                         if (keyword && keyword->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name().data, Main_t::_NONE_);
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name(), Main_t::_NONE_);
                         }
                     }
 
@@ -2174,8 +2174,8 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LEVELED_BASE);
                     show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name().data, Main_t::_NONE_); // 1
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String().data, Main_t::_NONE_); // 2
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Leveled_Name(), Main_t::_NONE_); // 1
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + leveled_base->Form_ID_String(), Main_t::_NONE_); // 2
 
                     view_nested_option = mcm->Add_Text_Option(Main_t::VIEW_INTERNAL_BASES, Main_t::_DOTS_); // 3
                     mcm->Add_Empty_Option(); // 4
@@ -2247,7 +2247,7 @@ namespace doticu_npcl { namespace MCM {
                     show_races_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     race_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Get_Editor_ID(), Main_t::_NONE_); // 1
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String().data, Main_t::_NONE_); // 2
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + race->Form_ID_String(), Main_t::_NONE_); // 2
 
                     if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();
@@ -2282,7 +2282,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         Actor_Base_t* base_template = templates[idx];
                         const char* name = base_template->Name();
-                        const char* form_id = base_template->Form_ID_String().data;
+                        const char* form_id = base_template->Form_ID_String();
                         mcm->Add_Text_Option(
                             std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
                             Main_t::_NONE_
@@ -2392,7 +2392,7 @@ namespace doticu_npcl { namespace MCM {
             if (race && race->Is_Valid()) {
                 const char* name = race->Name();
                 const char* editor_id = race->Get_Editor_ID();
-                const char* form_id = race->Form_ID_String().data;
+                const char* form_id = race->Form_ID_String();
                 some<Main_t*> mcm = Main_t::Self();
                 mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
             }

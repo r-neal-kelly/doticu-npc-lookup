@@ -441,7 +441,7 @@ namespace doticu_npcl { namespace MCM {
         maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
         if (nested_item) {
             Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-            Index_t idx = nested_items.Index_Of(nested_item());
+            Index_t idx = nested_items.Index_Of(nested_item);
             if (idx > -1) {
                 if (idx == 0) {
                     idx = nested_items.size() - 1;
@@ -462,7 +462,7 @@ namespace doticu_npcl { namespace MCM {
         maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
         if (nested_item) {
             Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-            Index_t idx = nested_items.Index_Of(nested_item());
+            Index_t idx = nested_items.Index_Of(nested_item);
             if (idx > -1) {
                 if (idx == nested_items.size() - 1) {
                     idx = 0;
@@ -624,7 +624,7 @@ namespace doticu_npcl { namespace MCM {
             maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item && nested_item->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-                Index_t nested_index = nested_items.Index_Of(nested_item());
+                Index_t nested_index = nested_items.Index_Of(nested_item);
                 if (nested_index > -1) {
                     if (mcm->Should_Translate_Page_Titles()) {
                         mcm->Translated_Title_Text(

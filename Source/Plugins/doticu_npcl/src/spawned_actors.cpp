@@ -157,12 +157,12 @@ namespace doticu_npcl {
     Bool_t Spawned_Actors_t::Add(skylib::Form_ID_t actor_id, String_t actor_mod_name, skylib::Form_ID_t actor_base_id, String_t actor_base_mod_name)
     {
         if (actor_base_mod_name) {
-            maybe<Mod_t*> actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name.data);
+            maybe<Mod_t*> actor_base_mod = Mod_t::Active_Mod(actor_base_mod_name);
             if (actor_base_mod) {
                 if (actor_base_id.Mod(actor_base_mod) && actor_base_id) {
                     if (actor_id.Is_Static()) {
                         if (actor_mod_name) {
-                            maybe<Mod_t*> actor_mod = Mod_t::Active_Mod(actor_mod_name.data);
+                            maybe<Mod_t*> actor_mod = Mod_t::Active_Mod(actor_mod_name);
                             if (actor_mod) {
                                 if (!actor_id.Mod(actor_mod) || !actor_id) {
                                     return false;

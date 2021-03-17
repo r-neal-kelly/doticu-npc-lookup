@@ -688,7 +688,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Relation_Argument() = mcm->From_Relation_Key(value.data);
+                Relation_Argument() = mcm->From_Relation_Key(value);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -701,7 +701,7 @@ namespace doticu_npcl { namespace MCM {
                         value = selectables[idx];
                     }
                 }
-                Vitality_Argument() = mcm->From_Vitality_Key(value.data);
+                Vitality_Argument() = mcm->From_Vitality_Key(value);
                 mcm->Menu_Option_Value(option, value, true);
             }
 
@@ -1164,7 +1164,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         Actor_Base_t* actor_base = actor_bases[idx];
                         const char* name = actor_base->Name();
-                        const char* form_id = actor_base->Form_ID_String().data;
+                        const char* form_id = actor_base->Form_ID_String();
                         mcm->Add_Text_Option(
                             std::string(Main_t::_SPACE_) + mcm->Pretty_ID(name, Main_t::_NONE_, form_id),
                             Main_t::_NONE_
@@ -1200,7 +1200,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::CELL);
                     show_cells_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    cell_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name().data, Main_t::_NONE_); // 1
+                    cell_name_option = mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + cell->Any_Name(), Main_t::_NONE_); // 1
                     if (cell->Is_Interior()) { // 2
                         mcm->Add_Text_Option(Main_t::IS_INTERIOR, Main_t::_NONE_);
                     } else {
@@ -1294,7 +1294,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         Location_t* location = locations[idx];
                         if (location && location->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name().data, Main_t::_NONE_);
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name(), Main_t::_NONE_);
                         }
                     }
 
@@ -1332,7 +1332,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         some<Quest_t*> quest = quests[idx];
                         if (quest->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name().data, Main_t::_NONE_);
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name(), Main_t::_NONE_);
                         }
                     }
 
@@ -1366,7 +1366,7 @@ namespace doticu_npcl { namespace MCM {
                     show_references_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Name(), Main_t::_NONE_); // 1
-                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String().data, Main_t::_NONE_); // 2
+                    mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + actor->Form_ID_String(), Main_t::_NONE_); // 2
 
                     maybe<Actor_Base_t*> actor_base = actor->Actor_Base();
                     if (actor_base && actor_base->Is_Valid()) {
@@ -1432,7 +1432,7 @@ namespace doticu_npcl { namespace MCM {
                     for (Index_t idx = 0, end = count; idx < end; idx += 1) {
                         some<Worldspace_t*> worldspace = worldspaces[idx];
                         if (worldspace->Is_Valid()) {
-                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + worldspace->Any_Name().data, Main_t::_NONE_);
+                            mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + worldspace->Any_Name(), Main_t::_NONE_);
                         }
                     }
 
@@ -1462,7 +1462,7 @@ namespace doticu_npcl { namespace MCM {
             if (cell && cell->Is_Valid()) {
                 const char* name = cell->Name();
                 const char* editor_id = cell->Get_Editor_ID();
-                const char* form_id = cell->Form_ID_String().data;
+                const char* form_id = cell->Form_ID_String();
                 some<Main_t*> mcm = Main_t::Self();
                 mcm->Highlight(mcm->Pretty_ID(name, editor_id, form_id), lcallback);
             }

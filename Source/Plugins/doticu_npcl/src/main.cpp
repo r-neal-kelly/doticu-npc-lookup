@@ -116,30 +116,32 @@ namespace doticu_npcl {
         const Version_t<skylib::u8>& required_skyrim_version = Consts_t::Skyrim_Required_Version();
 
         if (running_skyrim_version < required_skyrim_version) {
-            skylib::UI_t::Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
-                                      std::to_string(running_skyrim_version.major) + "." +
-                                      std::to_string(running_skyrim_version.minor) + "." +
-                                      std::to_string(running_skyrim_version.patch) + "." +
-                                      std::to_string(running_skyrim_version.build) + ")\n" +
-                                      "This version of NPC Lookup was written for: (" +
-                                      std::to_string(required_skyrim_version.major) + "." +
-                                      std::to_string(required_skyrim_version.minor) + "." +
-                                      std::to_string(required_skyrim_version.patch) + "." +
-                                      std::to_string(required_skyrim_version.build) + ")\n" +
-                                      "You need to update your version of Skyrim.");
+            skylib::UI_t::Create_Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
+                                             std::to_string(running_skyrim_version.major) + "." +
+                                             std::to_string(running_skyrim_version.minor) + "." +
+                                             std::to_string(running_skyrim_version.patch) + "." +
+                                             std::to_string(running_skyrim_version.build) + ")\n" +
+                                             "This version of NPC Lookup was written for: (" +
+                                             std::to_string(required_skyrim_version.major) + "." +
+                                             std::to_string(required_skyrim_version.minor) + "." +
+                                             std::to_string(required_skyrim_version.patch) + "." +
+                                             std::to_string(required_skyrim_version.build) + ")\n" +
+                                             "You need to update your version of Skyrim.",
+                                             none<V::Callback_i*>());
             return false;
         } else if (running_skyrim_version > required_skyrim_version) {
-            skylib::UI_t::Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
-                                      std::to_string(running_skyrim_version.major) + "." +
-                                      std::to_string(running_skyrim_version.minor) + "." +
-                                      std::to_string(running_skyrim_version.patch) + "." +
-                                      std::to_string(running_skyrim_version.build) + ")\n" +
-                                      "This version of NPC Lookup was written for: (" +
-                                      std::to_string(required_skyrim_version.major) + "." +
-                                      std::to_string(required_skyrim_version.minor) + "." +
-                                      std::to_string(required_skyrim_version.patch) + "." +
-                                      std::to_string(required_skyrim_version.build) + ")\n" +
-                                      "You should check for an update to NPC Lookup.");
+            skylib::UI_t::Create_Message_Box("NPC Lookup will not work with your installed version of Skyrim: (" +
+                                             std::to_string(running_skyrim_version.major) + "." +
+                                             std::to_string(running_skyrim_version.minor) + "." +
+                                             std::to_string(running_skyrim_version.patch) + "." +
+                                             std::to_string(running_skyrim_version.build) + ")\n" +
+                                             "This version of NPC Lookup was written for: (" +
+                                             std::to_string(required_skyrim_version.major) + "." +
+                                             std::to_string(required_skyrim_version.minor) + "." +
+                                             std::to_string(required_skyrim_version.patch) + "." +
+                                             std::to_string(required_skyrim_version.build) + ")\n" +
+                                             "You should check for an update to NPC Lookup.",
+                                             none<V::Callback_i*>());
             return false;
         } else {
             return true;
@@ -148,7 +150,7 @@ namespace doticu_npcl {
 
     Bool_t Main_t::Is_Active()
     {
-        return Consts_t::NPCL_Mod() != nullptr;
+        return Consts_t::NPCL_Mod() != none<Mod_t*>();
     }
 
     Bool_t Main_t::Is_Installed()
@@ -197,7 +199,7 @@ namespace doticu_npcl {
 
                     MCM::Main_t::Self()->On_Init();
                 } else {
-                    skylib::UI_t::Message_Box(FAILED_TO_INIT_QUESTS);
+                    skylib::UI_t::Create_Message_Box(FAILED_TO_INIT_QUESTS, none<V::Callback_i*>());
                 }
             }
         };
@@ -216,7 +218,7 @@ namespace doticu_npcl {
                     MCM::Main_t::Self()->On_Load();
                     Try_To_Update();
                 } else {
-                    skylib::UI_t::Message_Box(FAILED_TO_REINIT_QUESTS);
+                    skylib::UI_t::Create_Message_Box(FAILED_TO_REINIT_QUESTS, none<V::Callback_i*>());
                 }
             }
         };
@@ -233,7 +235,7 @@ namespace doticu_npcl {
             MCM::Main_t::Self()->On_Load();
             Try_To_Update();
         } else {
-            skylib::UI_t::Message_Box(FAILED_TO_LOAD_QUESTS);
+            skylib::UI_t::Create_Message_Box(FAILED_TO_LOAD_QUESTS, none<V::Callback_i*>());
             Reinit();
         }
     }
