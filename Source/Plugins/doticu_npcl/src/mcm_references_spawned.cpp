@@ -5,10 +5,10 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/enum_comparator.h"
 #include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
 #include "doticu_skylib/translations.h"
-
 #include "doticu_skylib/virtual_function.h"
 #include "doticu_skylib/virtual_input.h"
 #include "doticu_skylib/virtual_utility.h"

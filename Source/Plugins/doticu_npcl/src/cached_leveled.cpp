@@ -13,7 +13,8 @@ namespace doticu_npcl {
     Cached_Leveled_t::Cached_Leveled_t(some<Leveled_Actor_Base_t*> leveled) :
         name(leveled->Any_Name()), leveled(leveled)
     {
-        class Iterator_t : public skylib::Iterator_i<skylib::Iterator_e, Actor_Base_t*>
+        class Iterator_t :
+            public skylib::Iterator_i<Actor_Base_t*>
         {
         public:
             Vector_t<some<Actor_Base_t*>>&  bases;
@@ -22,7 +23,7 @@ namespace doticu_npcl {
                 bases(bases), races(races)
             {
             }
-            skylib::Iterator_e operator()(Actor_Base_t* actor_base)
+            skylib::Iterator_e operator() (Actor_Base_t* actor_base)
             {
                 if (actor_base && actor_base->Is_Valid()) {
                     some<Actor_Base_t*> base = actor_base;

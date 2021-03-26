@@ -2,12 +2,12 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/interface.h"
-
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
+#include "doticu_skylib/enum_comparator.h"
 #include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
+#include "doticu_skylib/interface.h"
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/race.h"
 #include "doticu_skylib/enum_relation.h"

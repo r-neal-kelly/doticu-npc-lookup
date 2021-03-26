@@ -2,18 +2,16 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/dynamic_array.inl"
-#include "doticu_skylib/forward_list.inl"
-
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/alias_base.h"
 #include "doticu_skylib/alias_reference.h"
-#include "doticu_skylib/player.h"
-#include "doticu_skylib/quest_objective.h"
-
+#include "doticu_skylib/dynamic_array.inl"
+#include "doticu_skylib/enum_comparator.h"
 #include "doticu_skylib/extra_aliases.h"
 #include "doticu_skylib/extra_list.inl"
-
+#include "doticu_skylib/forward_list.inl"
+#include "doticu_skylib/player.h"
+#include "doticu_skylib/quest_objective.h"
 #include "doticu_skylib/virtual_callback.h"
 #include "doticu_skylib/virtual_macros.h"
 

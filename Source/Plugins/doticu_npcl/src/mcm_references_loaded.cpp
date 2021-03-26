@@ -4,12 +4,12 @@
 
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/enum_comparator.h"
 #include "doticu_skylib/faction.h"
 #include "doticu_skylib/game.h"
-#include "doticu_skylib/worldspace.h"
-
 #include "doticu_skylib/virtual_input.h"
 #include "doticu_skylib/virtual_utility.h"
+#include "doticu_skylib/worldspace.h"
 
 #include "consts.h"
 #include "filter.h"

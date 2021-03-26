@@ -3,6 +3,7 @@
 */
 
 #include "doticu_skylib/alias_base.h"
+#include "doticu_skylib/enum_comparator.h"
 #include "doticu_skylib/interface.inl"
 #include "doticu_skylib/translations.h"
 #include "doticu_skylib/virtual_function.h"

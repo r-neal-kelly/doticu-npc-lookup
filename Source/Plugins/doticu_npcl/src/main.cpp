@@ -183,8 +183,6 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(!Is_Installed());
 
-        skylib::Main_t::Initialize();
-
         class Start_Quests_Callback_t : public Callback_i<Bool_t>
         {
             void operator()(Bool_t did_start_all)
@@ -229,7 +227,7 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(Is_Installed());
 
-        skylib::Main_t::After_Load();
+        //skylib::Main_t::After_Load();
 
         if (Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Load();
@@ -243,8 +241,6 @@ namespace doticu_npcl {
     void Main_t::Before_Save()
     {
         SKYLIB_ASSERT(Is_Installed());
-
-        skylib::Main_t::Before_Save();
 
         MCM::Main_t::Self()->On_Save();
     }
