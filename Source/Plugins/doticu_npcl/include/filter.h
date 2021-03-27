@@ -7,6 +7,8 @@
 #include "doticu_skylib/actor.h"
 #include "doticu_skylib/actor_base.h"
 #include "doticu_skylib/cell.h"
+#include "doticu_skylib/enum_relation.h"
+#include "doticu_skylib/enum_vitality.h"
 #include "doticu_skylib/faction.h"
 #include "doticu_skylib/form.h"
 #include "doticu_skylib/keyword.h"
@@ -15,8 +17,6 @@
 #include "doticu_skylib/mod.h"
 #include "doticu_skylib/quest.h"
 #include "doticu_skylib/race.h"
-#include "doticu_skylib/enum_relation.h"
-#include "doticu_skylib/vitality.h"
 #include "doticu_skylib/worldspace.h"
 
 #include "intrinsic.h"
@@ -148,7 +148,7 @@ namespace doticu_npcl {
                           Filter_e(*Compare)(Item_t, Vitality_e)) :
             Filter_i<Item_t>(state)
         {
-            if (vitality != Vitality_e::NONE) {
+            if (vitality != Vitality_e::_NONE_) {
                 if (do_negate) {
                     for (Index_t idx = 0, end = state.read->size(); idx < end; idx += 1) {
                         Item_t item = state.read->at(idx);
@@ -1286,7 +1286,7 @@ namespace doticu_npcl {
 
         static Filter_e Compare(Item_t item, Vitality_e vitality)
         {
-            if (item != Vitality_e::NONE) {
+            if (item != Vitality_e::_NONE_) {
                 if (item == vitality) {
                     return Filter_e::IS_MATCH;
                 } else {

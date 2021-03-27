@@ -570,7 +570,7 @@ namespace doticu_npcl { namespace MCM {
         Relation_Argument() = Relation_e::_NONE_;
         Relation_Do_Negate() = false;
 
-        Vitality_Argument() = Vitality_e::NONE;
+        Vitality_Argument() = Vitality_e::_NONE_;
         Vitality_Do_Negate() = false;
 
         Male_Female_Argument() = Binary_e::NONE;
@@ -2038,7 +2038,7 @@ namespace doticu_npcl { namespace MCM {
                         mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
                     }
                     Vitality_e vitality = base->Vitality(); // 5
-                    if (vitality != Vitality_e::NONE) {
+                    if (vitality != Vitality_e::_NONE_) {
                         mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
                     }
                     some<Relation_e> relation = base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6

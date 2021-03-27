@@ -46,7 +46,7 @@ namespace doticu_npcl { namespace MCM {
 
         Selectable_Data_t(Vitality_f vitality_f, Select_f select_f)
         {
-            Init<Vitality_f, Vitality_e>(vitality_f, Vitality_e::NONE);
+            Init<Vitality_f, Vitality_e>(vitality_f, Vitality_e::_NONE_);
             Select(select_f);
             Sort();
         }
@@ -1059,7 +1059,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vitality_e vitality = item->Vitality();
-                if (vitality != Vitality_e::NONE) {
+                if (vitality != Vitality_e::_NONE_) {
                     output.push_back(Main_t::To_Vitality_Key(vitality)());
                 }
             }

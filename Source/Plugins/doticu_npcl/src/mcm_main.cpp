@@ -149,7 +149,7 @@ namespace doticu_npcl { namespace MCM {
         } else if (CString_t::Is_Same(INVULNERABLE, vitality_key(), false)) {
             return Vitality_e::INVULNERABLE;
         } else {
-            return Vitality_e::NONE;
+            return Vitality_e::_NONE_;
         }
     }
 
