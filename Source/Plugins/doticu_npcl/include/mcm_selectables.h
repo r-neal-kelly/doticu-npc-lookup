@@ -93,11 +93,11 @@ namespace doticu_npcl { namespace MCM {
         inline void Select(Select_f select_f)
         {
             results.push_back(Main_t::ANY);
-            for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = items.size(); idx < end; idx += 1) {
                 Item_t item = items.at(idx);
                 if (item) {
                     select_f(item, buffer);
-                    for (Index_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
+                    for (size_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
                         String_t string = buffer[idx];
                         if (string && !results.Has(string)) {
                             results.push_back(string);
@@ -111,11 +111,11 @@ namespace doticu_npcl { namespace MCM {
         inline void Select(Select_Relation_f select_f, Actor_Base_t* base_to_compare)
         {
             results.push_back(Main_t::ANY);
-            for (Index_t idx = 0, end = items.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = items.size(); idx < end; idx += 1) {
                 Item_t item = items.at(idx);
                 if (item) {
                     select_f(item, base_to_compare, buffer);
-                    for (Index_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
+                    for (size_t idx = 0, end = buffer.size(); idx < end; idx += 1) {
                         String_t string = buffer[idx];
                         if (string && !results.Has(string)) {
                             results.push_back(string);
@@ -446,7 +446,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = bases.size(); idx < end; idx += 1) {
                     Selectable_Templates_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
@@ -529,7 +529,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
-                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
                     Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction(), output);
                 }
             }
@@ -552,7 +552,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = bases.size(); idx < end; idx += 1) {
                     Selectable_Factions_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
@@ -575,7 +575,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<Faction_And_Rank_t> factions_and_ranks = item->Factions_And_Ranks();
-                for (Index_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = factions_and_ranks.size(); idx < end; idx += 1) {
                     Selectable_Factions_t<Base_t, Faction_t*>::Select(factions_and_ranks[idx].faction(), output);
                 }
             }
@@ -615,7 +615,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<Keyword_t*> keywords = item->Keywords();
-                for (Index_t idx = 0, end = keywords.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = keywords.size(); idx < end; idx += 1) {
                     Keyword_t* keyword = keywords[idx];
                     if (keyword && keyword->Is_Valid()) {
                         String_t name = keyword->Any_Name();
@@ -644,7 +644,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& bases = item->bases;
-                for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = bases.size(); idx < end; idx += 1) {
                     Selectable_Keywords_t<Base_t, Actor_Base_t*>::Select(bases[idx](), output);
                 }
             }
@@ -761,7 +761,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<some<Worldspace_t*>> worldspaces = item->Worldspaces();
-                for (Index_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = worldspaces.size(); idx < end; idx += 1) {
                     Selectable_Worldspaces_t<Base_t, Worldspace_t*>::Select(worldspaces[idx](), output);
                 }
             }
@@ -938,7 +938,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->Is_Valid()) {
                 Vector_t<some<Quest_t*>> quests = item->Quests();
-                for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = quests.size(); idx < end; idx += 1) {
                     Selectable_Quests_t<Base_t, Quest_t*>::Select(quests[idx](), output);
                 }
             }
@@ -999,7 +999,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
-                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
                     Selectable_Relations_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx](), base_to_compare, output);
                 }
             }
@@ -1082,7 +1082,7 @@ namespace doticu_npcl { namespace MCM {
         {
             if (item && item->leveled && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>>& actor_bases = item->bases;
-                for (Index_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
+                for (size_t idx = 0, end = actor_bases.size(); idx < end; idx += 1) {
                     Selectable_Vitalities_t<Base_t, Actor_Base_t*>::Select(actor_bases[idx](), output);
                 }
             }

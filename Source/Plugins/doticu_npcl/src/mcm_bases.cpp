@@ -53,7 +53,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Item_Section_t> copy;
         copy.reserve(item_section_count);
 
-        for (Index_t idx = 0, end = item_section_count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = item_section_count; idx < end; idx += 1) {
             Item_Section_t item_section = item_sections[idx];
             if (item_section != Bases_Item_Section_e::NONE) {
                 copy.push_back(item_section);
@@ -71,7 +71,7 @@ namespace doticu_npcl { namespace MCM {
         item_sections.clear();
         item_sections.reserve(default_count);
 
-        for (Index_t idx = 0, end = default_count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = default_count; idx < end; idx += 1) {
             item_sections.push_back(defaults[idx]);
         }
     }
@@ -96,9 +96,9 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Index_t idx = item_sections.Index_Of(item_section);
-        if (idx > -1) {
-            item_sections.erase(item_sections.begin() + idx);
+        maybe<size_t> idx = item_sections.Index_Of(item_section);
+        if (idx.Has_Value()) {
+            item_sections.erase(item_sections.begin() + idx.Value());
         }
     }
 
@@ -106,27 +106,31 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        return item_sections.Index_Of(item_section) > 0;
+        maybe<size_t> maybe_idx = item_sections.Index_Of(item_section);
+        return maybe_idx.Has_Value() && maybe_idx.Value() > 0;
     }
 
     Bool_t Item_Sections_t::May_Move_Lower(Item_Section_t item_section)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Index_t idx = item_sections.Index_Of(item_section);
-        Index_t last = item_sections.size() - 1;
-        return idx > -1 && idx < last;
+        maybe<size_t> maybe_idx = item_sections.Index_Of(item_section);
+        size_t last_idx = item_sections.size() - 1;
+        return maybe_idx.Has_Value() && maybe_idx.Value() < last_idx;
     }
 
     void Item_Sections_t::Move_Higher(Item_Section_t item_section)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Index_t idx = item_sections.Index_Of(item_section);
-        if (idx > 0) {
-            Item_Section_t item_section = item_sections[idx];
-            item_sections[idx] = item_sections[idx - 1];
-            item_sections[idx - 1] = item_section;
+        maybe<size_t> maybe_idx = item_sections.Index_Of(item_section);
+        if (maybe_idx.Has_Value()) {
+            size_t idx = maybe_idx.Value();
+            if (idx > 0) {
+                Item_Section_t item_section = item_sections[idx];
+                item_sections[idx] = item_sections[idx - 1];
+                item_sections[idx - 1] = item_section;
+            }
         }
     }
 
@@ -134,12 +138,15 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        Index_t idx = item_sections.Index_Of(item_section);
-        Index_t last = item_sections.size() - 1;
-        if (idx > -1 && idx < last) {
-            Item_Section_t item_section = item_sections[idx];
-            item_sections[idx] = item_sections[idx + 1];
-            item_sections[idx + 1] = item_section;
+        maybe<size_t> maybe_idx = item_sections.Index_Of(item_section);
+        if (maybe_idx.Has_Value()) {
+            size_t idx = maybe_idx.Value();
+            size_t last_idx = item_sections.size() - 1;
+            if (idx < last_idx) {
+                Item_Section_t item_section = item_sections[idx];
+                item_sections[idx] = item_sections[idx + 1];
+                item_sections[idx + 1] = item_section;
+            }
         }
     }
 

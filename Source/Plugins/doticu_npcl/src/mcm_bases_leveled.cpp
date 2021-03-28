@@ -56,7 +56,7 @@ namespace doticu_npcl { namespace MCM {
         cached_leveleds.reserve(Leveled_Actor_Base_t::Leveled_Actor_Base_Count());
 
         Vector_t<Leveled_Actor_Base_t*> leveled_actor_bases = Leveled_Actor_Base_t::Leveled_Actor_Bases();
-        for (Index_t idx = 0, end = leveled_actor_bases.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = leveled_actor_bases.size(); idx < end; idx += 1) {
             Leveled_Actor_Base_t* leveled_actor_base = leveled_actor_bases[idx];
             if (leveled_actor_base && leveled_actor_base->Is_Valid()) {
                 cached_leveleds.push_back(std::move(Cached_Leveled_t(leveled_actor_base)));
@@ -77,7 +77,7 @@ namespace doticu_npcl { namespace MCM {
             write.reserve(cached_leveled_count);
             write.clear();
 
-            for (Index_t idx = 0, end = cached_leveled_count; idx < end; idx += 1) {
+            for (size_t idx = 0, end = cached_leveled_count; idx < end; idx += 1) {
                 read.push_back(&cached_leveleds[idx]);
             }
 
@@ -115,7 +115,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Item_t> items;
         items.reserve(cached_leveled_count);
 
-        for (Index_t idx = 0, end = cached_leveled_count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = cached_leveled_count; idx < end; idx += 1) {
             items.push_back(&cached_leveleds[idx]);
         }
 
@@ -265,11 +265,11 @@ namespace doticu_npcl { namespace MCM {
 
         } else {
             Vector_t<Item_t>& items = Items();
-            Index_t item_index = mcm->Option_To_Item_Index(
+            maybe<size_t> item_index = mcm->Option_To_Item_Index(
                 option, items.size(), Page_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
             );
-            if (item_index > -1) {
-                Item_t item = items[item_index];
+            if (item_index.Has_Value()) {
+                Item_t item = items[item_index.Value()];
                 if (item && item->leveled && item->leveled->Is_Valid()) {
                     mcm->Disable_Option(option);
                     Item()->Leveled_Form_ID() = item->leveled->form_id;
@@ -349,9 +349,9 @@ namespace doticu_npcl { namespace MCM {
             static_cast<maybe<Leveled_Actor_Base_t*>>(Game_t::Form(Leveled_Form_ID()));
         if (leveled) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(leveled);
-            if (idx > -1) {
-                return items[idx];
+            maybe<size_t> idx = items.Index_Of(leveled);
+            if (idx.Has_Value()) {
+                return items[idx.Value()];
             } else {
                 return none<Item_t>()();
             }
@@ -376,8 +376,9 @@ namespace doticu_npcl { namespace MCM {
             static_cast<maybe<Leveled_Actor_Base_t*>>(Game_t::Form(Leveled_Form_ID()));
         if (leveled) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(leveled);
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = items.Index_Of(leveled);
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == 0) {
                     idx = items.size() - 1;
                 } else {
@@ -398,8 +399,9 @@ namespace doticu_npcl { namespace MCM {
             static_cast<maybe<Leveled_Actor_Base_t*>>(Game_t::Form(Leveled_Form_ID()));
         if (leveled) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(leveled);
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = items.Index_Of(leveled);
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == items.size() - 1) {
                     idx = 0;
                 } else {
@@ -441,8 +443,9 @@ namespace doticu_npcl { namespace MCM {
         maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
         if (nested_item) {
             Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-            Index_t idx = nested_items.Index_Of(nested_item);
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = nested_items.Index_Of(nested_item);
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == 0) {
                     idx = nested_items.size() - 1;
                 } else {
@@ -462,8 +465,9 @@ namespace doticu_npcl { namespace MCM {
         maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
         if (nested_item) {
             Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-            Index_t idx = nested_items.Index_Of(nested_item);
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = nested_items.Index_Of(nested_item);
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == nested_items.size() - 1) {
                     idx = 0;
                 } else {
@@ -496,16 +500,16 @@ namespace doticu_npcl { namespace MCM {
         maybe<Leveled_Actor_Base_t*> leveled = static_cast<maybe<Leveled_Actor_Base_t*>>(Game_t::Form(Leveled_Form_ID()));
         if (leveled && leveled->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t item_index = items.Index_Of(leveled);
-            Item_t item = items[item_index];
-            if (item_index > -1) {
+            maybe<size_t> item_index = items.Index_Of(leveled);
+            if (item_index.Has_Value()) {
+                Item_t item = items[item_index.Value()];
                 if (mcm->Should_Translate_Page_Titles()) {
                     mcm->Translated_Title_Text(
-                        mcm->Singular_Title(Main_t::COMPONENT_LEVELED_BASE, item->name, item_index, items.size())
+                        mcm->Singular_Title(Main_t::COMPONENT_LEVELED_BASE, item->name, item_index.Value(), items.size())
                     );
                 } else {
                     mcm->Title_Text(
-                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_LEVELED_BASE, item->name, item_index, items.size())
+                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_LEVELED_BASE, item->name, item_index.Value(), items.size())
                     );
                 }
 
@@ -624,15 +628,15 @@ namespace doticu_npcl { namespace MCM {
             maybe<Actor_Base_t*> nested_item = static_cast<maybe<Actor_Base_t*>>(Game_t::Form(Nested_Form()));
             if (nested_item && nested_item->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
-                Index_t nested_index = nested_items.Index_Of(nested_item);
-                if (nested_index > -1) {
+                maybe<size_t> nested_index = nested_items.Index_Of(nested_item);
+                if (nested_index.Has_Value()) {
                     if (mcm->Should_Translate_Page_Titles()) {
                         mcm->Translated_Title_Text(
-                            mcm->Singular_Title(Main_t::COMPONENT_INTERNAL_BASE, nested_item->Any_Name(), nested_index, nested_items.size())
+                            mcm->Singular_Title(Main_t::COMPONENT_INTERNAL_BASE, nested_item->Any_Name(), nested_index.Value(), nested_items.size())
                         );
                     } else {
                         mcm->Title_Text(
-                            mcm->Singular_Title(Main_t::SAFE_COMPONENT_INTERNAL_BASE, nested_item->Any_Name(), nested_index, nested_items.size())
+                            mcm->Singular_Title(Main_t::SAFE_COMPONENT_INTERNAL_BASE, nested_item->Any_Name(), nested_index.Value(), nested_items.size())
                         );
                     }
 
@@ -772,11 +776,11 @@ namespace doticu_npcl { namespace MCM {
             Item_t item = Current_Item();
             if (item && item->leveled->Is_Valid()) {
                 Vector_t<some<Actor_Base_t*>> items = Nested_Items();
-                Index_t item_index = mcm->Option_To_Item_Index(
+                maybe<size_t> item_index = mcm->Option_To_Item_Index(
                     option, items.size(), Nested_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
                 );
-                if (item_index > -1) {
-                    some<Actor_Base_t*> item = items[item_index];
+                if (item_index.Has_Value()) {
+                    some<Actor_Base_t*> item = items[item_index.Value()];
                     if (item && item->Is_Valid()) {
                         mcm->Disable_Option(option);
                         Item()->Nested_Form() = item->form_id;

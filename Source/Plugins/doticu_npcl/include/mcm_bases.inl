@@ -27,7 +27,7 @@ namespace doticu_npcl { namespace MCM {
             Vector_t<String_t> strs;
             strs.reserve(item_section_count);
 
-            for (Index_t idx = 0, end = item_section_count; idx < end; idx += 1) {
+            for (size_t idx = 0, end = item_section_count; idx < end; idx += 1) {
                 some<const char*> str = Item_Section_e::To_String(item_sections[idx]);
                 strs.push_back(str());
             }
@@ -50,7 +50,7 @@ namespace doticu_npcl { namespace MCM {
             item_sections.clear();
             item_sections.reserve(arr->count);
 
-            for (Index_t idx = 0, end = arr->count; idx < end; idx += 1) {
+            for (size_t idx = 0, end = arr->count; idx < end; idx += 1) {
                 V::Variable_t* var = arr->Point(idx);
                 if (var && var->Is_String()) {
                     String_t str = var->String();
@@ -1393,7 +1393,7 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Menu_Option(label, Main_t::_DOTS_);
         };
-        for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
             Section_e section_e = current_sections[idx];
             if (allowed_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)     bases_section_option        = Enabled(Main_t::BASES);
@@ -1410,7 +1410,7 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Toggle_Option(mcm->Add_Font(label, "", "#80", ""), false);
         };
-        for (Index_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
             Section_e section_e = allowed_sections[idx];
             if (!current_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)     bases_section_option        = Disabled(Main_t::BASES);
@@ -1945,7 +1945,7 @@ namespace doticu_npcl { namespace MCM {
     {
         auto Buildable = [](Vector_t<Buildable_i*>& buildables, Item_Section_t item_section)->Buildable_i*
         {
-            for (Index_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
                 Buildable_i* buildable = buildables[idx];
                 if (buildable && buildable->Type() == item_section) {
                     return buildable;
@@ -1964,7 +1964,7 @@ namespace doticu_npcl { namespace MCM {
             unshown.reserve(buildable_count);
             disabled.reserve(buildable_count);
 
-            for (Index_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = buildables.size(); idx < end; idx += 1) {
                 Buildable_i* buildable = buildables[idx];
                 if (buildable) {
                     if (buildable->Can_Enable()) {
@@ -1980,21 +1980,21 @@ namespace doticu_npcl { namespace MCM {
             }
 
             Vector_t<Item_Section_t> current_sections = Options()->item_sections.Current();
-            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
                 Item_Section_t item_section = current_sections[idx];
                 Buildable_i* buildable = Buildable(shown, item_section);
                 if (buildable) {
                     buildable->Build();
                 }
             }
-            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
                 Item_Section_t item_section = current_sections[idx];
                 Buildable_i* buildable = Buildable(unshown, item_section);
                 if (buildable) {
                     buildable->Build();
                 }
             }
-            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
                 Item_Section_t item_section = current_sections[idx];
                 Buildable_i* buildable = Buildable(disabled, item_section);
                 if (buildable) {
@@ -2003,7 +2003,7 @@ namespace doticu_npcl { namespace MCM {
             }
         } else {
             Vector_t<Item_Section_t> current_sections = Options()->item_sections.Current();
-            for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
                 Item_Section_t item_section = current_sections[idx];
                 Buildable_i* buildable = Buildable(buildables, item_section);
                 if (buildable) {
@@ -2075,7 +2075,7 @@ namespace doticu_npcl { namespace MCM {
                     show_factions_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     factions.Sort(Faction_And_Rank_t::Compare_Editor_Or_Form_IDs);
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Faction_And_Rank_t& faction_and_rank = factions[idx];
                         maybe<Faction_t*> faction = faction_and_rank.faction;
                         skylib::Raw_Faction_Rank_t rank = faction_and_rank.rank;
@@ -2138,7 +2138,7 @@ namespace doticu_npcl { namespace MCM {
                     show_keywords_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     keywords.Sort(Keyword_t::Compare_Any_Names);
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Keyword_t* keyword = keywords[idx];
                         if (keyword && keyword->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + keyword->Any_Name(), Main_t::_NONE_);
@@ -2210,7 +2210,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::MODS);
                     show_mods_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Mod_t* mod = mods[idx];
                         if (mod) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + mod->Name(), Main_t::_NONE_);
@@ -2279,7 +2279,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::TEMPLATES);
                     show_templates_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Actor_Base_t* base_template = templates[idx];
                         const char* name = base_template->Name();
                         const char* form_id = base_template->Form_ID_String();

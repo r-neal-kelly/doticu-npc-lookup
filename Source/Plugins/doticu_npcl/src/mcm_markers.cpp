@@ -32,8 +32,8 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Markers_t* self;
-        Index_t marker_index;
-        Mark_Callback_t(Markers_t* self, Index_t marker_index) :
+        size_t marker_index;
+        Mark_Callback_t(Markers_t* self, size_t marker_index) :
             self(self), marker_index(marker_index)
         {
         }
@@ -60,8 +60,8 @@ namespace doticu_npcl { namespace MCM {
     {
     public:
         Markers_t* self;
-        Index_t marker_index;
-        Unmark_Callback_t(Markers_t* self, Index_t marker_index) :
+        size_t marker_index;
+        Unmark_Callback_t(Markers_t* self, size_t marker_index) :
             self(self), marker_index(marker_index)
         {
         }
@@ -89,7 +89,7 @@ namespace doticu_npcl { namespace MCM {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
         alias_actors.Clear();
-        for (Index_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
+        for (size_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
             maybe<Alias_Base_t*> alias_base = this->aliases[idx + 1];
             if (alias_base) {
                 maybe<Alias_Reference_t*> alias_reference = alias_base->As_Alias_Reference();
@@ -105,18 +105,18 @@ namespace doticu_npcl { namespace MCM {
             }
         }
 
-        for (Index_t idx = 0, end = promoted_references.Count(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = promoted_references.Count(); idx < end; idx += 1) {
             skylib::Reference_Handle_t reference_handle = promoted_references[idx];
             Reference_t* reference = Reference_t::From_Handle(reference_handle);
             if (reference && reference->Is_Valid()) {
                 maybe<skylib::Extra_Aliases_t*> xaliases = reference->x_list.Get<skylib::Extra_Aliases_t>();
                 if (xaliases) {
                     skylib::Read_Locker_t locker(xaliases->lock);
-                    for (Index_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
+                    for (size_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
                         maybe<skylib::Extra_Aliases_t::Instance_t*> instance = xaliases->instances[idx];
                         if (instance && instance->quest == some<Quest_t*>(this) && instance->alias_base) {
-                            Index_t marker_idx = instance->alias_base->id - 1;
-                            if (marker_idx > -1 && marker_idx < MAX_MARKERS) {
+                            size_t marker_idx = instance->alias_base->id - 1;
+                            if (marker_idx < MAX_MARKERS) {
                                 Actor_t* actor = static_cast<Actor_t*>(reference);
                                 alias_actors[marker_idx].actor = actor;
                             }
@@ -136,12 +136,12 @@ namespace doticu_npcl { namespace MCM {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
         some<Player_t*> player = Player_t::Self();
-        for (Index_t idx = 0, end = player->objectives.Count(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = player->objectives.Count(); idx < end; idx += 1) {
             auto& player_objective = player->objectives[idx];
             auto* objective = player_objective.objective;
             if (objective && objective->quest == this) {
-                Index_t marker_idx = objective->index;
-                if (marker_idx > -1 && marker_idx < alias_actors.count) {
+                size_t marker_idx = objective->index;
+                if (marker_idx < alias_actors.count) {
                     maybe<Actor_t*> actor = alias_actors[marker_idx].actor;
                     if (actor) {
                         objective->state = skylib::Quest_Objective_State_e::DISPLAYED;
@@ -161,7 +161,7 @@ namespace doticu_npcl { namespace MCM {
 
         Int_t count = 0;
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor) {
                 count += 1;
@@ -175,7 +175,7 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (!alias_actor.actor) {
                 return true;
@@ -191,7 +191,7 @@ namespace doticu_npcl { namespace MCM {
 
         std::lock_guard<std::mutex> guard(cache_mutex);
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor && alias_actor.actor() == actor()) {
                 return true;
@@ -208,7 +208,7 @@ namespace doticu_npcl { namespace MCM {
         if (!Has_Marked(actor)) {
             std::lock_guard<std::mutex> guard(cache_mutex);
 
-            for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+            for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
                 Alias_Actor_t& alias_actor = alias_actors[idx];
                 if (!alias_actor.actor) {
                     maybe<skylib::Quest_Objective_t**> objective = objectives.Point(idx);
@@ -233,7 +233,7 @@ namespace doticu_npcl { namespace MCM {
 
         std::lock_guard<std::mutex> guard(cache_mutex);
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor && alias_actor.actor() == actor()) {
                 alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
@@ -249,7 +249,7 @@ namespace doticu_npcl { namespace MCM {
     {
         std::lock_guard<std::mutex> guard(cache_mutex);
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             alias_actor.alias->Unfill(new Unmark_Callback_t(this, idx));
             alias_actor.actor = none<Actor_t*>();
@@ -263,7 +263,7 @@ namespace doticu_npcl { namespace MCM {
         Vector_t<Alias_Actor_t*> results;
         results.reserve(MAX_MARKERS);
 
-        for (Index_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = alias_actors.count; idx < end; idx += 1) {
             Alias_Actor_t& alias_actor = alias_actors[idx];
             if (alias_actor.actor) {
                 if (alias_actor.actor->Is_Valid()) {
@@ -344,7 +344,7 @@ namespace doticu_npcl { namespace MCM {
             mcm->Add_Header_Option(Main_t::_NONE_);
 
             Vector_t<Alias_Actor_t*> alias_actors = Alias_Actors();
-            for (Index_t idx = 0, end = alias_actors.size(); idx < end; idx += 1) {
+            for (size_t idx = 0, end = alias_actors.size(); idx < end; idx += 1) {
                 Alias_Actor_t* alias_actor = alias_actors[idx];
                 mcm->Add_Text_Option(alias_actor->actor->Any_Name(), Main_t::_DOTS_);
             }
@@ -365,16 +365,16 @@ namespace doticu_npcl { namespace MCM {
     {
         some<Main_t*> mcm = Main_t::Self();
 
-        Index_t marker_index = mcm->Option_To_Item_Index(option, MAX_MARKERS, 0, 2, 16);
-        if (marker_index > -1 && marker_index < MAX_MARKERS) {
+        maybe<size_t> marker_index = mcm->Option_To_Item_Index(option, MAX_MARKERS, 0, 2, 16);
+        if (marker_index.Has_Value() && marker_index.Value() < MAX_MARKERS) {
             class Callback_t : public Callback_i<Bool_t>
             {
             public:
                 some<Main_t*> mcm;
                 Markers_t* self;
-                Index_t marker_index;
+                size_t marker_index;
                 Latent_Callback_i* lcallback;
-                Callback_t(some<Main_t*> mcm, Markers_t* self, Index_t marker_index, Latent_Callback_i* lcallback) :
+                Callback_t(some<Main_t*> mcm, Markers_t* self, size_t marker_index, Latent_Callback_i* lcallback) :
                     mcm(mcm), self(self), marker_index(marker_index), lcallback(lcallback)
                 {
                 }
@@ -382,7 +382,7 @@ namespace doticu_npcl { namespace MCM {
                 {
                     if (accept) {
                         Vector_t<Alias_Actor_t*> alias_actors = self->Alias_Actors();
-                        if (marker_index > -1 && marker_index < alias_actors.size()) {
+                        if (marker_index < alias_actors.size()) {
                             Alias_Actor_t* alias_actor = alias_actors[marker_index];
                             alias_actor->alias->Unfill(new Unmark_Callback_t(self, marker_index));
                             alias_actor->actor = none<Actor_t*>();
@@ -398,7 +398,7 @@ namespace doticu_npcl { namespace MCM {
                 true,
                 Main_t::YES,
                 Main_t::NO,
-                new Callback_t(mcm, this, marker_index, lcallback)
+                new Callback_t(mcm, this, marker_index.Value(), lcallback)
             );
         } else {
             mcm->Destroy_Latent_Callback(lcallback);

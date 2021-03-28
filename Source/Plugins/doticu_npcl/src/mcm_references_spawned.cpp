@@ -117,7 +117,7 @@ namespace doticu_npcl { namespace MCM {
             if (actor_mod_names->count == actor_ids->count &&
                 actor_base_ids->count == actor_ids->count &&
                 actor_base_mod_names->count == actor_ids->count) {
-                for (Index_t idx = 0, end = actor_ids->count; idx < end; idx += 1) {
+                for (size_t idx = 0, end = actor_ids->count; idx < end; idx += 1) {
                     V::Variable_t* actor_id = actor_ids->Point(idx);
                     V::Variable_t* actor_mod_name = actor_mod_names->Point(idx);
                     V::Variable_t* actor_base_id = actor_base_ids->Point(idx);
@@ -278,11 +278,11 @@ namespace doticu_npcl { namespace MCM {
 
         } else {
             Vector_t<Item_t>& items = Items();
-            Index_t item_index = mcm->Option_To_Item_Index(
+            maybe<size_t> item_index = mcm->Option_To_Item_Index(
                 option, items.size(), Page_Index(), HEADERS_PER_PAGE, ITEMS_PER_PAGE
             );
-            if (item_index > -1) {
-                Item_t item = items[item_index];
+            if (item_index.Has_Value()) {
+                Item_t item = items[item_index.Value()];
                 if (item && item->Is_Valid()) {
                     mcm->Disable_Option(option);
                     Item()->Actor_Form_ID() = item->form_id;
@@ -434,8 +434,9 @@ namespace doticu_npcl { namespace MCM {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(item());
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = items.Index_Of(item());
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == 0) {
                     idx = items.size() - 1;
                 } else {
@@ -455,8 +456,9 @@ namespace doticu_npcl { namespace MCM {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t idx = items.Index_Of(item());
-            if (idx > -1) {
+            maybe<size_t> maybe_idx = items.Index_Of(item());
+            if (maybe_idx.Has_Value()) {
+                size_t idx = maybe_idx.Value();
                 if (idx == items.size() - 1) {
                     idx = 0;
                 } else {
@@ -553,15 +555,15 @@ namespace doticu_npcl { namespace MCM {
         maybe<Item_t> item = static_cast<maybe<Item_t>>(Game_t::Form(Actor_Form_ID()));
         if (item && item->Is_Valid()) {
             Vector_t<Item_t>& items = List()->Items();
-            Index_t item_index = items.Index_Of(item());
-            if (item_index > -1) {
+            maybe<size_t> item_index = items.Index_Of(item());
+            if (item_index.Has_Value()) {
                 if (mcm->Should_Translate_Page_Titles()) {
                     mcm->Translated_Title_Text(
-                        mcm->Singular_Title(Main_t::COMPONENT_SPAWNED_REFERENCE, item->Any_Name(), item_index, items.size())
+                        mcm->Singular_Title(Main_t::COMPONENT_SPAWNED_REFERENCE, item->Any_Name(), item_index.Value(), items.size())
                     );
                 } else {
                     mcm->Title_Text(
-                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_SPAWNED_REFERENCE, item->Any_Name(), item_index, items.size())
+                        mcm->Singular_Title(Main_t::SAFE_COMPONENT_SPAWNED_REFERENCE, item->Any_Name(), item_index.Value(), items.size())
                     );
                 }
 

@@ -453,7 +453,11 @@ namespace doticu_npcl { namespace MCM {
         }
     }
 
-    Int_t Main_t::Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page)
+    maybe<size_t> Main_t::Option_To_Item_Index(Int_t option,
+                                               Int_t item_count,
+                                               Int_t page_index,
+                                               Int_t headers_per_page,
+                                               Int_t items_per_page)
     {
         Int_t relative_idx = mcmlib::Option_t(option).position - headers_per_page;
         if (relative_idx > -1 && relative_idx < items_per_page) {
@@ -461,10 +465,10 @@ namespace doticu_npcl { namespace MCM {
             if (absolute_idx > -1 && absolute_idx < item_count) {
                 return absolute_idx;
             } else {
-                return -1;
+                return none<size_t>();
             }
         } else {
-            return -1;
+            return none<size_t>();
         }
     }
 

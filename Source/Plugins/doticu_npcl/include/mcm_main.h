@@ -316,7 +316,7 @@ namespace doticu_npcl { namespace MCM {
 
         std::string         Pretty_ID(some<const char*> name, some<const char*> editor_id, some<const char*> form_id);
 
-        Int_t               Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page);
+        maybe<size_t>       Option_To_Item_Index(Int_t option, Int_t item_count, Int_t page_index, Int_t headers_per_page, Int_t items_per_page);
 
     public:
         void On_Init();

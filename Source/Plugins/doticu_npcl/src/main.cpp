@@ -161,7 +161,7 @@ namespace doticu_npcl {
     Bool_t Main_t::Are_Quests_Running()
     {
         const Vector_t<some<Quest_t*>>& quests = Quests();
-        for (Index_t idx = 0, end = quests.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = quests.size(); idx < end; idx += 1) {
             some<Quest_t*> quest = quests[idx];
             if (!quest->Is_Enabled()) {
                 return false;

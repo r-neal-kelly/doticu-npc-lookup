@@ -50,7 +50,7 @@ namespace doticu_npcl {
         Vector_t<some<Actor_Base_t*>> results;
         results.reserve(actor_base_count);
 
-        for (Index_t idx = 0, end = actor_base_count; idx < end; idx += 1) {
+        for (size_t idx = 0, end = actor_base_count; idx < end; idx += 1) {
             results.push_back(bases[idx]);
         }
 
@@ -59,14 +59,14 @@ namespace doticu_npcl {
 
     void Cached_Leveled_t::Race_Names(Vector_t<String_t>& output)
     {
-        for (Index_t idx = 0, end = races.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = races.size(); idx < end; idx += 1) {
             output.push_back(races[idx]->Get_Editor_ID());
         }
     }
 
     void Cached_Leveled_t::Actor_Base_Names(Vector_t<String_t>& output)
     {
-        for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = bases.size(); idx < end; idx += 1) {
             String_t base_name = bases[idx]->Any_Name();
             if (!output.Has(base_name)) {
                 output.push_back(base_name);
@@ -81,12 +81,12 @@ namespace doticu_npcl {
         byte_count += sizeof(name);
         byte_count += sizeof(leveled);
 
-        for (Index_t idx = 0, end = bases.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = bases.size(); idx < end; idx += 1) {
             some<Actor_Base_t*> base = bases[idx];
             byte_count += sizeof(base);
         }
 
-        for (Index_t idx = 0, end = races.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = races.size(); idx < end; idx += 1) {
             some<Race_t*> race = races[idx];
             byte_count += sizeof(race);
         }

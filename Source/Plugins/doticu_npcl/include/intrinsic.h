@@ -19,7 +19,6 @@ namespace doticu_npcl {
 
     using Byte_t                = skylib::Byte_t;
     using Word_t                = skylib::Word_t;
-    using Index_t               = skylib::Index_t;
 
     using Bool_t                = skylib::Bool_t;
     using Int_t                 = skylib::Int_t;

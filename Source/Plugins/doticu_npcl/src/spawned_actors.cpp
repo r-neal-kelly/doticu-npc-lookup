@@ -41,7 +41,7 @@ namespace doticu_npcl {
         std::lock_guard<std::mutex> guard(global_mutex);
 
         Spawned_Actors_t& self = Self();
-        for (Index_t idx = 0, end = self.actors.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = self.actors.size(); idx < end; idx += 1) {
             Actor_t* actor = self.actors[idx];
             if (actor && actor->Is_Valid()) {
                 results.push_back(actor);
@@ -51,11 +51,11 @@ namespace doticu_npcl {
 
     void Spawned_Actors_t::Validate()
     {
-        Vector_t<Index_t> invalid_indices;
+        Vector_t<size_t> invalid_indices;
         invalid_indices.reserve(8);
 
         std::lock_guard<std::mutex> guard(mutex);
-        for (Index_t idx = 0, end = actors.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = actors.size(); idx < end; idx += 1) {
             Actor_t* actor = actors[idx];
             if (!actor || !actor->Is_Valid()) {
                 invalid_indices.push_back(idx);
@@ -63,7 +63,7 @@ namespace doticu_npcl {
         }
         guard.~lock_guard();
 
-        for (Index_t idx = 0, end = invalid_indices.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = invalid_indices.size(); idx < end; idx += 1) {
             Remove(invalid_indices[idx]);
         }
     }
@@ -79,21 +79,16 @@ namespace doticu_npcl {
         actor_base_mod_names.reserve(count);
     }
 
-    Index_t Spawned_Actors_t::Index_Of(some<Actor_t*> actor)
+    maybe<size_t> Spawned_Actors_t::Index_Of(some<Actor_t*> actor)
     {
         SKYLIB_ASSERT_SOME(actor);
 
         std::lock_guard<std::mutex> guard(mutex);
 
         if (actor->Is_Valid()) {
-            for (Index_t idx = 0, end = actors.size(); idx < end; idx += 1) {
-                if (actors[idx] == actor()) {
-                    return idx;
-                }
-            }
-            return -1;
+            return actors.Index_Of(actor());
         } else {
-            return -1;
+            return none<size_t>();
         }
     }
 
@@ -101,7 +96,7 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT_SOME(actor);
 
-        return Index_Of(actor) > -1;
+        return Index_Of(actor).Has_Value();
     }
 
     static void Add_Impl(Spawned_Actors_t* self, Actor_t* actor, Actor_Base_t* actor_base, String_t actor_base_mod_name)
@@ -230,36 +225,42 @@ namespace doticu_npcl {
         return Remove(Index_Of(actor));
     }
 
-    Bool_t Spawned_Actors_t::Remove(Index_t index)
+    Bool_t Spawned_Actors_t::Remove(maybe<size_t> maybe_index)
     {
         std::lock_guard<std::mutex> guard(mutex);
 
-        size_t end = actors.size();
-        if (index > -1 && index < end) {
-            if (index == end - 1) {
-                actors.erase(actors.end() - 1);
-                actor_ids.erase(actor_ids.end() - 1);
-                actor_mod_names.erase(actor_mod_names.end() - 1);
-                actor_base_ids.erase(actor_base_ids.end() - 1);
-                actor_base_mod_names.erase(actor_base_mod_names.end() - 1);
-                return true;
+        if (maybe_index.Has_Value()) {
+            size_t index = maybe_index.Value();
+            size_t end = actors.size();
+            if (index < end) {
+                if (index == end - 1) {
+                    actors.erase(actors.end() - 1);
+                    actor_ids.erase(actor_ids.end() - 1);
+                    actor_mod_names.erase(actor_mod_names.end() - 1);
+                    actor_base_ids.erase(actor_base_ids.end() - 1);
+                    actor_base_mod_names.erase(actor_base_mod_names.end() - 1);
+
+                    return true;
+                } else {
+                    actors[index] = actors[end - 1];
+                    actors.erase(actors.end() - 1);
+
+                    actor_ids[index] = actor_ids[end - 1];
+                    actor_ids.erase(actor_ids.end() - 1);
+
+                    actor_mod_names[index] = actor_mod_names[end - 1];
+                    actor_mod_names.erase(actor_mod_names.end() - 1);
+
+                    actor_base_ids[index] = actor_base_ids[end - 1];
+                    actor_base_ids.erase(actor_base_ids.end() - 1);
+
+                    actor_base_mod_names[index] = actor_base_mod_names[end - 1];
+                    actor_base_mod_names.erase(actor_base_mod_names.end() - 1);
+
+                    return true;
+                }
             } else {
-                actors[index] = actors[end - 1];
-                actors.erase(actors.end() - 1);
-
-                actor_ids[index] = actor_ids[end - 1];
-                actor_ids.erase(actor_ids.end() - 1);
-
-                actor_mod_names[index] = actor_mod_names[end - 1];
-                actor_mod_names.erase(actor_mod_names.end() - 1);
-
-                actor_base_ids[index] = actor_base_ids[end - 1];
-                actor_base_ids.erase(actor_base_ids.end() - 1);
-
-                actor_base_mod_names[index] = actor_base_mod_names[end - 1];
-                actor_base_mod_names.erase(actor_base_mod_names.end() - 1);
-
-                return true;
+                return false;
             }
         } else {
             return false;

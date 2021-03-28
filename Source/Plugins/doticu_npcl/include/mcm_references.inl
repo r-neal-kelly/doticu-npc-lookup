@@ -893,7 +893,7 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Menu_Option(label, Main_t::_DOTS_);
         };
-        for (Index_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = current_sections.size(); idx < end; idx += 1) {
             Section_e section_e = current_sections[idx];
             if (allowed_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)         bases_section_option        = Enabled(Main_t::BASES);
@@ -916,7 +916,7 @@ namespace doticu_npcl { namespace MCM {
         {
             return mcm->Add_Toggle_Option(mcm->Add_Font(label, "", "#80", ""), false);
         };
-        for (Index_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
+        for (size_t idx = 0, end = allowed_sections.size(); idx < end; idx += 1) {
             Section_e section_e = allowed_sections[idx];
             if (!current_sections.Has(section_e)) {
                      if (section_e == Section_e::BASES)         bases_section_option        = Disabled(Main_t::BASES);
@@ -1161,7 +1161,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::BASES);
                     show_bases_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Actor_Base_t* actor_base = actor_bases[idx];
                         const char* name = actor_base->Name();
                         const char* form_id = actor_base->Form_ID_String();
@@ -1291,7 +1291,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::LOCATIONS);
                     show_locations_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         Location_t* location = locations[idx];
                         if (location && location->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name(), Main_t::_NONE_);
@@ -1329,7 +1329,7 @@ namespace doticu_npcl { namespace MCM {
                     show_quests_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     quests.Sort(Quest_t::Compare_Any_Names);
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         some<Quest_t*> quest = quests[idx];
                         if (quest->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + quest->Any_Name(), Main_t::_NONE_);
@@ -1429,7 +1429,7 @@ namespace doticu_npcl { namespace MCM {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::WORLDSPACES);
                     show_worldspaces_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
-                    for (Index_t idx = 0, end = count; idx < end; idx += 1) {
+                    for (size_t idx = 0, end = count; idx < end; idx += 1) {
                         some<Worldspace_t*> worldspace = worldspaces[idx];
                         if (worldspace->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + worldspace->Any_Name(), Main_t::_NONE_);
