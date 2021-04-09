@@ -1313,7 +1313,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, Vitality_e vitality)
         {
             if (item && item->Is_Valid()) {
-                return Vitality_Filter_t<Vitality_e>::Compare(item->Vitality(), vitality);
+                return Vitality_Filter_t<Vitality_e>::Compare(item->Vitality()(), vitality);
             } else {
                 return Filter_e::INVALID;
             }

@@ -1058,10 +1058,8 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Vitality_e vitality = item->Vitality();
-                if (vitality != Vitality_e::_NONE_) {
-                    output.push_back(Main_t::To_Vitality_Key(vitality)());
-                }
+                some<Vitality_e> vitality = item->Vitality();
+                output.push_back(Main_t::To_Vitality_Key(vitality())());
             }
         }
     };

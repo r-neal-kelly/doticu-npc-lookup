@@ -1380,10 +1380,8 @@ namespace doticu_npcl { namespace MCM {
                         } else {
                             mcm->Add_Text_Option(Main_t::IS_GENERIC, Main_t::_NONE_);
                         }
-                        Vitality_e vitality = actor_base->Vitality(); // 5
-                        if (vitality != Vitality_e::_NONE_) {
-                            mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality)(), Main_t::_NONE_);
-                        }
+                        some<Vitality_e> vitality = actor_base->Vitality(); // 5
+                        mcm->Add_Text_Option(mcm->To_Is_Vitality_Key(vitality())(), Main_t::_NONE_);
                         some<Relation_e> relation = actor_base->Relation(Consts_t::Skyrim_Player_Actor_Base()); // 6
                         mcm->Add_Text_Option(mcm->To_Is_Relation_Key(relation())(), Main_t::_NONE_);
                     }
