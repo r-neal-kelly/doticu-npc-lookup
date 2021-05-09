@@ -994,22 +994,20 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                Vector_t<Location_t*> locations = item->Locations();
+                Vector_t<some<Location_t*>> locations = item->Locations();
                 for (size_t idx = 0, end = locations.size(); idx < end; idx += 1) {
-                    Location_t* location = locations[idx];
-                    if (location) {
-                        if (CString_t::Is_Length_Greater_Than(string, 1)) {
-                            if (CString_t::Contains(location->Name(), string, true) ||
-                                CString_t::Contains(location->Get_Editor_ID(), string, true) ||
-                                CString_t::Contains(location->Form_ID_String(), string, true)) {
-                                return Filter_e::IS_MATCH;
-                            }
-                        } else {
-                            if (CString_t::Starts_With(location->Name(), string, true) ||
-                                CString_t::Starts_With(location->Get_Editor_ID(), string, true) ||
-                                CString_t::Starts_With(location->Form_ID_String(), string, true)) {
-                                return Filter_e::IS_MATCH;
-                            }
+                    some<Location_t*> location = locations[idx];
+                    if (CString_t::Is_Length_Greater_Than(string, 1)) {
+                        if (CString_t::Contains(location->Name(), string, true) ||
+                            CString_t::Contains(location->Get_Editor_ID(), string, true) ||
+                            CString_t::Contains(location->Form_ID_String(), string, true)) {
+                            return Filter_e::IS_MATCH;
+                        }
+                    } else {
+                        if (CString_t::Starts_With(location->Name(), string, true) ||
+                            CString_t::Starts_With(location->Get_Editor_ID(), string, true) ||
+                            CString_t::Starts_With(location->Form_ID_String(), string, true)) {
+                            return Filter_e::IS_MATCH;
                         }
                     }
                 }
@@ -1035,7 +1033,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Location_Filter_t<Cell_t*>::Compare(item->Cell(), string);
+                return Location_Filter_t<Cell_t*>::Compare(item->Cell(true)(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1102,7 +1100,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, String_t string)
         {
             if (item && item->Is_Valid()) {
-                return Cell_Filter_t<Cell_t*>::Compare(item->Cell(), string);
+                return Cell_Filter_t<Cell_t*>::Compare(item->Cell(true)(), string);
             } else {
                 return Filter_e::INVALID;
             }
@@ -1632,7 +1630,7 @@ namespace doticu_npcl {
         static Filter_e Compare(Item_t item, Binary_e binary)
         {
             if (item && item->Is_Valid()) {
-                return Interior_Exterior_Filter_t<Cell_t*>::Compare(item->Cell(), binary);
+                return Interior_Exterior_Filter_t<Cell_t*>::Compare(item->Cell(true)(), binary);
             } else {
                 return Filter_e::INVALID;
             }

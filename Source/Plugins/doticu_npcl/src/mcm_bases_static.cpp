@@ -53,7 +53,7 @@ namespace doticu_npcl { namespace MCM {
 
             read.reserve(actor_base_count);
             read.clear();
-            Actor_Base_t::Actor_Bases(read);
+            Actor_Base_t::Actor_Bases(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
 
             write.reserve(actor_base_count);
             write.clear();
@@ -87,7 +87,7 @@ namespace doticu_npcl { namespace MCM {
 
     Vector_t<Item_t> Static_Bases_List_t::Default_Items()
     {
-        return Actor_Base_t::Actor_Bases();
+        return *reinterpret_cast<Vector_t<Item_t>*>(&Actor_Base_t::Actor_Bases());
     }
 
     Item_t Static_Bases_List_t::Null_Item()

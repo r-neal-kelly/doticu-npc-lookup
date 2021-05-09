@@ -227,7 +227,7 @@ namespace doticu_npcl {
     {
         SKYLIB_ASSERT(Is_Installed());
 
-        //skylib::Main_t::After_Load();
+        //skylib::Main_t::After_Load();//temp
 
         if (Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Load();

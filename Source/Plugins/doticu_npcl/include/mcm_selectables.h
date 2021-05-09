@@ -820,7 +820,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Locations_t<Base_t, Cell_t*>::Select(item->Cell(), output);
+                Selectable_Locations_t<Base_t, Cell_t*>::Select(item->Cell(true)(), output);
             }
         }
     };
@@ -877,7 +877,7 @@ namespace doticu_npcl { namespace MCM {
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
             if (item && item->Is_Valid()) {
-                Selectable_Cells_t<Base_t, Cell_t*>::Select(item->Cell(), output);
+                Selectable_Cells_t<Base_t, Cell_t*>::Select(item->Cell(true)(), output);
             }
         }
     };

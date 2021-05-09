@@ -582,7 +582,7 @@ namespace doticu_npcl { namespace MCM {
                     Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->Mods());
                     Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race()());
 
-                    Buildable_Cell_t<Base_t, Item_t> buildable_cell(this, item->Cell());
+                    Buildable_Cell_t<Base_t, Item_t> buildable_cell(this, item->Cell(true)());
                     Buildable_Locations_t<Base_t, Item_t> buildable_locations(this, item->Locations());
                     Buildable_Quests_t<Base_t, Item_t> buildable_quests(this, item->Quests());
                     Buildable_Reference_t<Base_t, Item_t> buildable_reference(this, item(), Main_t::SPAWNED_REFERENCE);

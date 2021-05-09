@@ -1280,7 +1280,7 @@ namespace doticu_npcl { namespace MCM {
     }
 
     template <typename B, typename I>
-    inline void References_Item_t<B, I>::Build_Locations(Vector_t<Location_t*> locations)
+    inline void References_Item_t<B, I>::Build_Locations(Vector_t<some<Location_t*>> locations)
     {
         some<Main_t*> mcm = Main_t::Self();
 
@@ -1292,8 +1292,8 @@ namespace doticu_npcl { namespace MCM {
                     show_locations_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
                     for (size_t idx = 0, end = count; idx < end; idx += 1) {
-                        Location_t* location = locations[idx];
-                        if (location && location->Is_Valid()) {
+                        some<Location_t*> location = locations[idx];
+                        if (location->Is_Valid()) {
                             mcm->Add_Text_Option(std::string(Main_t::_SPACE_) + location->Any_Name(), Main_t::_NONE_);
                         }
                     }
@@ -1456,7 +1456,7 @@ namespace doticu_npcl { namespace MCM {
     inline void References_Item_t<B, I>::Highlight_Cell_Option(Actor_t* actor, Latent_Callback_i* lcallback)
     {
         if (actor && actor->Is_Valid()) {
-            Cell_t* cell = actor->Cell();
+            maybe<Cell_t*> cell = actor->Cell(true);
             if (cell && cell->Is_Valid()) {
                 const char* name = cell->Name();
                 const char* editor_id = cell->Get_Editor_ID();
