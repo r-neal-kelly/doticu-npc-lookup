@@ -26,6 +26,8 @@ namespace doticu_npcl {
     using String_t              = skylib::String_t;
 
     using u8                    = skylib::u8;
+    using u16                   = skylib::u16;
+    using u32                   = skylib::u32;
     using s64                   = skylib::s64;
 
     template <typename Type>
@@ -55,6 +57,7 @@ namespace doticu_npcl {
     using Cursor_e              = mcmlib::Cursor_e;
     using Flag_e                = mcmlib::Flag_e;
     using Form_Type_e           = skylib::Form_Type_e;
+    using Operator_e            = skylib::Operator_e;
     using Relation_e            = skylib::Relation_e;
     using Sex_e                 = skylib::Sex_e;
     using Rarity_e              = skylib::Rarity_e;
@@ -81,6 +84,7 @@ namespace doticu_npcl {
     using Race_t                = skylib::Race_t;
     using Raw_Form_ID_t         = skylib::Raw_Form_ID_t;
     using Reference_t           = skylib::Reference_t;
+    using SKSE_Plugin_t         = skylib::SKSE_Plugin_t;
     using Translations_t        = skylib::Translations_t;
     using Voice_Type_t          = skylib::Voice_Type_t;
     using Worldspace_t          = skylib::Worldspace_t;

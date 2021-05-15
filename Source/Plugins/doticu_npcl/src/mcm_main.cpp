@@ -770,15 +770,15 @@ namespace doticu_npcl { namespace MCM {
         Global_Options_t::Self()->Prioritize_MCM_Menu() = true;
     }
 
-    void Main_t::Register_Me(V::Machine_t* machine)
+    void Main_t::Register_Me(some<V::Machine_t*> v_machine)
     {
-        Config_Base_t::Register_Me(machine);
+        Config_Base_t::Register_Me(v_machine);
 
         String_t class_name = Class_Name();
 
         #define METHOD(NAME_, WAITS_FOR_FRAME_, RETURN_, METHOD_, ...)              \
         SKYLIB_M                                                                    \
-            BIND_METHOD(machine, class_name, Main_t,                                \
+            BIND_METHOD(v_machine, class_name, Main_t,                              \
                         NAME_, WAITS_FOR_FRAME_, RETURN_, METHOD_, __VA_ARGS__);    \
         SKYLIB_W
 

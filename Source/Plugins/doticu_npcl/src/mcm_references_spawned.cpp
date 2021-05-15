@@ -102,6 +102,14 @@ namespace doticu_npcl { namespace MCM {
         return nullptr;
     }
 
+    void Spawned_References_List_t::On_Init()
+    {
+        References_List_t<Spawned_References_Base_t, Item_t>::On_Init();
+
+        Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
+        spawned.Clear();
+    }
+
     void Spawned_References_List_t::On_Load()
     {
         References_List_t<Spawned_References_Base_t, Item_t>::On_Load();
@@ -167,6 +175,7 @@ namespace doticu_npcl { namespace MCM {
                 static_cast<Float_t>(item_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
             ));
 
+            Item_t current_item = Item()->Current_Item();
             Int_t page_index = Page_Index();
             if (page_index < 0) {
                 page_index = 0;
@@ -174,6 +183,13 @@ namespace doticu_npcl { namespace MCM {
             } else if (page_index >= page_count) {
                 page_index = page_count - 1;
                 Page_Index() = page_index;
+            } else if (current_item && current_item->Is_Valid()) {
+                maybe<size_t> maybe_idx = items.Index_Of(current_item);
+                if (maybe_idx.Has_Value()) {
+                    size_t idx = maybe_idx.Value();
+                    page_index = idx / ITEMS_PER_PAGE;
+                    Page_Index() = page_index;
+                }
             }
 
             if (mcm->Should_Translate_Page_Titles()) {
@@ -698,6 +714,26 @@ namespace doticu_npcl { namespace MCM {
         } else {
             mcm->Destroy_Latent_Callback(lcallback);
 
+        }
+    }
+
+    void Spawned_References_Item_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
+    {
+        some<Main_t*> mcm = Main_t::Self();
+
+        if (option == rename_reference_option) {
+            Item_t item = Current_Item();
+            if (item && item->Is_Valid()) {
+                if (value) {
+                    item->Name(value);
+                } else {
+                    item->Name(item->Base_Name());
+                }
+                mcm->Reset_Page();
+            }
+            mcm->Destroy_Latent_Callback(lcallback);
+        } else {
+            References_Item_t<Spawned_References_Base_t, Item_t>::On_Option_Input_Accept(option, value, lcallback);
         }
     }
 

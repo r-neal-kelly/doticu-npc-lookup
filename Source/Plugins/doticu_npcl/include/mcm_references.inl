@@ -1106,6 +1106,9 @@ namespace doticu_npcl { namespace MCM {
     Int_t References_Item_t<B, I>::cell_name_option         = -1;
 
     template <typename B, typename I>
+    Int_t References_Item_t<B, I>::rename_reference_option  = -1;
+
+    template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Select_In_Console_Option()       { DEFINE_OPTION(); }
     template <typename B, typename I>
     inline Int_t& References_Item_t<B, I>::Mark_On_Map_Option()             { DEFINE_OPTION(); }
@@ -1232,7 +1235,7 @@ namespace doticu_npcl { namespace MCM {
 
         if (actor && actor->Is_Valid()) {
             if (Do_Show_Commands()) {
-                if (mcm->Can_Add_Options(2 + 6)) {
+                if (mcm->Can_Add_Options(2 + 7)) {
                     mcm->Add_Text_Option(Main_t::_TEXT_DIVIDER_, Main_t::COMMANDS);
                     show_commands_option = mcm->Add_Toggle_Option(Main_t::_TOGGLE_DIVIDER_, true);
 
@@ -1260,6 +1263,8 @@ namespace doticu_npcl { namespace MCM {
                     }
 
                     Select_In_Console_Option() = mcm->Add_Text_Option(Main_t::SELECT_IN_CONSOLE, Main_t::_NONE_); // 6
+
+                    rename_reference_option = mcm->Add_Input_Option(Main_t::RENAME_REFERENCE, Main_t::_NONE_); // 7
 
                     if (skylib::Is_Odd(mcm->Current_Cursor_Position().Int())) {
                         mcm->Add_Empty_Option();

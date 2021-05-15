@@ -4,46 +4,48 @@
 
 #pragma once
 
-#include "skse64/PluginAPI.h"
+#include "doticu_skylib/skse_plugin.h"
 
 #include "intrinsic.h"
 
 namespace doticu_npcl {
 
-    class Main_t
+    class Main_t :
+        public SKSE_Plugin_t
     {
     public:
         static constexpr const char*    FAILED_TO_INIT_QUESTS   = "$dnpcl_failed_to_init_quests";
         static constexpr const char*    FAILED_TO_LOAD_QUESTS   = "$dnpcl_failed_to_load_quests";
-        static constexpr const char*    FAILED_TO_REINIT_QUESTS = "$dnpcl_failed_to_reinit_quests";
 
     public:
-        static const SKSEInterface*             SKSE;
-        static const SKSEPapyrusInterface*      SKSE_PAPYRUS;
-        static const SKSEMessagingInterface*    SKSE_MESSAGING;
-        static PluginHandle                     SKSE_PLUGIN_HANDLE;
-        static IDebugLog                        SKSE_LOG;
-
-        static Bool_t   SKSE_Query_Plugin(const SKSEInterface* skse, PluginInfo* info);
-        static Bool_t   SKSE_Load_Plugin(const SKSEInterface* skse);
-        static Bool_t   SKSE_Register_Functions(skylib::Virtual::Machine_t* machine);
-
-    public:
-        static Bool_t   Has_Requirements();
-        static Bool_t   Is_Active();
-        static Bool_t   Is_Installed();
-        static Bool_t   Are_Quests_Running();
-
         static const Vector_t<some<Quest_t*>>& Quests();
 
-        static void     Init();
-        static void     Reinit();
-        static void     After_Load();
-        static void     Before_Save();
+    public:
+        Main_t();
 
     public:
-        static Bool_t   Try_To_Update();
-        static void     Update_1_1_1();
+        virtual         ~Main_t();
+
+        virtual Bool_t  On_Register(some<V::Machine_t*> v_machine) override;
+
+        virtual void    On_After_Load_Data() override;
+        virtual void    On_After_New_Game() override;
+        virtual void    On_Before_Save_Game() override;
+        virtual void    On_After_Save_Game() override;
+        virtual void    On_Before_Load_Game(some<const char*> file_path, u32 file_path_length) override;
+        virtual void    On_After_Load_Game(Bool_t did_load_successfully) override;
+        virtual void    On_Before_Delete_Game(some<const char*> file_path, u32 file_path_length) override;
+        virtual void    On_Update(u32 time_stamp) override;
+
+    public:
+        Bool_t  Is_Active();
+        Bool_t  Is_Installed();
+        Bool_t  Are_Quests_Running();
+
+    private:
+        Bool_t  Try_To_Update();
     };
+
+    extern Main_t main;
 
 }

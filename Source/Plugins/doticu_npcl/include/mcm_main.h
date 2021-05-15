@@ -152,6 +152,7 @@ namespace doticu_npcl { namespace MCM {
         static constexpr const char*    ENABLE_REFERENCE                    = "$dnpcl_enable_reference";
         static constexpr const char*    DISABLE_REFERENCE                   = "$dnpcl_disable_reference";
         static constexpr const char*    SELECT_IN_CONSOLE                   = "$dnpcl_select_in_console";
+        static constexpr const char*    RENAME_REFERENCE                    = "$dnpcl_rename_reference";
 
         static constexpr const char*    CONFIRM_SPAWN                       = "$dnpcl_confirm_spawn";
         static constexpr const char*    CONFIRM_UNSPAWN                     = "$dnpcl_confirm_unspawn";
@@ -339,7 +340,7 @@ namespace doticu_npcl { namespace MCM {
         void Update_1_1_1();
 
     public:
-        static void Register_Me(V::Machine_t* machine);
+        static void Register_Me(some<V::Machine_t*> v_machine);
     };
 
 }}

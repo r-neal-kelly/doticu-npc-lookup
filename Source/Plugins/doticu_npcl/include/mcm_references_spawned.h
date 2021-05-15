@@ -58,6 +58,7 @@ namespace doticu_npcl { namespace MCM {
         Item_t              Null_Item();
 
     public:
+        void    On_Init();
         void    On_Load();
         void    On_Save();
         void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
@@ -122,6 +123,7 @@ namespace doticu_npcl { namespace MCM {
     public:
         void    On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback);
         void    On_Option_Select(Int_t option, Latent_Callback_i* lcallback);
+        void    On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback);
     };
 
 }}

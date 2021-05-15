@@ -182,6 +182,8 @@ namespace doticu_npcl { namespace MCM {
         Int_t&  Go_To_Reference_Option();
         Int_t&  Enable_Disable_Option();
 
+        static Int_t rename_reference_option;
+
         void    Reset_Option_Ints();
 
     public:
