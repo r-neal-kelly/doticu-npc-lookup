@@ -86,47 +86,47 @@ namespace doticu_npcl { namespace MCM {
 
     void Markers_t::Refresh_Cache()
     {
-        std::lock_guard<std::mutex> guard(cache_mutex);
+        {
+            std::lock_guard<std::mutex> guard(cache_mutex);
 
-        alias_actors.Clear();
-        for (size_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
-            maybe<Alias_Base_t*> alias_base = this->aliases[idx + 1];
-            if (alias_base) {
-                maybe<Alias_Reference_t*> alias_reference = alias_base->As_Alias_Reference();
-                if (alias_reference) {
-                    alias_actors.Push(
-                        Alias_Actor_t(alias_reference(), none<Actor_t*>())
-                    );
+            alias_actors.Clear();
+            for (size_t idx = 0, end = MAX_MARKERS; idx < end; idx += 1) {
+                maybe<Alias_Base_t*> alias_base = this->aliases[idx + 1];
+                if (alias_base) {
+                    maybe<Alias_Reference_t*> alias_reference = alias_base->As_Alias_Reference();
+                    if (alias_reference) {
+                        alias_actors.Push(
+                            Alias_Actor_t(alias_reference(), none<Actor_t*>())
+                        );
+                    } else {
+                        SKYLIB_ASSERT(false);
+                    }
                 } else {
                     SKYLIB_ASSERT(false);
                 }
-            } else {
-                SKYLIB_ASSERT(false);
             }
-        }
 
-        for (size_t idx = 0, end = promoted_references.Count(); idx < end; idx += 1) {
-            skylib::Reference_Handle_t reference_handle = promoted_references[idx];
-            Reference_t* reference = Reference_t::From_Handle(reference_handle);
-            if (reference && reference->Is_Valid()) {
-                maybe<skylib::Extra_Aliases_t*> xaliases = reference->x_list.Get<skylib::Extra_Aliases_t>();
-                if (xaliases) {
-                    skylib::Read_Locker_t locker(xaliases->lock);
-                    for (size_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
-                        maybe<skylib::Extra_Aliases_t::Instance_t*> instance = xaliases->instances[idx];
-                        if (instance && instance->quest == some<Quest_t*>(this) && instance->alias_base) {
-                            size_t marker_idx = instance->alias_base->id - 1;
-                            if (marker_idx < MAX_MARKERS) {
-                                Actor_t* actor = static_cast<Actor_t*>(reference);
-                                alias_actors[marker_idx].actor = actor;
+            for (size_t idx = 0, end = promoted_references.Count(); idx < end; idx += 1) {
+                skylib::Reference_Handle_t reference_handle = promoted_references[idx];
+                Reference_t* reference = Reference_t::From_Handle(reference_handle);
+                if (reference && reference->Is_Valid()) {
+                    maybe<skylib::Extra_Aliases_t*> xaliases = reference->x_list.Get<skylib::Extra_Aliases_t>();
+                    if (xaliases) {
+                        skylib::Read_Locker_t locker(xaliases->lock);
+                        for (size_t idx = 0, end = xaliases->instances.Count(); idx < end; idx += 1) {
+                            maybe<skylib::Extra_Aliases_t::Instance_t*> instance = xaliases->instances[idx];
+                            if (instance && instance->quest == some<Quest_t*>(this) && instance->alias_base) {
+                                size_t marker_idx = instance->alias_base->id - 1;
+                                if (marker_idx < MAX_MARKERS) {
+                                    Actor_t* actor = static_cast<Actor_t*>(reference);
+                                    alias_actors[marker_idx].actor = actor;
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
-        guard.~lock_guard();
 
         Refresh_Menu();
     }
