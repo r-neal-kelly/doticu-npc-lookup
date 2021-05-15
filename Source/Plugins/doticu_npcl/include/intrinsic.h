@@ -86,6 +86,7 @@ namespace doticu_npcl {
     using Reference_t           = skylib::Reference_t;
     using SKSE_Plugin_t         = skylib::SKSE_Plugin_t;
     using Translations_t        = skylib::Translations_t;
+    using UI_t                  = skylib::UI_t;
     using Voice_Type_t          = skylib::Voice_Type_t;
     using Worldspace_t          = skylib::Worldspace_t;
 
@@ -108,3 +109,8 @@ namespace doticu_npcl {
     }
 
 }
+
+#define NPCL_PRINT_HEAD         \
+(                               \
+    std::string("NPC Lookup: ") \
+)

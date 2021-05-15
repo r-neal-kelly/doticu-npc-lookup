@@ -4,6 +4,7 @@
 
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/ui.h"
+#include "doticu_skylib/virtual_utility.h"
 
 #include "consts.h"
 #include "main.h"
@@ -68,8 +69,21 @@ namespace doticu_npcl {
                 Consts_t::NPCL_Patch_Version_Global()->Int(npcl_version.patch);
 
                 MCM::Main_t::Self()->On_Init();
+
+                class Wait_Callback :
+                    public Callback_i<>
+                {
+                public:
+                    virtual void operator ()() override
+                    {
+                        UI_t::Create_Notification(NPCL_PRINT_HEAD + "Thank you for playing!", none<V::Callback_i*>());
+                    }
+                };
+                some<Wait_Callback*> wait_callback = new Wait_Callback();
+                V::Utility_t::Wait_Out_Of_Menu(1.0f, wait_callback());
+                (*wait_callback)();
             } else {
-                skylib::UI_t::Create_Message_Box(FAILED_TO_INIT_QUESTS, none<V::Callback_i*>());
+                UI_t::Create_Message_Box(FAILED_TO_INIT_QUESTS, none<V::Callback_i*>());
             }
         }
     }
@@ -98,7 +112,7 @@ namespace doticu_npcl {
                         MCM::Main_t::Self()->On_Load();
                         Try_To_Update();
                     } else {
-                        skylib::UI_t::Create_Message_Box(FAILED_TO_LOAD_QUESTS, none<V::Callback_i*>());
+                        UI_t::Create_Message_Box(FAILED_TO_LOAD_QUESTS, none<V::Callback_i*>());
                     }
                 } else {
                     On_After_New_Game();
@@ -152,6 +166,12 @@ namespace doticu_npcl {
             Consts_t::NPCL_Major_Version_Global()->Int(current.major);
             Consts_t::NPCL_Minor_Version_Global()->Int(current.minor);
             Consts_t::NPCL_Patch_Version_Global()->Int(current.patch);
+
+            UI_t::Create_Notification(NPCL_PRINT_HEAD + "Updated to version " +
+                                      std::to_string(current.major) + "." +
+                                      std::to_string(current.minor) + "." +
+                                      std::to_string(current.patch),
+                                      none<V::Callback_i*>());
 
             return true;
         } else {
