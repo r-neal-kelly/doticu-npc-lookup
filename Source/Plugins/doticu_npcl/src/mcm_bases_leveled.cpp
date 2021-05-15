@@ -800,9 +800,21 @@ namespace doticu_npcl { namespace MCM {
 
         if (option == back_option) {
             mcm->Disable_Option(option);
+
             Nested_View(Bases_Item_View_e::BASES);
+
+            maybe<Actor_Base_t*> current_nested_item = Current_Nested_Item();
+            if (current_nested_item) {
+                Vector_t<some<Actor_Base_t*>> nested_items = Nested_Items();
+                maybe<size_t> maybe_idx = nested_items.Index_Of(current_nested_item);
+                if (maybe_idx.Has_Value()) {
+                    Nested_Index() = maybe_idx.Value() / ITEMS_PER_PAGE;
+                }
+            }
             Nested_Form() = 0;
+
             mcm->Reset_Page();
+
             mcm->Destroy_Latent_Callback(lcallback);
 
         } else if (option == spawn_option) {

@@ -2411,10 +2411,22 @@ namespace doticu_npcl { namespace MCM {
 
         if (option == back_option) {
             mcm->Disable_Option(option);
+
             List()->do_update_items = true;
             Current_View(Bases_View_e::LIST);
+
+            Item_t current_item = Item()->Current_Item();
+            if (current_item) {
+                maybe<size_t> maybe_idx = List()->Items().Index_Of(current_item);
+                if (maybe_idx.Has_Value()) {
+                    List()->Page_Index() = maybe_idx.Value() / Bases_List_t<B, I>::ITEMS_PER_PAGE;
+                }
+            }
+
             mcm->Reset_Page();
+
             mcm->Destroy_Latent_Callback(lcallback);
+
             return true;
 
         } else if (option == previous_option) {

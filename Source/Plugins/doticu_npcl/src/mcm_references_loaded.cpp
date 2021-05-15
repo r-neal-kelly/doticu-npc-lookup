@@ -112,7 +112,6 @@ namespace doticu_npcl { namespace MCM {
                 static_cast<Float_t>(loaded_actor_count) / static_cast<Float_t>(ITEMS_PER_PAGE)
             ));
 
-            Item_t current_item = Item()->Current_Item();
             Int_t page_index = Page_Index();
             if (page_index < 0) {
                 page_index = 0;
@@ -120,13 +119,6 @@ namespace doticu_npcl { namespace MCM {
             } else if (page_index >= page_count) {
                 page_index = page_count - 1;
                 Page_Index() = page_index;
-            } else if (current_item && current_item->Is_Valid()) {
-                maybe<size_t> maybe_idx = loaded_actors.Index_Of(current_item);
-                if (maybe_idx.Has_Value()) {
-                    size_t idx = maybe_idx.Value();
-                    page_index = idx / ITEMS_PER_PAGE;
-                    Page_Index() = page_index;
-                }
             }
 
             if (mcm->Should_Translate_Page_Titles()) {
