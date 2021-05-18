@@ -91,19 +91,8 @@ namespace doticu_npcl {
 
     void Main_t::On_Before_Save_Game()
     {
-        /*
         if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Save();
-        }
-        */
-
-        if (Is_Active() && Is_Installed()) {
-            if (Are_Quests_Running()) {
-                skylib::Read_Locker_t locker(Game_t::Form_IDs_To_Forms_Lock());
-                MCM::Main_t::Self()->On_Save();
-            } else {
-                _MESSAGE("quests are not running, skipping save!");
-            }
         }
     }
 

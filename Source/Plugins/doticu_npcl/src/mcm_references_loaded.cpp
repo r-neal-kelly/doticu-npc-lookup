@@ -50,7 +50,8 @@ namespace doticu_npcl { namespace MCM {
 
             read.reserve(2048);
             read.clear();
-            Actor_t::All(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
+            //Actor_t::All(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
+            Actor_t::All_Actors_In_Cells(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
 
             write.reserve(2048);
             write.clear();

@@ -149,14 +149,10 @@ namespace doticu_npcl { namespace MCM {
 
         Spawned_Actors_t& spawned = Spawned_Actors_t::Self();
 
-        _MESSAGE("1/2: about to save Spawned Refs");
-
         Actor_IDs() = spawned.actor_ids;
         Actor_Mod_Names() = spawned.actor_mod_names;
         Actor_Base_IDs() = spawned.actor_base_ids;
         Actor_Base_Mod_Names() = spawned.actor_base_mod_names;
-
-        _MESSAGE("2/2: saved Spawned Refs!");
     }
 
     void Spawned_References_List_t::On_Page_Open(Bool_t is_refresh, Latent_Callback_i* lcallback)
