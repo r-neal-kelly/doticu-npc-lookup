@@ -91,13 +91,15 @@ namespace doticu_npcl {
 
     void Main_t::On_Before_Save_Game()
     {
-        if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
+        _MESSAGE("Skipping Before Save Game, no data will be saved.");
+        /*if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Save();
-        }
+        }*/
     }
 
     void Main_t::On_After_Save_Game()
     {
+        _MESSAGE("Successfully completed thread that sends After Save Game event");
     }
 
     void Main_t::On_Before_Load_Game(some<const char*> file_path, u32 file_path_length)
