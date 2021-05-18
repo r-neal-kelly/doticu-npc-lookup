@@ -2,7 +2,6 @@
     Copyright © 2020 r-neal-kelly, aka doticu
 */
 
-#include "doticu_skylib/game.h"
 #include "doticu_skylib/global.h"
 #include "doticu_skylib/ui.h"
 #include "doticu_skylib/virtual_utility.h"
@@ -89,17 +88,15 @@ namespace doticu_npcl {
         }
     }
 
-    void Main_t::On_Before_Save_Game()
+    void Main_t::On_Before_Save_Game(some<const char*> file_path, u32 file_path_length)
     {
-        _MESSAGE("Skipping Before Save Game, no data will be saved.");
-        /*if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
+        if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Save();
-        }*/
+        }
     }
 
     void Main_t::On_After_Save_Game()
     {
-        _MESSAGE("Successfully completed thread that sends After Save Game event");
     }
 
     void Main_t::On_Before_Load_Game(some<const char*> file_path, u32 file_path_length)
