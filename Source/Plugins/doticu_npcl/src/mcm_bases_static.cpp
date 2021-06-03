@@ -49,11 +49,11 @@ namespace doticu_npcl { namespace MCM {
         if (!items || do_update_items) {
             do_update_items = false;
 
-            size_t actor_base_count = Actor_Base_t::Actor_Base_Count();
+            size_t actor_base_count = Actor_Base_t::Static_Actor_Base_Count();
 
             read.reserve(actor_base_count);
             read.clear();
-            Actor_Base_t::Actor_Bases(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
+            Actor_Base_t::Static_Actor_Bases(reinterpret_cast<Vector_t<some<Item_t>>&>(read));
 
             write.reserve(actor_base_count);
             write.clear();
@@ -61,19 +61,19 @@ namespace doticu_npcl { namespace MCM {
             items = Filter()->Execute(&read, &write).Results();
 
             items->Sort(
-                [](Item_t* item_a, Item_t* item_b)->Int_t
+                [](Item_t& item_a, Item_t& item_b)->Int_t
                 {
-                    if (!item_a || !*item_a) {
+                    if (!item_a) {
                         return Comparator_e::IS_UNORDERED;
-                    } else if (!item_b || !*item_b) {
+                    } else if (!item_b) {
                         return Comparator_e::IS_ORDERED;
                     } else {
                         Comparator_e result = Main_t::String_Comparator(
-                            (*item_a)->Any_Name(),
-                            (*item_b)->Any_Name()
+                            item_a->Any_Name(),
+                            item_b->Any_Name()
                         );
                         if (result == Comparator_e::IS_EQUAL) {
-                            return (*item_a)->form_id - (*item_b)->form_id;
+                            return item_a->form_id - item_b->form_id;
                         } else {
                             return result;
                         }
@@ -87,7 +87,7 @@ namespace doticu_npcl { namespace MCM {
 
     Vector_t<Item_t> Static_Bases_List_t::Default_Items()
     {
-        return *reinterpret_cast<Vector_t<Item_t>*>(&Actor_Base_t::Actor_Bases());
+        return *reinterpret_cast<Vector_t<Item_t>*>(&Actor_Base_t::Static_Actor_Bases());
     }
 
     Item_t Static_Bases_List_t::Null_Item()
@@ -401,7 +401,7 @@ namespace doticu_npcl { namespace MCM {
                     Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, item->Factions_And_Ranks());
                     Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, item->Keywords());
                     Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, item->Mods());
-                    Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race());
+                    Buildable_Race_t<Base_t, Item_t> buildable_race(this, item->Race()());
                     Buildable_Templates_t<Base_t, Item_t> buildable_templates(this, item->Templates());
 
                     buildables.push_back(&buildable_base);

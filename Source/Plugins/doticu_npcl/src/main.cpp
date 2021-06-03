@@ -88,22 +88,22 @@ namespace doticu_npcl {
         }
     }
 
-    void Main_t::On_Before_Save_Game(some<const char*> file_path, u32 file_path_length)
+    void Main_t::On_Before_Save_Game(const std::string& file_name)
     {
         if (Is_Active() && Is_Installed() && Are_Quests_Running()) {
             MCM::Main_t::Self()->On_Save();
         }
     }
 
-    void Main_t::On_After_Save_Game()
+    void Main_t::On_After_Save_Game(const std::string& file_name)
     {
     }
 
-    void Main_t::On_Before_Load_Game(some<const char*> file_path, u32 file_path_length)
+    void Main_t::On_Before_Load_Game(const std::string& file_name)
     {
     }
 
-    void Main_t::On_After_Load_Game(Bool_t did_load_successfully)
+    void Main_t::On_After_Load_Game(const std::string& file_name, Bool_t did_load_successfully)
     {
         if (did_load_successfully) {
             if (Is_Active()) {
@@ -121,7 +121,7 @@ namespace doticu_npcl {
         }
     }
 
-    void Main_t::On_Before_Delete_Game(some<const char*> file_path, u32 file_path_length)
+    void Main_t::On_Before_Delete_Game(const std::string& file_name)
     {
     }
 

@@ -128,12 +128,9 @@ namespace doticu_npcl { namespace MCM {
 
         inline void Sort()
         {
-            static auto comparator = [](String_t* str_a, String_t* str_b)->Int_t
+            static auto comparator = [](String_t& str_a, String_t& str_b)->Int_t
             {
-                return Main_t::String_Comparator(
-                    str_a ? *str_a : "",
-                    str_b ? *str_b : ""
-                );
+                return Main_t::String_Comparator(str_a, str_b);
             };
             results.Sort(comparator, 1);
         }
@@ -268,7 +265,7 @@ namespace doticu_npcl { namespace MCM {
 
         static void Select(Item_t item, Vector_t<String_t>& output)
         {
-            Race_t* race = item->Race();
+            maybe<Race_t*> race = item->Race();
             if (race) {
                 output.push_back(race->Get_Editor_ID());
             } else {

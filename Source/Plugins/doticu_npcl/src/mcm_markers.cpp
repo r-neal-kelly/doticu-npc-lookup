@@ -138,8 +138,8 @@ namespace doticu_npcl { namespace MCM {
         some<Player_t*> player = Player_t::Self();
         for (size_t idx = 0, end = player->objectives.Count(); idx < end; idx += 1) {
             auto& player_objective = player->objectives[idx];
-            auto* objective = player_objective.objective;
-            if (objective && objective->quest == this) {
+            maybe<skylib::Quest_Objective_t*> objective = player_objective.objective;
+            if (objective && objective->quest() == this) {
                 size_t marker_idx = objective->index;
                 if (marker_idx < alias_actors.count) {
                     maybe<Actor_t*> actor = alias_actors[marker_idx].actor;
@@ -280,19 +280,19 @@ namespace doticu_npcl { namespace MCM {
         }
 
         results.Sort(
-            [](Alias_Actor_t** item_a, Alias_Actor_t** item_b)->Int_t
+            [](Alias_Actor_t*& item_a, Alias_Actor_t*& item_b)->Int_t
             {
-                if (!item_a || !*item_a) {
+                if (!item_a) {
                     return Comparator_e::IS_UNORDERED;
-                } else if (!item_b || !*item_b) {
+                } else if (!item_b) {
                     return Comparator_e::IS_ORDERED;
                 } else {
                     Comparator_e result = Form_t::Compare_Names(
-                        (*item_a)->actor->Any_Name(),
-                        (*item_b)->actor->Any_Name()
+                        item_a->actor->Any_Name(),
+                        item_b->actor->Any_Name()
                     );
                     if (result == Comparator_e::IS_EQUAL) {
-                        return (*item_a)->actor->form_id - (*item_b)->actor->form_id;
+                        return item_a->actor->form_id - item_b->actor->form_id;
                     } else {
                         return result;
                     }

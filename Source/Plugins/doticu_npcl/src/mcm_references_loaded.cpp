@@ -59,19 +59,19 @@ namespace doticu_npcl { namespace MCM {
             items = Filter()->Execute(&read, &write).Results();
 
             items->Sort(
-                [](Item_t* item_a, Item_t* item_b)->Int_t
+                [](Item_t& item_a, Item_t& item_b)->Int_t
                 {
-                    if (!item_a || !*item_a) {
+                    if (!item_a) {
                         return Comparator_e::IS_UNORDERED;
-                    } else if (!item_b || !*item_b) {
+                    } else if (!item_b) {
                         return Comparator_e::IS_ORDERED;
                     } else {
                         Comparator_e result = Main_t::String_Comparator(
-                            (*item_a)->Any_Name(),
-                            (*item_b)->Any_Name()
+                            item_a->Any_Name(),
+                            item_b->Any_Name()
                         );
                         if (result == Comparator_e::IS_EQUAL) {
-                            return (*item_a)->form_id - (*item_b)->form_id;
+                            return item_a->form_id - item_b->form_id;
                         } else {
                             return result;
                         }
@@ -520,6 +520,8 @@ namespace doticu_npcl { namespace MCM {
 
     void Loaded_References_Item_t::On_Option_Input_Accept(Int_t option, String_t value, Latent_Callback_i* lcallback)
     {
+        // is it safe to call Markers_t::Refresh_Menu()?
+
         some<Main_t*> mcm = Main_t::Self();
 
         if (option == rename_reference_option) {

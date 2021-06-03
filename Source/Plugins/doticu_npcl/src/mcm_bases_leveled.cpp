@@ -84,19 +84,19 @@ namespace doticu_npcl { namespace MCM {
             items = Filter()->Execute(&read, &write).Results();
 
             items->Sort(
-                [](Item_t* item_a, Item_t* item_b)->Int_t
+                [](Item_t& item_a, Item_t& item_b)->Int_t
                 {
-                    if (!item_a || !*item_a) {
+                    if (!item_a) {
                         return Comparator_e::IS_UNORDERED;
-                    } else if (!item_b || !*item_b) {
+                    } else if (!item_b) {
                         return Comparator_e::IS_ORDERED;
                     } else {
                         Comparator_e result = Main_t::String_Comparator(
-                            (*item_a)->name,
-                            (*item_b)->name
+                            item_a->name,
+                            item_b->name
                         );
                         if (result == Comparator_e::IS_EQUAL) {
-                            return (*item_a)->leveled->form_id - (*item_b)->leveled->form_id;
+                            return item_a->leveled->form_id - item_b->leveled->form_id;
                         } else {
                             return result;
                         }
@@ -652,7 +652,7 @@ namespace doticu_npcl { namespace MCM {
                         Buildable_Factions_t<Base_t, Item_t> buildable_factions(this, nested_item->Factions_And_Ranks());
                         Buildable_Keywords_t<Base_t, Item_t> buildable_keywords(this, nested_item->Keywords());
                         Buildable_Mods_t<Base_t, Item_t> buildable_mods(this, nested_item->Mods());
-                        Buildable_Race_t<Base_t, Item_t> buildable_race(this, nested_item->Race());
+                        Buildable_Race_t<Base_t, Item_t> buildable_race(this, nested_item->Race()());
                         Buildable_Templates_t<Base_t, Item_t> buildable_templates(this, nested_item->Templates());
 
                         buildables.push_back(&buildable_base);

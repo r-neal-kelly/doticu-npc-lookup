@@ -31,9 +31,9 @@ namespace doticu_npcl {
                         bases.push_back(base);
                     }
 
-                    some<Race_t*> race = base->Race();
-                    if (race && !races.Has(race)) {
-                        races.push_back(race);
+                    maybe<Race_t*> race = base->Race();
+                    if (race && !races.Has(race())) {
+                        races.push_back(race());
                     }
                 }
                 return skylib::Iterator_e::CONTINUE;
